@@ -1,0 +1,18 @@
+language: node_js
+node_js:
+  - '6'
+
+branches:
+  only:
+    - develop
+    - master
+
+# cache dependencies to speed build time
+# https://docs.travis-ci.com/user/languages/javascript-with-nodejs/#Travis-CI-supports-yarn
+cache: yarn
+
+before_install:
+  - printf "//registry.npmjs.org/:_authToken=${NPM_TOKEN}\n" >> .npmrc
+
+after_success:
+  - test $TRAVIS_PULL_REQUEST == "false" && test $TRAVIS_BRANCH == "master" && npm publish
