@@ -1,0 +1,70 @@
+{
+  "name": "@samwise-tech/search-ql",
+  "version": "0.1.0",
+  "description": "QL used for advanced searches in Samwise applications",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "scripts": {
+    "build": "rm -rf ./lib && node_modules/.bin/tsc --project tsconfig.publish.json",
+    "karma": "node_modules/.bin/karma start config/karma.conf.js",
+    "lint": "node_modules/.bin/tslint --project tsconfig.tslint.json --type-check --format verbose './src/**/*.ts'",
+    "mocha": "node_modules/.bin/mocha --opts ./mocha.opts './src/**/*.spec.ts'",
+    "prepublish": "yarn build",
+    "test": "yarn outdated && yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
+    "test-specs-for-only": "node config/test-specs-for-only.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samwise-tech/search-ql.git"
+  },
+  "keywords": [
+    "ql",
+    "searchql"
+  ],
+  "author": "Samwise Technology, Inc. <icunningham@samwise.tech>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/samwise-tech/search-ql/issues"
+  },
+  "homepage": "https://github.com/samwise-tech/search-ql#readme",
+  "engines": {
+    "node": ">=6"
+  },
+  "dependencies": {
+    "@samwise-tech/core": "0.0.3",
+    "@types/parsimmon": "1.3.0",
+    "parsimmon": "1.6.2"
+  },
+  "devDependencies": {
+    "@samwise-tech/immutable": "^0.0.1",
+    "@samwise-tech/tslint-config": "0.4.0",
+    "@types/chai": "4.0.4",
+    "@types/lodash": "4.14.74",
+    "@types/mocha": "2.2.43",
+    "@types/node": "8.0.28",
+    "chai": "4.1.2",
+    "circular-dependency-plugin": "4.2.0",
+    "core-js": "2.5.1",
+    "immutable": "^3.8.1",
+    "karma": "1.7.1",
+    "karma-chai": "0.1.0",
+    "karma-mocha": "1.3.0",
+    "karma-mocha-reporter": "2.2.4",
+    "karma-phantomjs-launcher": "1.0.4",
+    "karma-webpack": "2.0.4",
+    "lodash": "4.17.4",
+    "mocha": "3.5.3",
+    "monet": "0.9.0-alpha.4",
+    "ts-loader": "2.3.7",
+    "ts-node": "3.3.0",
+    "tslib": "1.7.1",
+    "tslint": "5.7.0",
+    "typescript": "2.5.2",
+    "webpack": "3.6.0"
+  },
+  "peerDependencies": {
+    "@samwise-tech/immutable": "^0.0.1",
+    "immutable": "^3.8.1",
+    "monet": "0.9.0-alpha.4"
+  }
+}
