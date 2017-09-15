@@ -1,7 +1,7 @@
 {
   "name": "@samwise-tech/search-ql",
   "version": "0.0.1",
-  "description": "QL used for advanced searches in in Samwise applications",
+  "description": "QL used for advanced searches in Samwise applications",
   "main": "lib/index.js",
   "types": "index.d.ts",
   "scripts": {
@@ -10,7 +10,7 @@
     "lint": "node_modules/.bin/tslint --project tsconfig.tslint.json --type-check --format verbose './src/**/*.ts'",
     "mocha": "node_modules/.bin/mocha --opts ./mocha.opts './src/**/*.spec.ts'",
     "prepublish": "yarn build",
-    "test": "yarn outdated && yarn test-specs-for-only && yarn mocha && yarn karma && yarn lint && yarn build",
+    "test": "yarn outdated && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
     "test-specs-for-only": "node config/test-specs-for-only.js"
   },
   "repository": {

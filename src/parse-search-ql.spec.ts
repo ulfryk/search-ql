@@ -36,6 +36,7 @@ describe('SearchQL', () => {
       'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
       'asdasd OR AND NOT (OR AND NOT) asd: asd not ASD:ASd',
       ' ',
+      'des:: c: ipsum OR NOT dolor AND "john doe":"',
     ];
 
     _.zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
