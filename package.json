@@ -3,14 +3,14 @@
   "version": "0.1.0",
   "description": "QL used for advanced searches in Samwise applications",
   "main": "lib/index.js",
-  "types": "index.d.ts",
+  "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf ./lib && node_modules/.bin/tsc --project tsconfig.publish.json",
     "karma": "node_modules/.bin/karma start config/karma.conf.js",
     "lint": "node_modules/.bin/tslint --project tsconfig.tslint.json --type-check --format verbose './src/**/*.ts'",
     "mocha": "node_modules/.bin/mocha --opts ./mocha.opts './src/**/*.spec.ts'",
     "prepublish": "yarn build",
-    "test": "yarn outdated && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
+    "test": "yarn outdated && yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
     "test-specs-for-only": "node config/test-specs-for-only.js"
   },
   "repository": {
@@ -60,7 +60,7 @@
     "tslib": "1.7.1",
     "tslint": "5.7.0",
     "typescript": "2.5.2",
-    "webpack": "3.5.6"
+    "webpack": "3.6.0"
   },
   "peerDependencies": {
     "@samwise-tech/immutable": "^0.0.1",

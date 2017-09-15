@@ -65,15 +65,15 @@ It's an expression applied to a string label - a label followed by a matcher. Ma
 - **?** `AND` can be replaced with `&` or ` ` (whitespace)
 - **?** `OR` can be replaced with `,` or `|`
 - **?** `NOT` can be replaced with `!`
-- ~`:` preceded with whitespace makes query following it a `Bascic query`~
+- ~`:` preceded with whitespace makes query following it a `Basic query`~
 
 ## Usage
 
 ```typescript
 import { Map } from 'immutable';
-import { parseSearchQL, ParserName } from './src';
+import { parseSearchQL, ParserName } from '@samwise-tech/search-ql';
 
-// Yeas, it's configurable, choose what you need!
+// Yes, it's configurable! Choose what you need.
 // (but we believe that without ParserName.Basic it may not work as expected)
 const parsersUsed = [ParserName.Basic, ParserName.JoinedGroup, ParserName.Labelled, ParserName.Not];
 
@@ -82,51 +82,53 @@ const parse = parseSearchQL(parsersUsed);
 
 // The parser fed with search query will produce expression tree which can be used for testing some
 // list of values or for building queries that work with other systems (e.g. ElasticSearch)
-const validExpression = parse('desc: (ipsum OR NOT dolor) AND "john doe"');
-const failure = parse('des:: c: ipsum OR NOT dolor AND "john doe":"');
+const validExpression = parse('desc: (ipsum OR NOT dolor) AND "john doe"'); // Right { Expression }
+const failure = parse('des:: c: ipsum OR NOT dolor AND "john doe":"'); // Left { ParseFailure }
+```
 
-/* 
- * The returned expression is wrapped in a Either monad (coming from [monet][3]), it's 
- * Right { Expression } if passed string was parsable or Left { ParseFailure } if parser
- * failed to parse given query.
+The returned expression is wrapped in an `Either` monad (coming from [monet][3]), it's `Right { Expression }` if passed string was valid SearchQL query or `Left { ParseFailure }` if parser failed to parse given query.
 
-validExpression.forEach(expression => console.log(expression)); =>
+```typescript
+validExpression.forEach(expression => console.log(expression));
 
-JoinedExpression {
-  type: AND,
-  value: Set {
-    LabelledExpression {
-      label: "desc"
-      value: JoinedExpression {
-        type: OR,
-        value: Set {
-          BasicExpression { "ipsum" },
-          NotExpression { BasicExpression { "dolor" } }
-        }
-      }
-    },
-    BasicExpression { "john doe" }
-  }
-}
-
-failure.forEach(err => console.log(err)); =>
-
-ParseFailure {
-  expected: ["'\"'", "'('", "not a valid word"],
-  index: Index {
-    offset: 4,
-    line: 1,
-    column: 5
-  }
-  query: "des:: c: ipsum OR NOT dolor AND \"john doe\":\"",
-  status: false,
-}
-
+/*
+    JoinedExpression {
+      type: AND,
+      value: Set [
+        LabelledExpression {
+          label: "desc",
+          value: JoinedExpression {
+            type: OR,
+            value: Set [
+              BasicExpression { value: "ipsum" },
+              NotExpression { value: BasicExpression { value: "dolor" } }
+            ]
+          }
+        },
+        BasicExpression { value: "john doe" }
+      ]
+    }
 */
 
-// To test some object against SearchQL expression, it has to be serialized to 
-// a Map<string, string>. It has to be [ImmutableJS][4] implementation, native Map is
-// not supported for now.
+failure.forEachLeft(err => console.log(err));
+
+/*
+    ParseFailure {
+      expected: ["'\"'", "'('", "not a valid word"],
+      index: Index {
+        offset: 4,
+        line: 1,
+        column: 5
+      }
+      query: "des:: c: ipsum OR NOT dolor AND \"john doe\":\"",
+      status: false,
+    }
+*/
+```
+
+To test some object against SearchQL expression, it has to be serialized to a `Map<string, string>`. It has to be [ImmutableJS][4] implementation, native `Map` is not supported for now.
+
+```typescript
 validExpression
   .map(expression => expression.test(Map({
     description: "Lorem ipsum",
