@@ -8,7 +8,7 @@ type OperatorRuntime = (a: boolean, b: () => boolean) => boolean;
 
 export class JoinedExpression extends Expression {
 
-  public static operatorRuntime = Map<LogicOperator, OperatorRuntime>({
+  public static readonly operatorRuntime = Map<LogicOperator, OperatorRuntime>({
     [AND]: (a: boolean, b: () => boolean) => a && b(),
     [OR]: (a: boolean, b: () => boolean) => a || b(),
   });
@@ -21,7 +21,7 @@ export class JoinedExpression extends Expression {
     return new JoinedExpression(OR, Set<Expression>());
   }
 
-  private evaluate = JoinedExpression.operatorRuntime.get(this.type);
+  private readonly evaluate = JoinedExpression.operatorRuntime.get(this.type);
 
   constructor(
     public readonly type: LogicOperator,

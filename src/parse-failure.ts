@@ -6,7 +6,7 @@ export class ParseFailure implements Failure {
     return new ParseFailure(expected, index, query);
   }
 
-  public status: false = false;
+  public readonly status = false;
 
   constructor(
     public readonly expected: string[],
