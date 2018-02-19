@@ -24,10 +24,17 @@ const getParsers = (parserNames: ParserName[]): P.Parser<any>[] =>
     .map(getParser => getParser(parserNames))
     .toArray();
 
-const subQuery = (parserNames: ParserName[]): P.Parser<Expression> =>
-  P.lazy(() => P.alt(...getParsers(parserNames)));
-
 const operator = P.whitespace.then(logicalOperator).skip(P.whitespace);
+
+const trailingOperator = P.seq(
+  P.whitespace,
+  logicalOperator,
+  P.whitespace.many(),
+  P.eof,
+);
+
+const subQuery = (parserNames: ParserName[]): P.Parser<Expression> =>
+  P.lazy(() => P.alt(...getParsers(parserNames)).skip(trailingOperator.atMost(1)));
 
 const queryLogicalPart = (parserNames: ParserName[]) =>
   P.seqMap(operator, subQuery(parserNames), (op, expression) => [Some(op), expression]);
