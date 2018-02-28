@@ -78,6 +78,9 @@ describe('SearchQL parsers', () => {
         'NOT aaa AND NOT bbb',
         'NOT (aaa OR bbb) AND ccc',
         'aaa AND NOT bb:BB',
+        'aaa AND (bbb OR ccc) NOT ddd',
+        '(aaa OR bbb) NOT ccc',
+        'aaa AND bbb AND ccc NOT ddd',
       ];
 
       const validOutput = [
@@ -152,6 +155,31 @@ describe('SearchQL parsers', () => {
         new JoinedExpression(AND, Set([
           new BasicExpression('aaa'),
           new NotExpression(new LabelledExpression('bb', new BasicExpression('BB'))),
+        ])),
+        new JoinedExpression(AND, Set([
+          new JoinedExpression(AND, Set([
+            new BasicExpression('aaa'),
+            new JoinedExpression(OR, Set([
+              new BasicExpression('bbb'),
+              new BasicExpression('ccc'),
+            ])),
+          ])),
+          new NotExpression(new BasicExpression('ddd')),
+        ])),
+        new JoinedExpression(AND, Set([
+          new JoinedExpression(OR, Set([
+            new BasicExpression('aaa'),
+            new BasicExpression('bbb'),
+          ])),
+          new NotExpression(new BasicExpression('ccc')),
+        ])),
+        new JoinedExpression(AND, Set([
+          new JoinedExpression(AND, Set([
+            new BasicExpression('aaa'),
+            new BasicExpression('bbb'),
+            new BasicExpression('ccc'),
+          ])),
+          new NotExpression(new BasicExpression('ddd')),
         ])),
       ];
 

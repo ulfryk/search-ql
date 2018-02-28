@@ -1,14 +1,15 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
 import { Set } from 'immutable';
-import * as _ from 'lodash';
+import { zip } from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
-import { AND, LogicOperator, OR } from '../syntax-config';
+import { AND, LogicOperator, NOT, OR } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { fromPairs } from './from-pairs';
 import { JoinedExpression } from './joined-expression';
+import { NotExpression } from './not-expression';
 
 describe('SearchQL expressions', () => {
 
@@ -19,6 +20,10 @@ describe('SearchQL expressions', () => {
       [
         [None<LogicOperator>(), new BasicExpression('aaa')],
         [Some(AND), new BasicExpression('bbb')],
+      ],
+      [
+        [None<LogicOperator>(), new BasicExpression('aaa')],
+        [Some(NOT), new BasicExpression('bbb')],
       ],
       [
         [None<LogicOperator>(), new BasicExpression('bbb')],
@@ -44,6 +49,13 @@ describe('SearchQL expressions', () => {
         ] as [Maybe<LogicOperator>, Expression][])],
         [Some(AND), new BasicExpression('ccc')],
       ],
+      [
+        [None<LogicOperator>(), new JoinedExpression(AND, Set([
+          new BasicExpression('aaa'),
+          new BasicExpression('bbb'),
+        ]))],
+        [Some(NOT), new BasicExpression('ccc')],
+      ],
     ];
 
     const validOutput = [
@@ -51,6 +63,10 @@ describe('SearchQL expressions', () => {
       new JoinedExpression(AND, Set([
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
+      ])),
+      new JoinedExpression(AND, Set([
+        new BasicExpression('aaa'),
+        new NotExpression(new BasicExpression('bbb')),
       ])),
       new JoinedExpression(AND, Set([
         new BasicExpression('bbb'),
@@ -80,9 +96,16 @@ describe('SearchQL expressions', () => {
         ])),
         new BasicExpression('ccc'),
       ])),
+      new JoinedExpression(AND, Set([
+        new JoinedExpression(AND, Set([
+          new BasicExpression('aaa'),
+          new BasicExpression('bbb'),
+        ])),
+        new NotExpression(new BasicExpression('ccc')),
+      ])),
     ];
 
-    _.zip<any>(validInput, validOutput).forEach(([input, output]) => {
+    zip<any>(validInput, validOutput).forEach(([input, output]) => {
       it(`should properly build expression for: ${output}`, () => {
         expect(fromPairs(input).equals(output)).to.be.true;
       });

@@ -3,6 +3,7 @@ const path = require('path');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
+  mode: 'development',
   module: { rules: [{ test: /\.ts$/, loader: 'ts-loader', options: { configFile: 'tsconfig.json' } }] },
   resolve: {
 
