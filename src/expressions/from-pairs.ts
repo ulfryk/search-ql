@@ -11,7 +11,7 @@ export const fromPairs = (pairs: [Maybe<LogicOperator>, Expression][]): Expressi
   pairs
     .reduce((acc, [operator, expression]) => acc
         .flatMap(prev => operator
-          .map(key => prev instanceof JoinedExpression ?
+          .map(key => prev instanceof JoinedExpression && key !== NOT ?
             prev.add(key, expression) as Expression :
             key === NOT ?
               new JoinedExpression(AND, Set([prev, new NotExpression(expression)])) :
