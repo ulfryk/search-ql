@@ -78,15 +78,33 @@ describe('SearchQL expressions', () => {
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values)).to.be.true;
+          expect(expression.test(values).isEmpty()).to.be.false;
         });
       });
 
       notMatchingExpressions.forEach(expression => {
         it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values)).to.be.false;
+          expect(expression.test(values).isEmpty()).to.be.true;
         });
       });
+
+      it('should find expression "aaa" in few fields', () => {
+        expect(
+          BasicExpression
+            .fromMatch('aaa')
+            .test(Map({
+              one: 'aaa bbb aaa aaa aaasda ddaaa',
+              two: 'aaa bbb aaaXaaa',
+              three: 'aaGaa bbb aadaaXaadaa ddddadd',
+            }))
+            .toString(),
+        ).to.equal('Map {' +
+          ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" {' +
+            ' Map { "aaa": Set { [0, 3], [8, 11], [12, 15], [16, 19], [25, 28] } } },' +
+          ' "two": Match "aaa bbb aaaXaaa" {' +
+            ' Map { "aaa": Set { [0, 3], [8, 11], [12, 15] } } }' +
+          ' }');
+      })
 
     });
 

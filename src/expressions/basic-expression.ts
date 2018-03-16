@@ -1,7 +1,10 @@
-import { Map } from 'immutable';
+import { indexOf, last } from '@samwise-tech/core';
+import { Map, Set } from 'immutable';
 
 import { matchBasicWord } from '../parsers/basic/match-basic-word';
 import { Expression } from './expression';
+import { Match } from './match';
+import { MatchCoords } from './match-coords';
 
 export class BasicExpression extends Expression {
 
@@ -27,8 +30,23 @@ export class BasicExpression extends Expression {
       .orJust(`"${this.value}"`);
   }
 
-  public test(values: Map<string, string>): boolean {
-    return values.toSet().some(value => value.includes(this.value));
+  public test(values: Map<string, string>): Map<string, Match> {
+    return values
+      .map(this.getIndexes())
+      .filter(indexes => indexes.length > 0)
+      .map((indexes, key) => new Match(
+          values.get(key),
+          Set(indexes)
+            .map(index => new MatchCoords(index, index + this.value.length))
+            .groupBy(() => this.value)
+            .toMap()));
+  }
+
+  public getIndexes(indexes: number[] = []) {
+    const prevIndex = last(indexes).fold(0)(lastIndex => lastIndex + this.value.length);
+    return (input: string): number[] =>
+      indexOf(input.slice(prevIndex), this.value)
+        .fold(indexes)(index => this.getIndexes(indexes.concat([prevIndex + index]))(input));
   }
 
 }
