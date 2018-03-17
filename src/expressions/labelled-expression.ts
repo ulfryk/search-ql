@@ -1,6 +1,8 @@
 import { Map } from 'immutable';
+import { Maybe } from 'monet';
 
 import { Expression } from './expression';
+import { Match } from './match';
 
 export class LabelledExpression extends Expression {
 
@@ -25,7 +27,7 @@ export class LabelledExpression extends Expression {
     return `${this.label}: ${this.value.toString()}`;
   }
 
-  public test(values: Map<string, string>): boolean {
+  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
     return this.value.test(values
       .filter((_value, key) => key.includes(this.label)));
   }

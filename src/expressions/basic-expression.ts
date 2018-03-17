@@ -1,10 +1,14 @@
-import { indexOf, last } from '@samwise-tech/core';
-import { Map, Set } from 'immutable';
+// tslint:disable-next-line:no-import-side-effect
+import '@samwise-tech/immutable/Map/override-iterable';
+import '@samwise-tech/immutable/Iterable/lastMaybe';
+
+import { indexOf } from '@samwise-tech/core';
+import { Map, OrderedSet } from 'immutable';
+import { Maybe, Some } from 'monet';
 
 import { matchBasicWord } from '../parsers/basic/match-basic-word';
 import { Expression } from './expression';
 import { Match } from './match';
-import { MatchCoords } from './match-coords';
 
 export class BasicExpression extends Expression {
 
@@ -30,23 +34,22 @@ export class BasicExpression extends Expression {
       .orJust(`"${this.value}"`);
   }
 
-  public test(values: Map<string, string>): Map<string, Match> {
-    return values
-      .map(this.getIndexes())
-      .filter(indexes => indexes.length > 0)
-      .map((indexes, key) => new Match(
-          values.get(key),
-          Set(indexes)
-            .map(index => new MatchCoords(index, index + this.value.length))
-            .groupBy(() => this.value)
-            .toMap()));
+  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
+    return Some(values.map(this.getIndexes()).filter(indexes => !indexes.isEmpty()))
+      .filter(groupedIndexes => !groupedIndexes.isEmpty())
+      .map(groupedIndexes => groupedIndexes.map(this.getMatches(values)));
   }
 
-  public getIndexes(indexes: number[] = []) {
-    const prevIndex = last(indexes).fold(0)(lastIndex => lastIndex + this.value.length);
-    return (input: string): number[] =>
+  public getMatches(values: Map<string, string>) {
+    return (indexes: OrderedSet<number>, label: string) =>
+      Match.fromIndexes(values.get(label), this.value, indexes);
+  }
+
+  public getIndexes(indexes = OrderedSet<number>()) {
+    const prevIndex = indexes.lastMaybe().fold(0)(lastIndex => lastIndex + this.value.length);
+    return (input: string): OrderedSet<number> =>
       indexOf(input.slice(prevIndex), this.value)
-        .fold(indexes)(index => this.getIndexes(indexes.concat([prevIndex + index]))(input));
+        .fold(indexes)(index => this.getIndexes(indexes.add(prevIndex + index))(input));
   }
 
 }

@@ -5,14 +5,15 @@
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./lib && node_modules/.bin/tsc --project tsconfig.publish.json",
-    "karma": "node_modules/.bin/karma start config/karma.conf.js",
-    "lint": "node_modules/.bin/tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
-    "mocha": "node_modules/.bin/mocha --opts ./mocha.opts './src/**/*.spec.ts'",
+    "build": "rm -rf ./lib && tsc --project tsconfig.publish.json",
+    "karma": "karma start config/karma.conf.js",
+    "lint": "tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
+    "mocha": "mocha --opts ./mocha.opts './src/**/*.spec.ts'",
+    "mocha2": "mocha --opts ./mocha.opts './src/**/not-expression.spec.ts'",
     "mocha:tdd": "yarn mocha --watch --reporter min",
     "prepublish": "yarn build",
     "test": "yarn outdated && yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
-    "test-specs-for-only": "node_modules/.bin/forbidden 'src/**/*.spec.ts' -p describe.only it.only"
+    "test-specs-for-only": "forbidden 'src/**/*.spec.ts' -p describe.only it.only"
   },
   "repository": {
     "type": "git",
@@ -38,7 +39,7 @@
   },
   "devDependencies": {
     "@samwise-tech/forbidden-patterns": "1.0.2",
-    "@samwise-tech/immutable": "^1.0.3",
+    "@samwise-tech/immutable": "^1.1.0-rc.0",
     "@samwise-tech/tslint-config": "1.0.3",
     "@types/chai": "4.1.2",
     "@types/lodash": "4.14.104",
@@ -65,7 +66,7 @@
     "webpack": "4.1.1"
   },
   "peerDependencies": {
-    "@samwise-tech/immutable": "^1.0.0",
+    "@samwise-tech/immutable": "^1.1.0-rc.0",
     "immutable": "^3.8.0",
     "monet": "0.9.0-alpha.4"
   }

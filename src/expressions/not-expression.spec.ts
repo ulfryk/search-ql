@@ -5,34 +5,27 @@ import * as _ from 'lodash';
 
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
+import { NotExpression } from './not-expression';
 
 describe('SearchQL expressions', () => {
 
-  describe('BasicExpression', () => {
-
-    describe('fromMatch() static method', () => {
-
-      it('should return instance of BasicExpression', () => {
-        expect(BasicExpression.fromMatch('aaa')).to.be.instanceof(BasicExpression);
-      });
-
-    });
+  describe('NotExpression', () => {
 
     describe('equals() method', () => {
 
       const lhs = [
-        BasicExpression.fromMatch(''),
-        BasicExpression.fromMatch('aaa  asdas as asd asdas dad '),
+        new NotExpression(BasicExpression.fromMatch('')),
+        new NotExpression(BasicExpression.fromMatch('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhs = [
-        new BasicExpression(''),
-        new BasicExpression('aaa  asdas as asd asdas dad '),
+        new NotExpression(BasicExpression.fromMatch('')),
+        new NotExpression(BasicExpression.fromMatch('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhsInvalid = [
-        BasicExpression.fromMatch('aaa  asdas as asd asdas dad '),
-        new BasicExpression(''),
+        new NotExpression(BasicExpression.fromMatch('aaa  asdas as asd asdas dad ')),
+        new NotExpression(BasicExpression.fromMatch('')),
       ];
 
       it('should return true for comparison with a reference', () => {
@@ -67,19 +60,21 @@ describe('SearchQL expressions', () => {
         'hello world',
       ].map((val, i) => [`label ${i}`, val.toLowerCase()])) as Map<string, string>;
 
-      const expressions = values.toArray()
+      const notMatchingExpressions = values.toArray()
         .map((val: string) => val.substr(-6, 5))
         .concat(values.toArray())
-        .map(BasicExpression.fromMatch);
+        .map(BasicExpression.fromMatch)
+        .map(NotExpression.of);
 
-      const notMatchingExpressions = values.toArray()
+      const expressions = values.toArray()
         .map((val, i) => `${i} ${val}`)
-        .map(BasicExpression.fromMatch);
+        .map(BasicExpression.fromMatch)
+        .map(NotExpression.of);
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
           expect(expression.test(values).isSome()).to.be.true;
-          expect(expression.test(values).some().isEmpty()).to.be.false;
+          // expect(expression.test(values).some().isEmpty()).to.be.true;
         });
       });
 
@@ -89,10 +84,9 @@ describe('SearchQL expressions', () => {
         });
       });
 
-      it('should find expression "aaa" in few fields', () => {
+      it('should not find expression "zzz" in few fields', () => {
         expect(
-          BasicExpression
-            .fromMatch('aaa')
+          NotExpression.of(BasicExpression.fromMatch('zzz'))
             .test(Map({
               one: 'aaa bbb aaa aaa aaasda ddaaa',
               two: 'aaa bbb aaaXaaa',
@@ -100,12 +94,11 @@ describe('SearchQL expressions', () => {
             }))
             .toString(),
         ).to.equal('Just(Map {' +
-          ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" {' +
-            ' Map { "aaa": OrderedSet { [0, 3], [8, 11], [12, 15], [16, 19], [25, 28] } } },' +
-          ' "two": Match "aaa bbb aaaXaaa" {' +
-            ' Map { "aaa": OrderedSet { [0, 3], [8, 11], [12, 15] } } }' +
+          ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" { Map {} },' +
+          ' "two": Match "aaa bbb aaaXaaa" { Map {} },' +
+          ' "three": Match "aaGaa bbb aadaaXaadaa ddddadd" { Map {} }' +
           ' })');
-      })
+      });
 
     });
 

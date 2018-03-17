@@ -2,6 +2,10 @@ import { ISetoid } from '@samwise-tech/core';
 
 export class MatchCoords implements ISetoid {
 
+  public static fromIndex(phrase: string) {
+    return (index: number) => new MatchCoords(index, index + phrase.length);
+  }
+
   constructor(
     public readonly start: number,
     public readonly end: number,

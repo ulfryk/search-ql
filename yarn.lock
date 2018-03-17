@@ -2,16 +2,15 @@
 # yarn lockfile v1
 
 
-"@samwise-tech/core@^1.2.0-rc.1":
-  version "1.2.0-rc.1"
-  resolved "https://registry.yarnpkg.com/@samwise-tech/core/-/core-1.2.0-rc.1.tgz#d3a16793dfd4adc227c9dfae1b3f1571b18d8904"
+"@samwise-tech/core@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@samwise-tech/core/-/core-1.2.0.tgz#f5eab64319827e54953937cd887eab439e24f61e"
   dependencies:
     "@samwise-tech/di" "^1.2.0"
     "@types/lodash" "^4.14.80"
     "@types/uuid" "^3.4.3"
     immutable "^3.8.2"
     lodash "^4.17.4"
-    reflect-metadata "^0.1.12"
     rxjs "^5.5.7"
     uuid "^3.2.1"
 
@@ -28,9 +27,9 @@
     monet "0.9.0-alpha.4"
     yargs "11.0.0"
 
-"@samwise-tech/immutable@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@samwise-tech/immutable/-/immutable-1.0.3.tgz#42c46d7b5462459ec9323aa5fe4acedbbb23dcd9"
+"@samwise-tech/immutable@^1.1.0-rc.0":
+  version "1.1.0-rc.0"
+  resolved "https://registry.yarnpkg.com/@samwise-tech/immutable/-/immutable-1.1.0-rc.0.tgz#13d6a3b497a5ef2bbef2d52a64b50f0663a6e64e"
 
 "@samwise-tech/tslint-config@1.0.3":
   version "1.0.3"
@@ -3503,10 +3502,6 @@ redis@^2.7.1:
     double-ended-queue "^2.1.0-0"
     redis-commands "^1.2.0"
     redis-parser "^2.6.0"
-
-reflect-metadata@^0.1.12:
-  version "0.1.12"
-  resolved "https://registry.yarnpkg.com/reflect-metadata/-/reflect-metadata-0.1.12.tgz#311bf0c6b63cd782f228a81abe146a2bfa9c56f2"
 
 regenerator-runtime@^0.11.0:
   version "0.11.1"
