@@ -150,8 +150,8 @@ describe('SearchQL expressions', () => {
         expect(String(expressions[1].test(values)))
           .to.equal('Just(Map { "label 1": Match "asdffa sdfas sdf" { Map {' +
           ' "asdffa": OrderedSet { [0, 6] },' +
-          ' "sdfas": OrderedSet { [7, 12] },' +
-          ' "sdf": OrderedSet { [1, 4], [7, 10], [13, 16] }' +
+          ' "sdf": OrderedSet { [1, 4], [7, 10], [13, 16] },' +
+          ' "sdfas": OrderedSet { [7, 12] }' +
           ' } } })');
 
         expect(String(expressions[3].test(values)))

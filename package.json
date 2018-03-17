@@ -9,7 +9,6 @@
     "karma": "karma start config/karma.conf.js",
     "lint": "tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
     "mocha": "mocha --opts ./mocha.opts './src/**/*.spec.ts'",
-    "mocha2": "mocha --opts ./mocha.opts './src/**/joined-expression.spec.ts'",
     "mocha:tdd": "yarn mocha --watch --reporter min",
     "prepublish": "yarn build",
     "test": "yarn outdated && yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",

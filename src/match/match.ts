@@ -1,5 +1,5 @@
 import { ISetoid } from '@samwise-tech/core/model/fantasy-land/setoid';
-import { Map, OrderedSet } from 'immutable';
+import { Iterable, Map, OrderedSet } from 'immutable';
 
 import { MatchCoords } from './match-coords';
 
@@ -47,7 +47,23 @@ export class Match implements ISetoid {
           .toSet()
           .sort((a, b) => a.compare(b))
           .toOrderedSet())
+        .sortBy((__, phrase) => phrase)
         .toMap());
+  }
+
+  public getFlatMatched(): Map<string, OrderedSet<MatchCoords>> {
+    return this.matched.entrySeq()
+      .flatMap<number, MatchCoords>(([__, coords]: [string, OrderedSet<MatchCoords>]) => coords
+        .map(singleCoords => singleCoords))
+      .sort((a, b) => a.compare(b))
+      .reduce((acc, next) =>
+        acc.lastMaybe().cata(
+        () => acc.concat(next),
+          (last: MatchCoords) => acc.butLast().concat(last.queueOrMerge(next))),
+        Iterable([]) as Iterable<number, MatchCoords>)
+      .groupBy(({ phrase }) => phrase)
+      .map(group => group.sort((a, b) => a.compare(b)).toOrderedSet())
+      .toMap();
   }
 
 }
