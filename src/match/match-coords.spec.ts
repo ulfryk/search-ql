@@ -36,9 +36,8 @@ describe('MatchCoords', () => {
 
       expect(Set(matched).sort((a, b) => a.compare(b)).toString())
         .to.equal('OrderedSet { [0, 5], [1, 5], [2, 5], [2, 8], [2, 10], [6, 11] }');
-    })
+    });
 
   });
-
 
 });

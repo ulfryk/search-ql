@@ -33,16 +33,16 @@
     "node": ">=6"
   },
   "dependencies": {
-    "@samwise-tech/core": "^1.2.0",
+    "@samwise-tech/core": "^1.2.2",
     "@types/parsimmon": "1.6.1",
     "parsimmon": "1.7.0"
   },
   "devDependencies": {
     "@samwise-tech/forbidden-patterns": "1.0.2",
-    "@samwise-tech/immutable": "^1.1.0-rc.0",
+    "@samwise-tech/immutable": "^1.1.0",
     "@samwise-tech/tslint-config": "1.0.3",
     "@types/chai": "4.1.2",
-    "@types/lodash": "4.14.104",
+    "@types/lodash": "4.14.105",
     "@types/mocha": "2.2.48",
     "@types/node": "9.4.7",
     "chai": "4.1.2",
@@ -58,7 +58,7 @@
     "lodash": "4.17.5",
     "mocha": "5.0.4",
     "monet": "0.9.0-alpha.4",
-    "ts-loader": "4.0.1",
+    "ts-loader": "4.1.0",
     "ts-node": "5.0.1",
     "tslib": "1.9.0",
     "tslint": "5.9.1",

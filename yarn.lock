@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@samwise-tech/core@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@samwise-tech/core/-/core-1.2.0.tgz#f5eab64319827e54953937cd887eab439e24f61e"
+"@samwise-tech/core@^1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@samwise-tech/core/-/core-1.2.2.tgz#9df1f672028492b4e55dba9be8cd4890058a94b1"
   dependencies:
     "@samwise-tech/di" "^1.2.0"
     "@types/lodash" "^4.14.80"
@@ -27,9 +27,9 @@
     monet "0.9.0-alpha.4"
     yargs "11.0.0"
 
-"@samwise-tech/immutable@^1.1.0-rc.0":
-  version "1.1.0-rc.0"
-  resolved "https://registry.yarnpkg.com/@samwise-tech/immutable/-/immutable-1.1.0-rc.0.tgz#13d6a3b497a5ef2bbef2d52a64b50f0663a6e64e"
+"@samwise-tech/immutable@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@samwise-tech/immutable/-/immutable-1.1.0.tgz#e54ac0efaa7dc7e9d8c178bace46f699bc4a6f79"
 
 "@samwise-tech/tslint-config@1.0.3":
   version "1.0.3"
@@ -43,9 +43,9 @@
   version "4.1.2"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.2.tgz#f1af664769cfb50af805431c407425ed619daa21"
 
-"@types/lodash@4.14.104", "@types/lodash@^4.14.80":
-  version "4.14.104"
-  resolved "http://registry.npmjs.org/@types/lodash/-/lodash-4.14.104.tgz#53ee2357fa2e6e68379341d92eb2ecea4b11bb80"
+"@types/lodash@4.14.105", "@types/lodash@^4.14.80":
+  version "4.14.105"
+  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.105.tgz#9fcc4627a1f98f8f8fce79ddb2bff4afd97e959b"
 
 "@types/mocha@2.2.48":
   version "2.2.48"
@@ -140,8 +140,8 @@ ajv@^5.1.0:
     json-schema-traverse "^0.3.0"
 
 ajv@^6.1.0:
-  version "6.2.1"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.2.1.tgz#28a6abc493a2abe0fb4c8507acaedb43fa550671"
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.3.0.tgz#1650a41114ef00574cac10b8032d8f4c14812da7"
   dependencies:
     fast-deep-equal "^1.0.0"
     fast-json-stable-stringify "^2.0.0"
@@ -2053,8 +2053,8 @@ iconv-lite@0.4.19:
   resolved "https://registry.yarnpkg.com/iconv-lite/-/iconv-lite-0.4.19.tgz#f7468f60135f5e5dad3399c0a81be9a1603a082b"
 
 ieee754@^1.1.4:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.8.tgz#be33d40ac10ef1926701f6f08a2d86fbfd1ad3e4"
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.1.9.tgz#13acbc76462de80959be14b2d4ac93b96761b195"
 
 iferr@^0.1.5:
   version "0.1.5"
@@ -2846,8 +2846,8 @@ ms@2.0.0:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.0.0.tgz#5608aeadfc00be6c2901df5f9861788de0d597c8"
 
 nan@^2.3.0:
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/nan/-/nan-2.9.2.tgz#f564d75f5f8f36a6d9456cca7a6c4fe488ab7866"
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/nan/-/nan-2.10.0.tgz#96d0cd610ebd58d4b4de9cc0c6828cda99c7548f"
 
 nanomatch@^1.2.9:
   version "1.2.9"
@@ -4216,9 +4216,9 @@ tough-cookie@~2.3.0, tough-cookie@~2.3.3:
   dependencies:
     punycode "^1.4.1"
 
-ts-loader@4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-4.0.1.tgz#3d920b059966efec9637133ab0ca9b04d625d59a"
+ts-loader@4.1.0:
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/ts-loader/-/ts-loader-4.1.0.tgz#6216e75600941df3270bc4a7125e20aefb2dc5ea"
   dependencies:
     chalk "^2.3.0"
     enhanced-resolve "^4.0.0"
@@ -4228,7 +4228,7 @@ ts-loader@4.0.1:
 
 ts-node@5.0.1:
   version "5.0.1"
-  resolved "http://registry.npmjs.org/ts-node/-/ts-node-5.0.1.tgz#78e5d1cb3f704de1b641e43b76be2d4094f06f81"
+  resolved "https://registry.yarnpkg.com/ts-node/-/ts-node-5.0.1.tgz#78e5d1cb3f704de1b641e43b76be2d4094f06f81"
   dependencies:
     arrify "^1.0.0"
     chalk "^2.3.0"
@@ -4347,8 +4347,8 @@ uglify-es@^3.3.4:
     source-map "~0.6.1"
 
 uglifyjs-webpack-plugin@^1.1.1:
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.2.3.tgz#bf23197b37a8fc953fecfbcbab66e506f9a0ae72"
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/uglifyjs-webpack-plugin/-/uglifyjs-webpack-plugin-1.2.4.tgz#5eec941b2e9b8538be0a20fc6eda25b14c7c1043"
   dependencies:
     cacache "^10.0.4"
     find-cache-dir "^1.0.0"
