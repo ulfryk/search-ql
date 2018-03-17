@@ -121,7 +121,8 @@ describe('SearchQL expressions', () => {
         new JoinedExpression(AND, Set(['asdffa', 'SDFAS', 'sdf'].map(BasicExpression.fromMatch))),
         new JoinedExpression(AND, Set(['AND', 'OR', 'AND'].map(BasicExpression.fromMatch))),
         new JoinedExpression(OR, Set(['dolor_sitAMET', 'world'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(OR, Set(['xyz', 'zyx', 'ello wo'].map(BasicExpression.fromMatch))),
+        new JoinedExpression(OR,
+          Set(['xyz', 'zyx', 'ello wo', '12-12'].map(BasicExpression.fromMatch))),
       ];
 
       const notMatchingExpressions = [
@@ -134,14 +135,34 @@ describe('SearchQL expressions', () => {
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values)).to.be.true;
+          expect(expression.test(values).isSome()).to.be.true;
+          expect(expression.test(values).some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingExpressions.forEach(expression => {
         it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values)).to.be.false;
+          expect(expression.test(values).isSome()).to.be.false;
         });
+      });
+
+      it('should build proper Match output', () => {
+        expect(String(expressions[1].test(values)))
+          .to.equal('Just(Map { "label 1": Match "asdffa sdfas sdf" { Map {' +
+          ' "asdffa": OrderedSet { [0, 6] },' +
+          ' "sdfas": OrderedSet { [7, 12] },' +
+          ' "sdf": OrderedSet { [1, 4], [7, 10], [13, 16] }' +
+          ' } } })');
+
+        expect(String(expressions[3].test(values)))
+          .to.equal('Just(Map { "label 4": Match "ipsum-dolor_sitamet" { Map {' +
+          ' "dolor_sitamet": OrderedSet { [6, 19] }' +
+          ' } } })');
+
+        expect(String(expressions[4].test(values)))
+          .to.equal('Just(Map { "label 5": Match "hello world" { Map {' +
+          ' "ello wo": OrderedSet { [1, 8] }' +
+          ' } } })');
       });
 
     });

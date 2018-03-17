@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
 import { Map } from 'immutable';
-import * as _ from 'lodash';
+import { zip } from 'lodash';
 
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
@@ -42,13 +42,13 @@ describe('SearchQL expressions', () => {
       });
 
       it('should return true for different instances of same shape', () => {
-        _.zip<Expression>(lhs, rhs).forEach(([left, right]) => {
+        zip<Expression>(lhs, rhs).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.true;
         });
       });
 
       it('should return false for instances of different shape', () => {
-        _.zip<Expression>(lhs, rhsInvalid).forEach(([left, right]) => {
+        zip<Expression>(lhs, rhsInvalid).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.false;
         });
       });
@@ -95,8 +95,8 @@ describe('SearchQL expressions', () => {
             .fromMatch('aaa')
             .test(Map({
               one: 'aaa bbb aaa aaa aaasda ddaaa',
-              two: 'aaa bbb aaaXaaa',
               three: 'aaGaa bbb aadaaXaadaa ddddadd',
+              two: 'aaa bbb aaaXaaa',
             }))
             .toString(),
         ).to.equal('Just(Map {' +
@@ -105,7 +105,7 @@ describe('SearchQL expressions', () => {
           ' "two": Match "aaa bbb aaaXaaa" {' +
             ' Map { "aaa": OrderedSet { [0, 3], [8, 11], [12, 15] } } }' +
           ' })');
-      })
+      });
 
     });
 

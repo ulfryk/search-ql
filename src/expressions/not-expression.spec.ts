@@ -89,14 +89,14 @@ describe('SearchQL expressions', () => {
           NotExpression.of(BasicExpression.fromMatch('zzz'))
             .test(Map({
               one: 'aaa bbb aaa aaa aaasda ddaaa',
-              two: 'aaa bbb aaaXaaa',
               three: 'aaGaa bbb aadaaXaadaa ddddadd',
+              two: 'aaa bbb aaaXaaa',
             }))
             .toString(),
         ).to.equal('Just(Map {' +
           ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" { Map {} },' +
-          ' "two": Match "aaa bbb aaaXaaa" { Map {} },' +
-          ' "three": Match "aaGaa bbb aadaaXaadaa ddddadd" { Map {} }' +
+          ' "three": Match "aaGaa bbb aadaaXaadaa ddddadd" { Map {} },' +
+          ' "two": Match "aaa bbb aaaXaaa" { Map {} }' +
           ' })');
       });
 

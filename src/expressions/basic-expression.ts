@@ -1,14 +1,13 @@
 // tslint:disable-next-line:no-import-side-effect
-import '@samwise-tech/immutable/Map/override-iterable';
 import '@samwise-tech/immutable/Iterable/lastMaybe';
 
-import { indexOf } from '@samwise-tech/core';
+import { indexOf } from '@samwise-tech/core/utils/index-of';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
+import { Match } from '../match';
 import { matchBasicWord } from '../parsers/basic/match-basic-word';
 import { Expression } from './expression';
-import { Match } from './match';
 
 export class BasicExpression extends Expression {
 

@@ -1,8 +1,8 @@
 import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
+import { Match } from '../match';
 import { Expression } from './expression';
-import { Match } from './match';
 
 export class LabelledExpression extends Expression {
 
