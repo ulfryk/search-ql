@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/samwise-tech/search-ql#readme",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "dependencies": {
     "@samwise-tech/core": "^1.2.2",
