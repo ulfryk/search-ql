@@ -11,7 +11,6 @@
     "moduleResolution": "node",
     "noEmitHelpers": true,
     "noImplicitReturns": true,
-//    "noStrictGenericChecks": true, // TEMPORARY
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "sourceMap": true,
@@ -22,8 +21,8 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     // "strictNullChecks": true, // can not be used due to wrong immutable typings
-//    "strictFunctionTypes": true,
-//    "strictPropertyInitialization": true
+    // "strictFunctionTypes": true,
+     "strictPropertyInitialization": true
   },
   "exclude": ["node_modules", "lib"]
 }

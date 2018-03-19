@@ -73,14 +73,14 @@ describe('MatchCoords', () => {
 
   describe('merging coords', () => {
 
-    const mergable = [
+    const mergeable = [
       ['ipsum dolor', 'dolor sit', 'ipsum dolor sit'],
       ['elit,', ', sed do', 'elit, sed do'],
       ['et dol', 'ore magna', 'et dolore magna'],
     ].map(phrases => phrases.map(getCoords));
 
-    const notMergable = [
-      // ['ipsum dolor', 'sit amet'],
+    const notMergeable = [
+      ['ipsum dolor', 'sit amet'],
       ['sit amet', 'adipiscing elit'],
       ['rem ipsu', 'a aliqua.'],
     ].map(phrases => phrases.map(getCoords));
@@ -88,7 +88,7 @@ describe('MatchCoords', () => {
     describe('merge method', () => {
 
       it('should properly merge subsequent, intersecting coordinates', () => {
-        mergable.forEach(([a, b, c]) => {
+        mergeable.forEach(([a, b, c]) => {
           expect(a.merge(b)).to.deep.equal(c);
         });
       });
@@ -98,13 +98,13 @@ describe('MatchCoords', () => {
     describe('queueOrMerge method', () => {
 
       it('should properly merge subsequent, intersecting coordinates', () => {
-        mergable.forEach(([a, b, c]) => {
+        mergeable.forEach(([a, b, c]) => {
           expect(a.queueOrMerge(b)).to.deep.equal([c]);
         });
       });
 
       it('should NOT merge NOT intersecting coordinates', () => {
-        notMergable.forEach(([a, b]) => {
+        notMergeable.forEach(([a, b]) => {
           expect(a.queueOrMerge(b)).to.deep.equal([a, b]);
         });
       });

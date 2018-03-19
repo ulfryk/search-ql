@@ -4,6 +4,7 @@ import '@samwise-tech/immutable/Iterable/lastMaybe';
 import { ISetoid } from '@samwise-tech/core/model/fantasy-land/setoid';
 import { Iterable, Map, OrderedSet } from 'immutable';
 
+import { MatchError } from './error';
 import { MatchCoords } from './match-coords';
 
 export class Match implements ISetoid {
@@ -36,9 +37,7 @@ export class Match implements ISetoid {
   public and(other: Match): Match {
     if (process.env.NODE_ENV !== 'production') {
       if (this.input !== other.input) {
-        throw new Error(
-          `Match "and" operator used on different text matches. ` +
-          `"${this.input}" !== "${other.input}"`);
+        throw MatchError.improperConjunction(this.input, other.input);
       }
     }
     return new Match(

@@ -40,7 +40,7 @@ export class BasicExpression extends Expression {
   }
 
   public getMatches(values: Map<string, string>) {
-    return (indexes: OrderedSet<number>, label: string) =>
+    return (indexes: OrderedSet<number>, label: string): Match =>
       Match.fromIndexes(values.get(label), this.value, indexes);
   }
 

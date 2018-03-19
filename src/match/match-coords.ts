@@ -1,4 +1,5 @@
 import { ISetoid } from '@samwise-tech/core/model/fantasy-land/setoid';
+import { MatchError } from './error';
 
 export enum Ordering { Lt = -1, Eq = 0, Gt = 1 }
 
@@ -27,7 +28,7 @@ export class MatchCoords implements IOrd<MatchCoords> {
     return this === other || (this.start === other.start && this.phrase === other.phrase);
   }
 
-  public compare(other: MatchCoords) {
+  public compare(other: MatchCoords): Ordering {
     return this.equals(other) ? Ordering.Eq :
       this.start === other.start ?
         compareNum(this.end, other.end) :
@@ -39,19 +40,31 @@ export class MatchCoords implements IOrd<MatchCoords> {
       other.contains(this.start) || other.contains(this.end);
   }
 
-  // With assumption that `this.compare(next) === Lt`
   public queueOrMerge(next: MatchCoords): MatchCoords[] {
+    if (process.env.NODE_ENV !== 'production') {
+      if (this.compare(next) !== Ordering.Lt) {
+        throw MatchError.improperQueueOrMerge(this.toFullString(), next.toFullString());
+      }
+    }
     return this.intersects(next) ? [this.merge(next)] : [this, next];
   }
 
-  // With assumption that `this.compare(next) === Lt && this.intersects(next)`
   public merge(next: MatchCoords): MatchCoords {
+    if (process.env.NODE_ENV !== 'production') {
+      if (this.compare(next) !== Ordering.Lt || !this.intersects(next)) {
+        throw MatchError.improperMerge(this.toFullString(), next.toFullString());
+      }
+    }
     return MatchCoords.fromIndex(
       `${this.phrase.substring(0, next.start - this.start)}${next.phrase}`)(this.start);
   }
 
   public toString() {
     return `[${this.start}, ${this.end}]`;
+  }
+
+  private toFullString() {
+    return `"${this.phrase}" ${this}`;
   }
 
   private contains(index: number) {
