@@ -1,3 +1,6 @@
+// tslint:disable-next-line:no-import-side-effect
+import '@samwise-tech/immutable/Iterable/lastMaybe';
+
 import { ISetoid } from '@samwise-tech/core/model/fantasy-land/setoid';
 import { Iterable, Map, OrderedSet } from 'immutable';
 

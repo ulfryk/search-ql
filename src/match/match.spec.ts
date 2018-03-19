@@ -133,8 +133,22 @@ describe('Match', () => {
 
   });
 
-  xdescribe('getFlatMatched method', () => {
-    /* */
+  describe('getFlatMatched method', () => {
+
+    it('should properly merge intersecting coords in output', () => {
+      const match1 = getMatch('dolor').and(getMatch('dolor sit')).and(getMatch('sit amet'));
+      const match2 = getMatch(' ut labore').and(getMatch(' et dolore'));
+      const match3 = getMatch('elit, sed do');
+      const match = match1.and(match2).and(match3);
+      const flattenedMatchCoords = Map([
+        ['dolor sit amet', OrderedSet([getCoords('dolor sit amet')])],
+        ['elit, sed do', OrderedSet([getCoords('elit, sed do')])],
+        [' ut labore et dolore', OrderedSet([getCoords(' ut labore et dolore')])],
+      ]);
+
+      expect(match.getFlatMatched()).to.deep.equal(flattenedMatchCoords);
+    });
+
   });
 
 });
