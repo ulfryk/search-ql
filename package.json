@@ -1,6 +1,6 @@
 {
   "name": "@samwise-tech/search-ql",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "QL used for advanced searches in Samwise applications",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,8 +10,8 @@
     "lint": "tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
     "mocha": "mocha --opts ./mocha.opts './src/**/*.spec.ts'",
     "mocha:tdd": "yarn mocha --watch --reporter min",
-    "prepublish": "yarn build",
-    "test": "yarn outdated && yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
+    "prepublishOnly": "yarn build",
+    "test": "yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
     "test-specs-for-only": "forbidden 'src/**/*.spec.ts' -p describe.only it.only"
   },
   "repository": {
@@ -22,14 +22,16 @@
     "ql",
     "searchql"
   ],
-  "author": "Samwise Technology, Inc. <icunningham@samwise.tech>",
+  "author": "Technology Concepts & Design, Inc.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/samwise-tech/search-ql/issues"
   },
   "homepage": "https://github.com/samwise-tech/search-ql#readme",
   "engines": {
-    "node": ">=8"
+    "node": ">=8",
+    "npm": ">=5",
+    "yarn": ">=1"
   },
   "dependencies": {
     "@samwise-tech/core": "^1.2.2",

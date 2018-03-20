@@ -139,14 +139,14 @@ describe('Match', () => {
       const match1 = getMatch('dolor').and(getMatch('dolor sit')).and(getMatch('sit amet'));
       const match2 = getMatch(' ut labore').and(getMatch(' et dolore'));
       const match3 = getMatch('elit, sed do');
-      const match = match1.and(match2).and(match3);
-      const flattenedMatchCoords = Map([
-        ['dolor sit amet', OrderedSet([getCoords('dolor sit amet')])],
-        ['elit, sed do', OrderedSet([getCoords('elit, sed do')])],
-        [' ut labore et dolore', OrderedSet([getCoords(' ut labore et dolore')])],
+      const lhs = match1.and(match2).and(match3).getFlatMatched();
+      const rhs = OrderedSet([
+        getCoords('dolor sit amet'),
+        getCoords('elit, sed do'),
+        getCoords(' ut labore et dolore'),
       ]);
 
-      expect(match.getFlatMatched()).to.deep.equal(flattenedMatchCoords);
+      expect(lhs).to.deep.equal(rhs);
     });
 
   });
