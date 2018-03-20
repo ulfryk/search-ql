@@ -22,14 +22,15 @@
     "ql",
     "searchql"
   ],
-  "author": "Samwise Technology, Inc. <icunningham@samwise.tech>",
+  "author": "Technology Concepts & Design, Inc.",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/samwise-tech/search-ql/issues"
   },
   "homepage": "https://github.com/samwise-tech/search-ql#readme",
   "engines": {
-    "node": ">=8"
+    "node": ">=8",
+    "npm": ">=5"
   },
   "dependencies": {
     "@samwise-tech/core": "^1.2.2",
