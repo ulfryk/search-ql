@@ -79,13 +79,14 @@ describe('SearchQL expressions', () => {
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values)).to.be.true;
+          expect(expression.test(values).isSome()).to.be.true;
+          expect(expression.test(values).some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingExpressions.forEach(expression => {
         it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values)).to.be.false;
+          expect(expression.test(values).isSome()).to.be.false;
         });
       });
 

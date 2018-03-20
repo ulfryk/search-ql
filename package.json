@@ -1,18 +1,18 @@
 {
   "name": "@samwise-tech/search-ql",
-  "version": "1.0.5",
+  "version": "2.0.0",
   "description": "QL used for advanced searches in Samwise applications",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "build": "rm -rf ./lib && node_modules/.bin/tsc --project tsconfig.publish.json",
-    "karma": "node_modules/.bin/karma start config/karma.conf.js",
-    "lint": "node_modules/.bin/tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
-    "mocha": "node_modules/.bin/mocha --opts ./mocha.opts './src/**/*.spec.ts'",
+    "build": "rm -rf ./lib && tsc --project tsconfig.publish.json",
+    "karma": "karma start config/karma.conf.js",
+    "lint": "tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
+    "mocha": "mocha --opts ./mocha.opts './src/**/*.spec.ts'",
     "mocha:tdd": "yarn mocha --watch --reporter min",
     "prepublish": "yarn build",
     "test": "yarn outdated && yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
-    "test-specs-for-only": "node_modules/.bin/forbidden 'src/**/*.spec.ts' -p describe.only it.only"
+    "test-specs-for-only": "forbidden 'src/**/*.spec.ts' -p describe.only it.only"
   },
   "repository": {
     "type": "git",
@@ -29,43 +29,43 @@
   },
   "homepage": "https://github.com/samwise-tech/search-ql#readme",
   "engines": {
-    "node": ">=6"
+    "node": ">=8"
   },
   "dependencies": {
-    "@samwise-tech/core": "^1.0.0",
+    "@samwise-tech/core": "^1.2.2",
     "@types/parsimmon": "1.6.1",
-    "parsimmon": "1.6.4"
+    "parsimmon": "1.7.0"
   },
   "devDependencies": {
     "@samwise-tech/forbidden-patterns": "1.0.2",
-    "@samwise-tech/immutable": "^1.0.0",
+    "@samwise-tech/immutable": "^1.1.0",
     "@samwise-tech/tslint-config": "1.0.3",
     "@types/chai": "4.1.2",
-    "@types/lodash": "4.14.104",
+    "@types/lodash": "4.14.105",
     "@types/mocha": "2.2.48",
-    "@types/node": "9.4.6",
+    "@types/node": "9.4.7",
     "chai": "4.1.2",
     "circular-dependency-plugin": "4.4.0",
     "core-js": "2.5.3",
-    "immutable": "^3.8.0",
+    "immutable": "^3.8.1",
     "karma": "2.0.0",
     "karma-chai": "0.1.0",
+    "karma-chrome-launcher": "2.2.0",
     "karma-mocha": "1.3.0",
     "karma-mocha-reporter": "2.2.5",
-    "karma-phantomjs-launcher": "1.0.4",
-    "karma-webpack": "2.0.13",
+    "karma-webpack": "3.0.0",
     "lodash": "4.17.5",
-    "mocha": "5.0.1",
+    "mocha": "5.0.4",
     "monet": "0.9.0-alpha.4",
-    "ts-loader": "4.0.0",
-    "ts-node": "5.0.0",
+    "ts-loader": "4.1.0",
+    "ts-node": "5.0.1",
     "tslib": "1.9.0",
     "tslint": "5.9.1",
     "typescript": "2.7.2",
-    "webpack": "4.0.1"
+    "webpack": "4.1.1"
   },
   "peerDependencies": {
-    "@samwise-tech/immutable": "^1.0.0",
+    "@samwise-tech/immutable": "^1.1.0-rc.0",
     "immutable": "^3.8.0",
     "monet": "0.9.0-alpha.4"
   }
