@@ -2,7 +2,6 @@
   "compileOnSave": false,
   "compilerOptions": {
     "allowSyntheticDefaultImports": false,
-    "alwaysStrict": true,
     "charset": "utf8",
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,16 +10,19 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "noEmitHelpers": true,
-    "noImplicitAny": true,
     "noImplicitReturns": true,
-    "noImplicitThis": true,
-    "noStrictGenericChecks": true, // TEMPORARY
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "lib",
     "sourceMap": true,
     "target": "es5",
-    "types": ["chai", "mocha", "node"]
+
+    // --strict
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    // "strictNullChecks": true, // can not be used due to wrong immutable typings
+    // "strictFunctionTypes": true,
+     "strictPropertyInitialization": true
   },
   "exclude": ["node_modules", "lib"]
 }

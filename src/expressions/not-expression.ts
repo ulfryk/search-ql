@@ -1,8 +1,14 @@
 import { Map } from 'immutable';
+import { Maybe, None, Some } from 'monet';
 
+import { Match } from '../match';
 import { Expression } from './expression';
 
 export class NotExpression extends Expression {
+
+  public static of(value: Expression) {
+    return new NotExpression(value);
+  }
 
   constructor(
     public readonly value: Expression,
@@ -20,8 +26,10 @@ export class NotExpression extends Expression {
     return `NOT ${this.value.toString()}`;
   }
 
-  public test(values: Map<string, string>): boolean {
-    return !this.value.test(values);
+  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
+    return this.value.test(values).cata(
+      () => Some(values.map(text => Match.empty(text)).toMap()),
+      () => None()); // tslint:disable-line:no-unnecessary-callback-wrapper
   }
 
 }
