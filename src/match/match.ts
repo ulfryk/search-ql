@@ -53,7 +53,7 @@ export class Match implements ISetoid {
         .toMap());
   }
 
-  public getFlatMatched(): Map<string, OrderedSet<MatchCoords>> {
+  public getFlatMatched(): OrderedSet<MatchCoords> {
     return this.matched.entrySeq()
       .flatMap<number, MatchCoords>(([__, coords]: [string, OrderedSet<MatchCoords>]) => coords
         .map(singleCoords => singleCoords))
@@ -63,9 +63,8 @@ export class Match implements ISetoid {
         () => acc.concat(next),
           (last: MatchCoords) => acc.butLast().concat(last.queueOrMerge(next))),
         Iterable([]) as Iterable<number, MatchCoords>)
-      .groupBy(({ phrase }) => phrase)
-      .map(group => group.sort((a, b) => a.compare(b)).toOrderedSet())
-      .toMap();
+      .sort((a, b) => a.compare(b))
+      .toOrderedSet();
   }
 
 }
