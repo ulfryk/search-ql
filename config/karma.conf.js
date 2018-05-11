@@ -14,15 +14,13 @@ module.exports = (config) => {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    browsers: ['ChromeHeadlessCustom'],
+    browsers: ['ChromeHeadlessCustom', 'FirefoxHeadlessCustom'],
     customLaunchers: {
-      ChromeHeadlessCustom: {
-        base: 'ChromeHeadless',
-        flags: ['--no-sandbox'],
-      },
+      ChromeHeadlessCustom: { base: 'ChromeHeadless', flags: ['--no-sandbox'] },
+      FirefoxHeadlessCustom: { base: 'Firefox', flags: [ '-headless' ] },
     },
     singleRun: true,
     concurrency: 6e6,
-    mime: { 'text/x-typescript': ['ts','tsx'] },
+    mime: { 'text/x-typescript': ['ts'] },
   });
 };
