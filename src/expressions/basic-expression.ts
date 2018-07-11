@@ -36,7 +36,7 @@ export class BasicExpression extends Expression {
   public test(values: Map<string, string>): Maybe<Map<string, Match>> {
     return Some(values.map(this.getIndexes()).filter(indexes => !indexes.isEmpty()))
       .filter(groupedIndexes => !groupedIndexes.isEmpty())
-      .map(groupedIndexes => groupedIndexes.map(this.getMatches(values)));
+      .map(groupedIndexes => groupedIndexes.map(this.getMatches(values)).toMap());
   }
 
   public getMatches(values: Map<string, string>) {
