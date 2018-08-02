@@ -1,4 +1,4 @@
-import { ISetoid } from '@samwise-tech/core/model/fantasy-land/setoid';
+import { ISetoid } from '@samwise-tech/core';
 import { MatchError } from './error';
 
 export enum Ordering { Lt = -1, Eq = 0, Gt = 1 }
