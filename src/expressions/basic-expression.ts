@@ -1,7 +1,7 @@
 // tslint:disable-next-line:no-import-side-effect
 import '@samwise-tech/immutable/Iterable/lastMaybe';
 
-import { indexOf } from '@samwise-tech/core/utils/index-of';
+import { indexOf } from '@samwise-tech/core';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 

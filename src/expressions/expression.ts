@@ -1,4 +1,4 @@
-import { ISetoid } from '@samwise-tech/core/model/fantasy-land/setoid';
+import { ISetoid } from '@samwise-tech/core';
 import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
