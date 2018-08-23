@@ -1,9 +1,9 @@
 import { OrderedMap } from 'immutable';
-import { None, Some } from 'monet';
+import { Maybe, None, Some } from 'monet';
 import * as P from 'parsimmon';
 
 import { Expression, fromPairs, NotExpression } from '../expressions';
-import { GROUP_END, GROUP_START, NOT } from '../syntax-config';
+import { SyntaxConfig } from '../syntax-config';
 import { basicExpression } from './basic';
 import { labelledExpression } from './labelled';
 import { logicalOperator } from './logical-operator';
@@ -13,23 +13,24 @@ export class QueryParserFactory {
 
   private readonly parserMappings = OrderedMap<ParserName, () => P.Parser<any>>([
     [ParserName.JoinedGroup, () => this.joinedGroup],
-    [ParserName.Labelled, () => labelledExpression],
+    [ParserName.Labelled, () => labelledExpression(this.config)],
     [ParserName.Not, () => this.notExpression],
-    [ParserName.Basic, () => basicExpression],
+    [ParserName.Basic, () => basicExpression(this.config)],
   ]);
 
-  private readonly operator = P.whitespace.then(logicalOperator).skip(P.whitespace);
+  private readonly operator = P.whitespace
+    .then(logicalOperator(this.config))
+    .skip(P.whitespace);
 
   private readonly trailingOperator = P.seq(
     P.whitespace,
-    logicalOperator,
+    logicalOperator(this.config),
     P.whitespace.many(),
-    P.eof,
-  );
+    P.eof);
 
   constructor(
     public readonly parserNames: ParserName[],
-    public readonly config: any,
+    public readonly config: SyntaxConfig = new SyntaxConfig(),
   ) {}
 
   public getParser(): P.Parser<Expression> {
@@ -56,20 +57,20 @@ export class QueryParserFactory {
       this.subQuery,
       this.queryLogicalPart.many(),
       (head, tail) => [[None<string>(), head]].concat(tail),
-    ).map(fromPairs);
+    ).map((parser: [Maybe<string>, Expression][]) => fromPairs(parser, this.config));
   }
 
   private get joinedGroup(): P.Parser<Expression> {
     return P.seqMap(
-      P.string(GROUP_START).skip(P.optWhitespace),
+      P.string(this.config.GROUP_START).skip(P.optWhitespace),
       this.joinedExpression,
-      P.optWhitespace.then(P.string(GROUP_END)),
+      P.optWhitespace.then(P.string(this.config.GROUP_END)),
       (_start, logical, _end) => logical);
   }
 
   private get notExpression(): P.Parser<Expression> {
     return P.seqMap(
-      P.string(NOT).skip(P.whitespace),
+      P.string(this.config.NOT).skip(P.whitespace),
       this.subQuery,
       (_operator, logical) => new NotExpression(logical));
   }

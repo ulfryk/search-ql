@@ -2,7 +2,7 @@ import { Map, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { Match } from '../match';
-import { AND, LogicOperator, OR } from '../syntax-config';
+import { SyntaxConfig } from '../syntax-config';
 import { Expression } from './expression';
 
 type OperatorRuntime = (
@@ -24,23 +24,12 @@ const or = (a: Maybe<Map<string, Match>>, b: () => Maybe<Map<string, Match>>) =>
 
 export class JoinedExpression extends Expression {
 
-  public static readonly operatorRuntime = Map<LogicOperator, OperatorRuntime>({
-    [AND]: and,
-    [OR]: or,
-  });
-
-  public static emptyAnd() {
-    return new JoinedExpression(AND, Set<Expression>());
+  public static empty(operator: string) {
+    return new JoinedExpression(operator, Set<Expression>());
   }
-
-  public static emptyOr() {
-    return new JoinedExpression(OR, Set<Expression>());
-  }
-
-  private readonly evaluate: OperatorRuntime = JoinedExpression.operatorRuntime.get(this.type);
 
   constructor(
-    public readonly type: LogicOperator,
+    public readonly type: string,
     public readonly value: Set<Expression>,
   ) { super(); }
 
@@ -51,7 +40,7 @@ export class JoinedExpression extends Expression {
       this.value.equals(other.value));
   }
 
-  public add(key: LogicOperator, expression: Expression): JoinedExpression {
+  public add(key: string, expression: Expression): JoinedExpression {
     return this.type === key ?
       new JoinedExpression(this.type, this.value.add(expression)) :
       new JoinedExpression(key, Set([this, expression]));
@@ -61,14 +50,25 @@ export class JoinedExpression extends Expression {
     return this.value.map(expression => expression.toString()).join(` ${this.type} `);
   }
 
-  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
+  public test(values: Map<string, string>, config: SyntaxConfig): Maybe<Map<string, Match>> {
     return this.value
-      .map(expression => () => expression.test(values))
+      .map(expression => () => expression.test(values, config))
       .reduce((acc, evaluator) => acc
-          .map(accumulated => this.evaluate(accumulated, evaluator))
+          .map(accumulated => this.evaluate(config)(accumulated, evaluator))
           .orElse(Some(evaluator())),
         None<Maybe<Map<string, Match>>>())
       .orJust(None());
+  }
+
+  private getOperatorRuntime({ AND, OR }: SyntaxConfig) {
+    return Map<string, OperatorRuntime>({
+      [AND]: and,
+      [OR]: or,
+    });
+  }
+
+  private evaluate(config: SyntaxConfig): OperatorRuntime {
+    return this.getOperatorRuntime(config).get(this.type);
   }
 
 }

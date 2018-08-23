@@ -2,20 +2,20 @@ import { Maybe } from 'monet';
 import * as P from 'parsimmon';
 
 import { Expression, LabelledExpression } from '../expressions';
+import { SyntaxConfig } from '../syntax-config';
 import { basicExpression, basicGroup, matchBasicWord } from './basic';
-import { delimiter as delimiterMatcher, word } from './common';
 
-const label = P.custom((success, fail) => (input, i) =>
-  Maybe.fromNull(input.substring(i).match(word))
-    .flatMap(([match]) => matchBasicWord(match))
+const label = (config: SyntaxConfig) => P.custom((success, fail) => (input, i) =>
+  Maybe.fromNull(input.substring(i).match(config.word))
+    .flatMap(([match]) => matchBasicWord(match, config))
     .cata(() => fail(i, 'not a valid label'), ([match]) => success(i + match.length, match)));
 
-const delimiter = P.regexp(delimiterMatcher);
+const delimiter = (config: SyntaxConfig) => P.regexp(config.delimiter);
 
-const labelledExpression = P.seqMap(
-  label,
-  delimiter,
-  P.alt(basicExpression, basicGroup),
+const labelledExpression = (config: SyntaxConfig) => P.seqMap(
+  label(config),
+  delimiter(config),
+  P.alt(basicExpression(config), basicGroup(config)),
   (labelValue: string, _s, expression: Expression) =>
     new LabelledExpression(labelValue, expression));
 

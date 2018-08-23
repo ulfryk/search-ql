@@ -3,9 +3,12 @@ import { expect } from 'chai';
 import { Map } from 'immutable';
 import { zip } from 'lodash';
 
+import { SyntaxConfig } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { NotExpression } from './not-expression';
+
+const config = new SyntaxConfig();
 
 describe('SearchQL expressions', () => {
 
@@ -73,13 +76,13 @@ describe('SearchQL expressions', () => {
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values).isSome()).to.be.true;
+          expect(expression.test(values, config).isSome()).to.be.true;
         });
       });
 
       notMatchingExpressions.forEach(expression => {
         it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values).isSome()).to.be.false;
+          expect(expression.test(values, config).isSome()).to.be.false;
         });
       });
 
@@ -90,7 +93,7 @@ describe('SearchQL expressions', () => {
               one: 'aaa bbb aaa aaa aaasda ddaaa',
               three: 'aaGaa bbb aadaaXaadaa ddddadd',
               two: 'aaa bbb aaaXaaa',
-            }))
+            }), config)
             .toString(),
         ).to.equal('Just(Map {' +
           ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" { Map {} },' +

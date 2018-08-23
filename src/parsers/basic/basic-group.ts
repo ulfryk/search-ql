@@ -1,21 +1,20 @@
 import { Maybe, None, Some } from 'monet';
 import * as P from 'parsimmon';
 
-import { Expression } from '../../expressions/expression';
-import { fromPairs } from '../../expressions/from-pairs';
-import { GROUP_END, GROUP_START, LogicOperator } from '../../syntax-config';
+import { Expression, fromPairs } from '../../expressions';
+import { SyntaxConfig } from '../../syntax-config';
 import { logicalOperator } from '../logical-operator';
-import { basicExpression } from './basic-expresssion';
+import { basicExpression } from './basic-expression';
 
-const logicalExpression = P.seqMap(
-  P.whitespace, logicalOperator, P.whitespace, basicExpression,
+const logicalExpression = (config: SyntaxConfig) => P.seqMap(
+  P.whitespace, logicalOperator(config), P.whitespace, basicExpression(config),
   (_s1, operator, _s2, expression) => [Some(operator), expression]);
 
-export const basicGroup = P.seqMap(
-  P.string(GROUP_START).skip(P.optWhitespace),
-  basicExpression,
-  logicalExpression.many(),
-  P.optWhitespace.then(P.string(GROUP_END)),
+export const basicGroup = (config: SyntaxConfig) => P.seqMap(
+  P.string(config.GROUP_START).skip(P.optWhitespace),
+  basicExpression(config),
+  logicalExpression(config).many(),
+  P.optWhitespace.then(P.string(config.GROUP_END)),
   (_start, head, tail, _end) =>
-    [[None<string>(), head]].concat(tail) as [Maybe<LogicOperator>, Expression][])
-  .map(fromPairs);
+    [[None<string>(), head]].concat(tail) as [Maybe<string>, Expression][])
+  .map(parser => fromPairs(parser, config));

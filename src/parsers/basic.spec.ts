@@ -4,8 +4,11 @@ import { Set } from 'immutable';
 import * as _ from 'lodash';
 
 import { BasicExpression, JoinedExpression } from '../expressions';
-import { AND, EXACT_MATCHER, GROUP_END, GROUP_START, LABEL_DELIMITER, OR } from '../syntax-config';
+import { SyntaxConfig } from '../syntax-config';
 import { basicExpression, basicGroup } from './basic';
+
+const config = new SyntaxConfig();
+const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, LABEL_DELIMITER, OR } = config;
 
 describe('SearchQL parsers', () => {
 
@@ -45,7 +48,7 @@ describe('SearchQL parsers', () => {
 
     _.zip<any>(validInput, validOutput).forEach(([input, output]) => {
       describe(`for valid input: '${input}'`, () => {
-        const parsed = basicExpression.parse(input);
+        const parsed = basicExpression(config).parse(input);
 
         it('should succeed', () => {
           expect(parsed.status).to.be.true;
@@ -62,7 +65,7 @@ describe('SearchQL parsers', () => {
       describe(`for invalid input: '${input}'`, () => {
 
         it('should fail', () => {
-          expect(basicExpression.parse(input).status).to.be.false;
+          expect(basicExpression(config).parse(input).status).to.be.false;
         });
 
       });
@@ -117,7 +120,7 @@ describe('SearchQL parsers', () => {
 
     _.zip<any>(validGroups, validGroupsOutput).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
-        const parsed = basicGroup.parse(input);
+        const parsed = basicGroup(config).parse(input);
 
         it('should succeed', () => {
           expect(parsed.status).to.be.true;
@@ -134,7 +137,7 @@ describe('SearchQL parsers', () => {
       describe(`for invalid input: '${input}'`, () => {
 
         it('should fail', () => {
-          expect(basicExpression.parse(input).status).to.be.false;
+          expect(basicExpression(config).parse(input).status).to.be.false;
         });
 
       });

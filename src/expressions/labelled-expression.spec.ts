@@ -4,9 +4,12 @@ import { expect } from 'chai';
 import { Map } from 'immutable';
 import * as _ from 'lodash';
 
+import { SyntaxConfig } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { LabelledExpression } from './labelled-expression';
+
+const config = new SyntaxConfig();
 
 describe('SearchQL expressions', () => {
 
@@ -79,14 +82,14 @@ describe('SearchQL expressions', () => {
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values).isSome()).to.be.true;
-          expect(expression.test(values).some().isEmpty()).to.be.false;
+          expect(expression.test(values, config).isSome()).to.be.true;
+          expect(expression.test(values, config).some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingExpressions.forEach(expression => {
         it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values).isSome()).to.be.false;
+          expect(expression.test(values, config).isSome()).to.be.false;
         });
       });
 

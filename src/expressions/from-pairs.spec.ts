@@ -4,53 +4,56 @@ import { Set } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
-import { AND, LogicOperator, NOT, OR } from '../syntax-config';
+import { SyntaxConfig } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { fromPairs } from './from-pairs';
 import { JoinedExpression } from './joined-expression';
 import { NotExpression } from './not-expression';
 
+const config = new SyntaxConfig();
+const { AND, NOT, OR } = config;
+
 describe('SearchQL expressions', () => {
 
   describe('fromPairs', () => {
 
     const validInput = [
-      [[None<LogicOperator>(), new BasicExpression('aaa AND ) a:aaaa OR OR OR')]],
+      [[None<string>(), new BasicExpression('aaa AND ) a:aaaa OR OR OR')]],
       [
-        [None<LogicOperator>(), new BasicExpression('aaa')],
+        [None<string>(), new BasicExpression('aaa')],
         [Some(AND), new BasicExpression('bbb')],
       ],
       [
-        [None<LogicOperator>(), new BasicExpression('aaa')],
+        [None<string>(), new BasicExpression('aaa')],
         [Some(NOT), new BasicExpression('bbb')],
       ],
       [
-        [None<LogicOperator>(), new BasicExpression('bbb')],
+        [None<string>(), new BasicExpression('bbb')],
         [Some(AND), new BasicExpression('bbb')],
         [Some(AND), new BasicExpression('bbb')],
       ],
       [
-        [None<LogicOperator>(), new BasicExpression('aaa')],
+        [None<string>(), new BasicExpression('aaa')],
         [Some(OR), new BasicExpression('bbb')],
         [Some(AND), new BasicExpression('ccc')],
       ],
       [
-        [None<LogicOperator>(), new BasicExpression('bbb')],
+        [None<string>(), new BasicExpression('bbb')],
         [Some(AND), new BasicExpression('ccc')],
         [Some(AND), new BasicExpression('ddd')],
       ],
       [
-        [None<LogicOperator>(), new BasicExpression('aaa')],
+        [None<string>(), new BasicExpression('aaa')],
         [Some(OR), fromPairs([
-          [None<LogicOperator>(), new BasicExpression('aaa')] as [Maybe<LogicOperator>, Expression],
+          [None<string>(), new BasicExpression('aaa')],
           [Some(OR), new BasicExpression('bbb')],
           [Some(AND), new BasicExpression('ccc')],
-        ] as [Maybe<LogicOperator>, Expression][])],
+        ] as [Maybe<string>, Expression][], config)],
         [Some(AND), new BasicExpression('ccc')],
       ],
       [
-        [None<LogicOperator>(), new JoinedExpression(AND, Set([
+        [None<string>(), new JoinedExpression(AND, Set([
           new BasicExpression('aaa'),
           new BasicExpression('bbb'),
         ]))],
@@ -107,7 +110,7 @@ describe('SearchQL expressions', () => {
 
     zip<any>(validInput, validOutput).forEach(([input, output]) => {
       it(`should properly build expression for: ${output}`, () => {
-        expect(fromPairs(input).equals(output)).to.be.true;
+        expect(fromPairs(input, config).equals(output)).to.be.true;
       });
     });
 

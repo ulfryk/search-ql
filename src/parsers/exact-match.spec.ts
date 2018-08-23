@@ -3,7 +3,10 @@ import { expect } from 'chai';
 import * as P from 'parsimmon';
 
 import { BasicExpression } from '../expressions';
+import { SyntaxConfig } from '../syntax-config';
 import { exactMatch } from './exact-match';
+
+const config = new SyntaxConfig();
 
 describe('SearchQL parsers', () => {
 
@@ -19,7 +22,7 @@ describe('SearchQL parsers', () => {
 
     validExactMatchInput.forEach(input => {
       describe(`for '"${input}"'`, () => {
-        const parsed = exactMatch.parse(`"${input}"`);
+        const parsed = exactMatch(config).parse(`"${input}"`);
 
         it('should succeed', () => {
           expect(parsed.status).to.be.true;
@@ -36,7 +39,7 @@ describe('SearchQL parsers', () => {
       describe(`for '${input}'`, () => {
 
         it('should fail', () => {
-          expect(exactMatch.parse(input).status).to.be.false;
+          expect(exactMatch(config).parse(input).status).to.be.false;
         });
 
       });
@@ -44,7 +47,7 @@ describe('SearchQL parsers', () => {
 
     describe('for many valid occurrences', () => {
       const input = validExactMatchInput.map(__ => `"${__}"`).join(' ');
-      const parser = P.sepBy1(exactMatch, P.whitespace);
+      const parser = P.sepBy1(exactMatch(config), P.whitespace);
       const expectedOutput = validExactMatchInput.map(BasicExpression.fromMatch);
 
       it('should succeed', () => {
@@ -61,7 +64,7 @@ describe('SearchQL parsers', () => {
 
     describe('for mixed input (valid occurrences mixed with invalid strings)', () => {
       const input = validExactMatchInput.map((__, i) => i % 2 ? `"${__}"` : __).join(' ');
-      const parser = P.sepBy1(exactMatch, P.whitespace);
+      const parser = P.sepBy1(exactMatch(config), P.whitespace);
       const output = parser.parse(input);
 
       it('should fail', () => {

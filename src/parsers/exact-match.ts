@@ -1,12 +1,13 @@
 import * as P from 'parsimmon';
 
 import { BasicExpression } from '../expressions';
-import { EXACT_MATCHER } from '../syntax-config';
+import { SyntaxConfig } from '../syntax-config';
 
-const startEnd = P.string(EXACT_MATCHER);
-const content = P.regexp(new RegExp(`[^${EXACT_MATCHER}]+`));
+const startEnd = ({ EXACT_MATCHER }: SyntaxConfig) => P.string(EXACT_MATCHER);
+const content = ({ EXACT_MATCHER }: SyntaxConfig) => P.regexp(new RegExp(`[^${EXACT_MATCHER}]+`));
 
-const exactMatch = P.seqMap(startEnd, content, startEnd,
+const exactMatch = (config: SyntaxConfig) => P.seqMap(
+  startEnd(config), content(config), startEnd(config),
   (_start, regExMatches, _end) => regExMatches)
   .map(BasicExpression.fromMatch);
 

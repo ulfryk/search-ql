@@ -4,16 +4,19 @@ import * as _ from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
 import { BasicExpression, Expression, fromPairs, LabelledExpression } from '../expressions';
-import {
+import { SyntaxConfig } from '../syntax-config';
+import { labelledExpression } from './labelled';
+
+const config = new SyntaxConfig();
+
+const {
   AND,
   EXACT_MATCHER,
   GROUP_END,
   GROUP_START,
   LABEL_DELIMITER,
-  LogicOperator,
   OR,
-} from '../syntax-config';
-import { labelledExpression } from './labelled';
+} = config;
 
 describe('SearchQL parsers', () => {
 
@@ -57,24 +60,24 @@ describe('SearchQL parsers', () => {
     lo(AND + 'a', new BasicExpression('and')),
     lo(OR + 'a', new BasicExpression('or')),
     lo('lo12_rem', fromPairs([
-      [None<LogicOperator>(), new BasicExpression('ispum')],
-    ] as [Maybe<LogicOperator>, Expression][])),
+      [None<string>(), new BasicExpression('ispum')],
+    ], config)),
     lo('valid', fromPairs([
-      [None<LogicOperator>(), new BasicExpression('lorem')] as [Maybe<LogicOperator>, Expression],
+      [None<string>(), new BasicExpression('lorem')] as [Maybe<string>, Expression],
       [Some(AND), new BasicExpression('ispum')],
-    ] as [Maybe<LogicOperator>, Expression][])),
+    ], config)),
     lo('world', fromPairs([
       [
-        None<LogicOperator>(),
+        None<string>(),
         new BasicExpression('ASDfas 32%@$%4512 u954anna as d][;];.{P} AND'),
-      ] as [Maybe<LogicOperator>, Expression],
+      ] as [Maybe<string>, Expression],
       [Some(OR), new BasicExpression('shgfghjfhjfghs')],
-    ] as [Maybe<LogicOperator>, Expression][])),
+    ], config)),
     lo('sit.Amet', fromPairs([
-      [None<LogicOperator>(), new BasicExpression('lorem')] as [Maybe<LogicOperator>, Expression],
+      [None<string>(), new BasicExpression('lorem')] as [Maybe<string>, Expression],
       [Some(OR), new BasicExpression('\'s#$%^876gsbjh_-s-S-s\'')],
       [Some(AND), new BasicExpression('OR AND(OR AND) asd:ASd')],
-    ] as [Maybe<LogicOperator>, Expression][])),
+    ], config)),
   ];
 
   const invalidInput = [
@@ -104,7 +107,7 @@ describe('SearchQL parsers', () => {
 
     _.zip<any>(validInput, validOutput).forEach(([input, output]) => {
       describe(`for valid input: '${input}'`, () => {
-        const parsed = labelledExpression.parse(input);
+        const parsed = labelledExpression(config).parse(input);
 
         it('should succeed', () => {
           expect(parsed.status).to.be.true;
@@ -121,7 +124,7 @@ describe('SearchQL parsers', () => {
       describe(`for invalid input: '${input}'`, () => {
 
         it('should fail', () => {
-          expect(labelledExpression.parse(input).status).to.be.false;
+          expect(labelledExpression(config).parse(input).status).to.be.false;
         });
 
       });

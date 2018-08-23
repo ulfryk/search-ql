@@ -1,8 +1,10 @@
 import * as P from 'parsimmon';
 
+import { SyntaxConfig } from '../../syntax-config';
 import { exactMatch } from '../exact-match';
 import { BasicExpression, basicWord } from './basic-word';
 
 export { BasicExpression }; // So TSC does not complain
 
-export const basicExpression = P.alt(exactMatch, basicWord);
+export const basicExpression = (config: SyntaxConfig) =>
+  P.alt(exactMatch(config), basicWord(config));

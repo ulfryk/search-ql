@@ -3,10 +3,13 @@ import { expect } from 'chai';
 import { Map, Set } from 'immutable';
 import * as _ from 'lodash';
 
-import { AND, LogicOperator, OR } from '../syntax-config';
+import { SyntaxConfig } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { JoinedExpression } from './joined-expression';
+
+const config = new SyntaxConfig();
+const { AND, OR } = config;
 
 describe('SearchQL expressions', () => {
 
@@ -37,7 +40,7 @@ describe('SearchQL expressions', () => {
 
         it('with initial and passed expressions as values if opposite type passed', () => {
           const additional = b();
-          const output = (type: LogicOperator, original: JoinedExpression) =>
+          const output = (type: string, original: JoinedExpression) =>
             new JoinedExpression(type, Set([original, additional]));
 
           expect(initialAnd.add(OR, additional).equals(output(OR, initialAnd))).to.be.true;
@@ -53,14 +56,14 @@ describe('SearchQL expressions', () => {
       const toAdd = [b(), b()];
 
       const lhs = [
-        JoinedExpression.emptyAnd().add(OR, JoinedExpression.emptyOr()),
+        JoinedExpression.empty(AND).add(OR, JoinedExpression.empty(OR)),
         initialAnd.add(AND, toAdd[0]).add(AND, toAdd[1]),
       ];
 
       const rhs = [
         new JoinedExpression(OR, Set([
-          JoinedExpression.emptyAnd(),
-          JoinedExpression.emptyOr(),
+          JoinedExpression.empty(AND),
+          JoinedExpression.empty(OR),
         ])),
         new JoinedExpression(AND, Set(initialAnd.value
           .map(({ value }) => new BasicExpression(value))
@@ -72,8 +75,8 @@ describe('SearchQL expressions', () => {
 
       const rhsInvalid = [
         new JoinedExpression(OR, Set([
-          JoinedExpression.emptyAnd(),
-          JoinedExpression.emptyAnd(),
+          JoinedExpression.empty(AND),
+          JoinedExpression.empty(AND),
         ])),
         new JoinedExpression(AND, Set(initialAnd.value
           .map(({ value }) => new BasicExpression(value))
@@ -135,31 +138,31 @@ describe('SearchQL expressions', () => {
 
       expressions.forEach(expression => {
         it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values).isSome()).to.be.true;
-          expect(expression.test(values).some().isEmpty()).to.be.false;
+          expect(expression.test(values, config).isSome()).to.be.true;
+          expect(expression.test(values, config).some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingExpressions.forEach(expression => {
         it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values).isSome()).to.be.false;
+          expect(expression.test(values, config).isSome()).to.be.false;
         });
       });
 
       it('should build proper Match output', () => {
-        expect(String(expressions[1].test(values)))
+        expect(String(expressions[1].test(values, config)))
           .to.equal('Just(Map { "label 1": Match "asdffa sdfas sdf" { Map {' +
           ' "asdffa": OrderedSet { [0, 6] },' +
           ' "sdf": OrderedSet { [1, 4], [7, 10], [13, 16] },' +
           ' "sdfas": OrderedSet { [7, 12] }' +
           ' } } })');
 
-        expect(String(expressions[3].test(values)))
+        expect(String(expressions[3].test(values, config)))
           .to.equal('Just(Map { "label 4": Match "ipsum-dolor_sitamet" { Map {' +
           ' "dolor_sitamet": OrderedSet { [6, 19] }' +
           ' } } })');
 
-        expect(String(expressions[4].test(values)))
+        expect(String(expressions[4].test(values, config)))
           .to.equal('Just(Map { "label 5": Match "hello world" { Map {' +
           ' "ello wo": OrderedSet { [1, 8] }' +
           ' } } })');
