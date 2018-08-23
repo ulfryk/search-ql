@@ -6,7 +6,6 @@ import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
 import { Match } from '../match';
-import { matchBasicWord } from '../parsers/basic/match-basic-word';
 import { Expression } from './expression';
 
 export class BasicExpression extends Expression {
@@ -27,10 +26,7 @@ export class BasicExpression extends Expression {
   }
 
   public toString() {
-    return matchBasicWord(this.value)
-      .map(([value]) => value)
-      .filter(value => value === this.value)
-      .orJust(`"${this.value}"`);
+    return `"${this.value}"`;
   }
 
   public test(values: Map<string, string>): Maybe<Map<string, Match>> {

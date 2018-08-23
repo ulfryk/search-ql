@@ -12,7 +12,7 @@ import {
 } from '../expressions';
 import { AND, EXACT_MATCHER, GROUP_END, GROUP_START, LABEL_DELIMITER, OR } from '../syntax-config';
 import { ParserName } from './names';
-import { query } from './query';
+import { QueryParserFactory } from './query-parser-factory';
 
 const test = (
   validInput: string[],
@@ -22,7 +22,7 @@ const test = (
 ) => {
   _.zip<any>(validInput, validOutput).forEach(([input, output]) => {
     describe(`for valid input: '${input}'`, () => {
-      const parsed = query(parserNames).parse(input);
+      const parsed = new QueryParserFactory(parserNames, {}).getParser().parse(input);
 
       it('should succeed', () => {
         expect(parsed.status).to.be.true;
@@ -40,7 +40,7 @@ const test = (
     describe(`for invalid input: '${input}'`, () => {
 
       it('should fail', () => {
-        expect(query(parserNames).parse(input).status).to.be.false;
+        expect(new QueryParserFactory(parserNames, {}).getParser().parse(input).status).to.be.false;
       });
 
     });

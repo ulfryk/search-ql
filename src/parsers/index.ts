@@ -1,2 +1,2 @@
 export * from './names';
-export { query } from './query';
+export * from './query-parser-factory';

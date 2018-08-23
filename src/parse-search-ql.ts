@@ -3,10 +3,10 @@ import { Failure } from 'parsimmon';
 
 import { Expression } from './expressions';
 import { ParseFailure } from './parse-failure';
-import { ParserName, query as queryParser } from './parsers';
+import { ParserName, QueryParserFactory } from './parsers';
 
 export const parseSearchQL = (parserNames: ParserName[]) => {
-  const queryParserConfigured = queryParser(parserNames);
+  const queryParserConfigured = new QueryParserFactory(parserNames, {}).getParser();
 
   return (query: string): Either<ParseFailure, Expression> => {
     const parsed = queryParserConfigured.parse(query);
