@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
-import { Map, Set } from 'immutable';
-import * as _ from 'lodash';
+import { Set } from 'immutable';
+import { zip } from 'lodash';
 
 import { SyntaxConfig } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
@@ -94,78 +94,15 @@ describe('SearchQL expressions', () => {
       });
 
       it('should return true for different instances of same shape', () => {
-        _.zip<Expression>(lhs, rhs).forEach(([left, right]) => {
+        zip<Expression>(lhs, rhs).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.true;
         });
       });
 
       it('should return false for instances of different shape', () => {
-        _.zip<Expression>(lhs, rhsInvalid).forEach(([left, right]) => {
+        zip<Expression>(lhs, rhsInvalid).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.false;
         });
-      });
-
-    });
-
-    describe('test() method', () => {
-
-      // tslint:disable-next-line:no-unnecessary-type-assertion
-      const values = Map([
-        'All good',
-        'asdffa SDFAS sdf',
-        ')((',
-        'AND OR OR AND',
-        'IpsUM-dolor_sitAMET',
-        'hello world',
-      ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
-
-      const expressions = [
-        new JoinedExpression(AND, Set(['All', 'good'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(AND, Set(['asdffa', 'SDFAS', 'sdf'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(AND, Set(['AND', 'OR', 'AND'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(OR, Set(['dolor_sitAMET', 'world'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(OR,
-          Set(['xyz', 'zyx', 'ello wo', '12-12'].map(BasicExpression.fromMatch))),
-      ];
-
-      const notMatchingExpressions = [
-        new JoinedExpression(AND, Set(['All', 'is good'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(AND, Set(['asdffa', 'SDFAS', 'sdfx'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(AND, Set(['AND', 'OR', 'OOxx'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(OR, Set(['dolor--sitAMET', 'worldx'].map(BasicExpression.fromMatch))),
-        new JoinedExpression(OR, Set(['xyz', 'zyx', 'ello woxx'].map(BasicExpression.fromMatch))),
-      ];
-
-      expressions.forEach(expression => {
-        it(`should find expression "${expression}"`, () => {
-          expect(expression.test(values, config).isSome()).to.be.true;
-          expect(expression.test(values, config).some().isEmpty()).to.be.false;
-        });
-      });
-
-      notMatchingExpressions.forEach(expression => {
-        it(`should not find expression "${expression}"`, () => {
-          expect(expression.test(values, config).isSome()).to.be.false;
-        });
-      });
-
-      it('should build proper Match output', () => {
-        expect(String(expressions[1].test(values, config)))
-          .to.equal('Just(Map { "label 1": Match "asdffa sdfas sdf" { Map {' +
-          ' "asdffa": OrderedSet { [0, 6] },' +
-          ' "sdf": OrderedSet { [1, 4], [7, 10], [13, 16] },' +
-          ' "sdfas": OrderedSet { [7, 12] }' +
-          ' } } })');
-
-        expect(String(expressions[3].test(values, config)))
-          .to.equal('Just(Map { "label 4": Match "ipsum-dolor_sitamet" { Map {' +
-          ' "dolor_sitamet": OrderedSet { [6, 19] }' +
-          ' } } })');
-
-        expect(String(expressions[4].test(values, config)))
-          .to.equal('Just(Map { "label 5": Match "hello world" { Map {' +
-          ' "ello wo": OrderedSet { [1, 8] }' +
-          ' } } })');
       });
 
     });

@@ -1,26 +1,6 @@
-import { Map, Set } from 'immutable';
-import { Maybe, None, Some } from 'monet';
+import { Set } from 'immutable';
 
-import { Match } from '../match';
-import { SyntaxConfig } from '../syntax-config';
 import { Expression } from './expression';
-
-type OperatorRuntime = (
-  a: Maybe<Map<string, Match>>,
-  b: () => Maybe<Map<string, Match>>,
-) => Maybe<Map<string, Match>>;
-
-const and = (a: Maybe<Map<string, Match>>, b: () => Maybe<Map<string, Match>>) =>
-  a.flatMap(someA => b()
-    .map(someB => someA.entrySeq()
-      .concat(someB.entrySeq())
-      .groupBy(([label]) => label)
-      .map(group => group
-        .map(([__, match]) => match)
-        .reduce((acc: Match, match: Match) => acc.and(match)))
-      .toMap()));
-
-const or = (a: Maybe<Map<string, Match>>, b: () => Maybe<Map<string, Match>>) => a.cata(b, Some);
 
 export class JoinedExpression extends Expression {
 
@@ -48,27 +28,6 @@ export class JoinedExpression extends Expression {
 
   public toString() {
     return this.value.map(expression => expression.toString()).join(` ${this.type} `);
-  }
-
-  public test(values: Map<string, string>, config: SyntaxConfig): Maybe<Map<string, Match>> {
-    return this.value
-      .map(expression => () => expression.test(values, config))
-      .reduce((acc, evaluator) => acc
-          .map(accumulated => this.evaluate(config)(accumulated, evaluator))
-          .orElse(Some(evaluator())),
-        None<Maybe<Map<string, Match>>>())
-      .orJust(None());
-  }
-
-  private getOperatorRuntime({ AND, OR }: SyntaxConfig) {
-    return Map<string, OperatorRuntime>({
-      [AND]: and,
-      [OR]: or,
-    });
-  }
-
-  private evaluate(config: SyntaxConfig): OperatorRuntime {
-    return this.getOperatorRuntime(config).get(this.type);
   }
 
 }
