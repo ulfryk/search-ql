@@ -1,16 +1,18 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
 import { Set } from 'immutable';
-import * as _ from 'lodash';
+import { zip } from 'lodash';
 
 import {
+  AndOperator,
   BasicExpression,
   Expression,
   JoinedExpression,
   LabelledExpression,
   NotExpression,
+  OrOperator,
 } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
@@ -22,7 +24,7 @@ const test = (
   invalidInput: string[],
   parserNames: ParserName[],
 ) => {
-  _.zip<any>(validInput, validOutput).forEach(([input, output]) => {
+  zip<any>(validInput, validOutput).forEach(([input, output]) => {
     describe(`for valid input: '${input}'`, () => {
       const parsed = new QueryParserFactory(parserNames).getParser().parse(input);
 
@@ -85,33 +87,33 @@ describe('SearchQL parsers', () => {
         new BasicExpression(`${OR}a`),
         new BasicExpression('aa:bb AND cc dd'),
         new LabelledExpression('aa', new BasicExpression('AA')),
-        new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
           new BasicExpression('aa'),
           new BasicExpression('bb'),
         ])),
-        new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
           new BasicExpression('aa'),
           new BasicExpression('bb'),
         ])),
-        new JoinedExpression(OR, Set([
-          new JoinedExpression(AND, Set([
+        new JoinedExpression(OrOperator.one, Set([
+          new JoinedExpression(AndOperator.one, Set([
             new BasicExpression('aa'),
-            new JoinedExpression(OR, Set([
+            new JoinedExpression(OrOperator.one, Set([
               new LabelledExpression('bb', new BasicExpression('BB')),
               new BasicExpression('cc'),
             ])),
           ])),
-          new JoinedExpression(AND, Set([
+          new JoinedExpression(AndOperator.one, Set([
             new BasicExpression('dd'),
-            new JoinedExpression(OR, Set([
+            new JoinedExpression(OrOperator.one, Set([
               new LabelledExpression('ee', new BasicExpression('EE')),
               new BasicExpression('ff'),
             ])),
           ])),
         ])),
-        new JoinedExpression(AND, Set([
-          new JoinedExpression(OR, Set([
-            new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
+          new JoinedExpression(OrOperator.one, Set([
+            new JoinedExpression(AndOperator.one, Set([
               new BasicExpression('aaa'),
               new BasicExpression('bbb'),
             ])),
@@ -120,48 +122,48 @@ describe('SearchQL parsers', () => {
           new BasicExpression('ddd'),
         ])),
         new NotExpression(new BasicExpression('abc')),
-        new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
           new BasicExpression('aa'),
           new NotExpression(new BasicExpression('bb')),
         ])),
-        new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
           new BasicExpression('aa'),
           new NotExpression(new BasicExpression('bb')),
         ])),
-        new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
           new NotExpression(new BasicExpression('aaa')),
           new NotExpression(new BasicExpression('bbb')),
         ])),
-        new JoinedExpression(AND, Set([
-          new NotExpression(new JoinedExpression(OR, Set([
+        new JoinedExpression(AndOperator.one, Set([
+          new NotExpression(new JoinedExpression(OrOperator.one, Set([
             new BasicExpression('aaa'),
             new BasicExpression('bbb'),
           ]))),
           new BasicExpression('ccc'),
         ])),
-        new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
           new BasicExpression('aaa'),
           new NotExpression(new LabelledExpression('bb', new BasicExpression('BB'))),
         ])),
-        new JoinedExpression(AND, Set([
-          new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
+          new JoinedExpression(AndOperator.one, Set([
             new BasicExpression('aaa'),
-            new JoinedExpression(OR, Set([
+            new JoinedExpression(OrOperator.one, Set([
               new BasicExpression('bbb'),
               new BasicExpression('ccc'),
             ])),
           ])),
           new NotExpression(new BasicExpression('ddd')),
         ])),
-        new JoinedExpression(AND, Set([
-          new JoinedExpression(OR, Set([
+        new JoinedExpression(AndOperator.one, Set([
+          new JoinedExpression(OrOperator.one, Set([
             new BasicExpression('aaa'),
             new BasicExpression('bbb'),
           ])),
           new NotExpression(new BasicExpression('ccc')),
         ])),
-        new JoinedExpression(AND, Set([
-          new JoinedExpression(AND, Set([
+        new JoinedExpression(AndOperator.one, Set([
+          new JoinedExpression(AndOperator.one, Set([
             new BasicExpression('aaa'),
             new BasicExpression('bbb'),
             new BasicExpression('ccc'),

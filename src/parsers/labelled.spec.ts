@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
 import { BasicExpression, Expression, fromPairs, LabelledExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { labelledExpression } from './labelled';
 
 const config = new SyntaxConfig();

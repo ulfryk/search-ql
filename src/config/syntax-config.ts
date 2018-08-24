@@ -1,3 +1,5 @@
+import { OperatorType } from './operator-type';
+
 export class SyntaxConfig {
 
   public static create(
@@ -32,6 +34,15 @@ export class SyntaxConfig {
 
   public get delimiter() {
     return new RegExp(`\\s*${this.LABEL_DELIMITER}\\s*`);
+  }
+
+  public getOperatorType(token: string) {
+    switch (token) {
+      case this.AND: return OperatorType.And;
+      case this.NOT: return OperatorType.Not;
+      case this.OR: return OperatorType.Or;
+      default: throw Error(`No operator type for token: "${token}"`);
+    }
   }
 
 }

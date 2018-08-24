@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { Set } from 'immutable';
 import * as _ from 'lodash';
 
-import { BasicExpression, JoinedExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { AndOperator, BasicExpression, JoinedExpression, OrOperator } from '../ast';
+import { SyntaxConfig } from '../config';
 import { basicExpression, basicGroup } from './basic';
 
 const config = new SyntaxConfig();
@@ -88,17 +88,17 @@ describe('SearchQL parsers', () => {
     const validGroupsOutput = [
       new BasicExpression('ispum'),
       validOutput[0],
-      new JoinedExpression(AND, Set([
+      new JoinedExpression(AndOperator.one, Set([
         new BasicExpression('lorem'),
         new BasicExpression('ispum'),
       ])),
-      new JoinedExpression(OR, Set([
+      new JoinedExpression(OrOperator.one, Set([
         validOutput[0],
         validOutput[1],
       ])),
-      new JoinedExpression(AND, Set([
-        new JoinedExpression(OR, Set([
-          new JoinedExpression(AND, Set([
+      new JoinedExpression(AndOperator.one, Set([
+        new JoinedExpression(OrOperator.one, Set([
+          new JoinedExpression(AndOperator.one, Set([
             new BasicExpression('lorem'),
             new BasicExpression('ispum'),
           ])),

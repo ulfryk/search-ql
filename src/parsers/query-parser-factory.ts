@@ -3,7 +3,7 @@ import { Maybe, None, Some } from 'monet';
 import * as P from 'parsimmon';
 
 import { Expression, fromPairs, NotExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 import { labelledExpression } from './labelled';
 import { logicalOperator } from './logical-operator';

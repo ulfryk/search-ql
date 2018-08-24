@@ -3,13 +3,10 @@ import { expect } from 'chai';
 import { Set } from 'immutable';
 import { zip } from 'lodash';
 
-import { SyntaxConfig } from '../syntax-config';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { JoinedExpression } from './joined-expression';
-
-const config = new SyntaxConfig();
-const { AND, OR } = config;
+import { AndOperator, Operator, OrOperator } from './operators';
 
 describe('SearchQL expressions', () => {
 
@@ -18,33 +15,39 @@ describe('SearchQL expressions', () => {
     let i = 111; // tslint:disable-line:no-let
     const b = () => new BasicExpression('aaa' + i++); // Make sure values are not equal
 
-    const initialAnd = new JoinedExpression(AND, Set<Expression>([b(), b()]));
-    const initialOr = new JoinedExpression(OR, Set<Expression>([b(), b()]));
+    const initialAnd = new JoinedExpression(AndOperator.one, Set<Expression>([b(), b()]));
+    const initialOr = new JoinedExpression(OrOperator.one, Set<Expression>([b(), b()]));
 
     describe('add() method', () => {
 
       it('should return instance of JoinedExpression', () => {
-        expect(initialAnd.add(AND, b())).to.be.instanceof(JoinedExpression);
-        expect(initialAnd.add(OR, b())).to.be.instanceof(JoinedExpression);
+        expect(initialAnd.add(AndOperator.one, b())).to.be.instanceof(JoinedExpression);
+        expect(initialAnd.add(OrOperator.one, b())).to.be.instanceof(JoinedExpression);
       });
 
       describe('should return JoinedExpression ', () => {
 
         it('with added value if same type passed', () => {
           expect(initialAnd.value.size).to.equal(2);
-          expect(initialAnd.add(AND, b()).add(AND, b()).value.size).to.equal(4);
+          expect(initialAnd.add(AndOperator.one, b())
+            .add(AndOperator.one, b()).value.size).to.equal(4);
 
           expect(initialOr.value.size).to.equal(2);
-          expect(initialOr.add(OR, b()).add(OR, b()).add(OR, b()).value.size).to.equal(5);
+          expect(initialOr
+            .add(OrOperator.one, b())
+            .add(OrOperator.one, b())
+            .add(OrOperator.one, b()).value.size).to.equal(5);
         });
 
         it('with initial and passed expressions as values if opposite type passed', () => {
           const additional = b();
-          const output = (type: string, original: JoinedExpression) =>
-            new JoinedExpression(type, Set([original, additional]));
+          const output = (operator: Operator, original: JoinedExpression) =>
+            new JoinedExpression(operator, Set([original, additional]));
 
-          expect(initialAnd.add(OR, additional).equals(output(OR, initialAnd))).to.be.true;
-          expect(initialOr.add(AND, additional).equals(output(AND, initialOr))).to.be.true;
+          expect(initialAnd.add(OrOperator.one, additional)
+            .equals(output(OrOperator.one, initialAnd))).to.be.true;
+          expect(initialOr.add(AndOperator.one, additional)
+            .equals(output(AndOperator.one, initialOr))).to.be.true;
         });
 
       });
@@ -56,16 +59,17 @@ describe('SearchQL expressions', () => {
       const toAdd = [b(), b()];
 
       const lhs = [
-        JoinedExpression.empty(AND).add(OR, JoinedExpression.empty(OR)),
-        initialAnd.add(AND, toAdd[0]).add(AND, toAdd[1]),
+        JoinedExpression.empty(AndOperator.one)
+          .add(OrOperator.one, JoinedExpression.empty(OrOperator.one)),
+        initialAnd.add(AndOperator.one, toAdd[0]).add(AndOperator.one, toAdd[1]),
       ];
 
       const rhs = [
-        new JoinedExpression(OR, Set([
-          JoinedExpression.empty(AND),
-          JoinedExpression.empty(OR),
+        new JoinedExpression(OrOperator.one, Set([
+          JoinedExpression.empty(AndOperator.one),
+          JoinedExpression.empty(OrOperator.one),
         ])),
-        new JoinedExpression(AND, Set(initialAnd.value
+        new JoinedExpression(AndOperator.one, Set(initialAnd.value
           .map(({ value }) => new BasicExpression(value))
           .concat([
             new BasicExpression(toAdd[0].value),
@@ -74,11 +78,11 @@ describe('SearchQL expressions', () => {
       ];
 
       const rhsInvalid = [
-        new JoinedExpression(OR, Set([
-          JoinedExpression.empty(AND),
-          JoinedExpression.empty(AND),
+        new JoinedExpression(OrOperator.one, Set([
+          JoinedExpression.empty(AndOperator.one),
+          JoinedExpression.empty(AndOperator.one),
         ])),
-        new JoinedExpression(AND, Set(initialAnd.value
+        new JoinedExpression(AndOperator.one, Set(initialAnd.value
           .map(({ value }) => new BasicExpression(value))
           .concat([
             new BasicExpression(toAdd[0].value),

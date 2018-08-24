@@ -5,16 +5,14 @@ import * as _ from 'lodash';
 import { Right } from 'monet';
 import { Failure } from 'parsimmon';
 
-import { BasicExpression, Expression, JoinedExpression, LabelledExpression } from './ast';
+import { AndOperator, BasicExpression, Expression, JoinedExpression, LabelledExpression, OrOperator } from './ast';
+import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
-import { SyntaxConfig } from './syntax-config';
 
 describe('SearchQL', () => {
 
   describe('parseSearchQL with regular config', () => {
-
-    const { AND } = new SyntaxConfig();
 
     const allParserNames =
       [ParserName.Basic, ParserName.JoinedGroup, ParserName.Labelled, ParserName.Not];
@@ -24,11 +22,11 @@ describe('SearchQL', () => {
       'first_name:Adam AND token_expired:true',
     ];
     const successfulOutputValues = [
-      Right<Failure, Expression>(new JoinedExpression(AND, Set([
+      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
       ]))),
-      Right<Failure, Expression>(new JoinedExpression(AND, Set([
+      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
         new LabelledExpression('first_name', new BasicExpression('Adam')),
         new LabelledExpression('token_expired', new BasicExpression('true')),
       ]))),
@@ -76,7 +74,6 @@ describe('SearchQL', () => {
   describe('parseSearchQL with custom config', () => {
 
     const config = SyntaxConfig.create({ AND: '&&', OR: '||', LABEL_DELIMITER: '~' });
-    const { AND, OR } = config;
 
     const allParserNames =
       [ParserName.Basic, ParserName.JoinedGroup, ParserName.Labelled, ParserName.Not];
@@ -87,15 +84,15 @@ describe('SearchQL', () => {
       'first_name ~ Adam && token_expired ~ true',
     ];
     const successfulOutputValues = [
-      Right<Failure, Expression>(new JoinedExpression(AND, Set([
+      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
       ]))),
-      Right<Failure, Expression>(new JoinedExpression(OR, Set([
+      Right<Failure, Expression>(new JoinedExpression(OrOperator.one, Set([
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
       ]))),
-      Right<Failure, Expression>(new JoinedExpression(AND, Set([
+      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
         new LabelledExpression('first_name', new BasicExpression('Adam')),
         new LabelledExpression('token_expired', new BasicExpression('true')),
       ]))),

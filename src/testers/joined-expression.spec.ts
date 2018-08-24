@@ -3,15 +3,14 @@ import { expect } from 'chai';
 import { Map, Set } from 'immutable';
 import * as _ from 'lodash';
 
-import { BasicExpression, JoinedExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { AndOperator, BasicExpression, JoinedExpression, Operator, OrOperator } from '../ast';
+import { SyntaxConfig } from '../config';
 import { BasicExpressionTester } from './basic-expression';
 import { JoinedExpressionTester } from './joined-expression';
 
 const config = new SyntaxConfig();
-const { AND, OR } = config;
 
-const getTester = (operator: string, values: string[]) => {
+const getTester = (operator: Operator, values: string[]) => {
   const expr = new JoinedExpression(operator, Set(values.map(BasicExpression.fromMatch)));
 
   return new JoinedExpressionTester(
@@ -39,19 +38,19 @@ describe('SearchQL expressions', () => {
       ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
 
       const matchingTesters = [
-        getTester(AND, ['All', 'good']),
-        getTester(AND, ['asdffa', 'SDFAS', 'sdf']),
-        getTester(AND, ['AND', 'OR', 'AND']),
-        getTester(OR, ['dolor_sitAMET', 'world']),
-        getTester(OR, ['xyz', 'zyx', 'ello wo', '12-12']),
+        getTester(AndOperator.one, ['All', 'good']),
+        getTester(AndOperator.one, ['asdffa', 'SDFAS', 'sdf']),
+        getTester(AndOperator.one, ['AND', 'OR', 'AND']),
+        getTester(OrOperator.one, ['dolor_sitAMET', 'world']),
+        getTester(OrOperator.one, ['xyz', 'zyx', 'ello wo', '12-12']),
       ];
 
       const notMatchingTesters = [
-        getTester(AND, ['All', 'is good']),
-        getTester(AND, ['asdffa', 'SDFAS', 'sdfx']),
-        getTester(AND, ['AND', 'OR', 'OOxx']),
-        getTester(OR, ['dolor--sitAMET', 'worldx']),
-        getTester(OR, ['xyz', 'zyx', 'ello woxx']),
+        getTester(AndOperator.one, ['All', 'is good']),
+        getTester(AndOperator.one, ['asdffa', 'SDFAS', 'sdfx']),
+        getTester(AndOperator.one, ['AND', 'OR', 'OOxx']),
+        getTester(OrOperator.one, ['dolor--sitAMET', 'worldx']),
+        getTester(OrOperator.one, ['xyz', 'zyx', 'ello woxx']),
       ];
 
       matchingTesters.forEach(tester => {

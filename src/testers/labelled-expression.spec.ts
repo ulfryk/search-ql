@@ -5,7 +5,7 @@ import { Map } from 'immutable';
 import * as _ from 'lodash';
 
 import { BasicExpression, LabelledExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { BasicExpressionTester } from './basic-expression';
 import { LabelledExpressionTester } from './labelled-expression';
 

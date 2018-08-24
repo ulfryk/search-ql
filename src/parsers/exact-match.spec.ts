@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import * as P from 'parsimmon';
 
 import { BasicExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { exactMatch } from './exact-match';
 
 const config = new SyntaxConfig();

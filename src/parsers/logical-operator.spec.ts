@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import * as P from 'parsimmon';
 
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { logicalOperator } from './logical-operator';
 
 const config = new SyntaxConfig();

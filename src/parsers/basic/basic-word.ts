@@ -1,7 +1,7 @@
 import * as P from 'parsimmon';
 
 import { BasicExpression } from '../../ast';
-import { SyntaxConfig } from '../../syntax-config';
+import { SyntaxConfig } from '../../config';
 import { matchBasicWord } from './match-basic-word';
 
 export { BasicExpression }; // So TSC does not complain

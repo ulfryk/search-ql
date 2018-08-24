@@ -1,7 +1,7 @@
 import * as P from 'parsimmon';
 
 import { BasicExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 
 const startEnd = ({ EXACT_MATCHER }: SyntaxConfig) => P.string(EXACT_MATCHER);
 const content = ({ EXACT_MATCHER }: SyntaxConfig) => P.regexp(new RegExp(`[^${EXACT_MATCHER}]+`));

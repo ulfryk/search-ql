@@ -1,9 +1,8 @@
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, JoinedExpression } from '../ast';
+import { AndOperator, Expression, JoinedExpression, MultiaryOperator, OrOperator } from '../ast';
 import { Match } from '../match';
-import { SyntaxConfig } from '../syntax-config';
 import { Tester } from './tester';
 
 type OperatorRuntime = (
@@ -29,25 +28,25 @@ export class JoinedExpressionTester
 extends Tester<JoinedExpression, OrderedSet<Tester<Expression, any>>> {
 
   public test(values: Map<string, string>): Maybe<Map<string, Match>> {
-    const { type } = this.ast;
+    const { operator } = this.ast;
     return this.children
         .map(expression => () => expression.test(values))
         .reduce((acc, evaluator) => acc
-            .map(accumulated => this.evaluate(this.config, type)(accumulated, evaluator))
+            .map(accumulated => this.evaluate(operator)(accumulated, evaluator))
             .orElse(Some(evaluator())),
           None<Maybe<Map<string, Match>>>())
         .orJust(None());
   }
 
-  private getOperatorRuntime({ AND, OR }: SyntaxConfig) {
-    return Map<string, OperatorRuntime>({
-      [AND]: and,
-      [OR]: or,
-    });
+  private getOperatorRuntime() {
+    return Map<MultiaryOperator, OperatorRuntime>([
+      [AndOperator.one, and],
+      [OrOperator.one, or],
+    ]);
   }
 
-  private evaluate(config: SyntaxConfig, type: string): OperatorRuntime {
-    return this.getOperatorRuntime(config).get(type);
+  private evaluate(operator: MultiaryOperator): OperatorRuntime {
+    return this.getOperatorRuntime().get(operator);
   }
 
 }

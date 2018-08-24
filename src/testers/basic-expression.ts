@@ -6,8 +6,8 @@ import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
 import { BasicExpression } from '../ast';
+import { SyntaxConfig } from '../config';
 import { Match } from '../match';
-import { SyntaxConfig } from '../syntax-config';
 import { Tester } from './tester';
 
 export class BasicExpressionTester extends Tester<BasicExpression, null> {

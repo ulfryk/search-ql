@@ -2,7 +2,7 @@ import { Maybe } from 'monet';
 import * as P from 'parsimmon';
 
 import { Expression, LabelledExpression } from '../ast';
-import { SyntaxConfig } from '../syntax-config';
+import { SyntaxConfig } from '../config';
 import { basicExpression, basicGroup, matchBasicWord } from './basic';
 
 const label = (config: SyntaxConfig) => P.custom((success, fail) => (input, i) =>
