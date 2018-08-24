@@ -1,6 +1,6 @@
 import * as P from 'parsimmon';
 
-import { BasicExpression } from '../../expressions';
+import { BasicExpression } from '../../ast';
 import { SyntaxConfig } from '../../syntax-config';
 import { matchBasicWord } from './match-basic-word';
 

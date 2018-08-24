@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { BasicExpression, NotExpression } from '../expressions';
+import { BasicExpression, NotExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 import { BasicExpressionTester } from './basic-expression';
 import { NotExpressionTester } from './not-expression';

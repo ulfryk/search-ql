@@ -9,7 +9,7 @@ import {
   JoinedExpression,
   LabelledExpression,
   NotExpression,
-} from '../expressions';
+} from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';

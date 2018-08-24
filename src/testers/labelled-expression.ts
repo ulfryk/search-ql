@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
-import { Expression, LabelledExpression } from '../expressions';
+import { Expression, LabelledExpression } from '../ast';
 import { Match } from '../match';
 import { Tester } from './tester';
 

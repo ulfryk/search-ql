@@ -2,7 +2,7 @@ import { OrderedMap } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 import * as P from 'parsimmon';
 
-import { Expression, fromPairs, NotExpression } from '../expressions';
+import { Expression, fromPairs, NotExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 import { basicExpression } from './basic';
 import { labelledExpression } from './labelled';

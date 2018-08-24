@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, NotExpression } from '../expressions';
+import { Expression, NotExpression } from '../ast';
 import { Match } from '../match';
 import { Tester } from './tester';
 

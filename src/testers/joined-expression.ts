@@ -1,7 +1,7 @@
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, JoinedExpression } from '../expressions';
+import { Expression, JoinedExpression } from '../ast';
 import { Match } from '../match';
 import { SyntaxConfig } from '../syntax-config';
 import { Tester } from './tester';

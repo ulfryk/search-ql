@@ -1,7 +1,7 @@
 import { Maybe, None, Some } from 'monet';
 import * as P from 'parsimmon';
 
-import { Expression, fromPairs } from '../../expressions';
+import { Expression, fromPairs } from '../../ast';
 import { SyntaxConfig } from '../../syntax-config';
 import { logicalOperator } from '../logical-operator';
 import { basicExpression } from './basic-expression';

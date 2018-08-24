@@ -1,4 +1,4 @@
-import { BasicExpression, Expression, JoinedExpression, LabelledExpression, NotExpression } from '../expressions';
+import { BasicExpression, Expression, JoinedExpression, LabelledExpression, NotExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 
 import { BasicExpressionTester } from './basic-expression';

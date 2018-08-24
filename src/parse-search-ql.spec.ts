@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import { Right } from 'monet';
 import { Failure } from 'parsimmon';
 
-import { BasicExpression, Expression, JoinedExpression, LabelledExpression } from './expressions';
+import { BasicExpression, Expression, JoinedExpression, LabelledExpression } from './ast';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
 import { SyntaxConfig } from './syntax-config';

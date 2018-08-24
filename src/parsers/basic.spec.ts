@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { Set } from 'immutable';
 import * as _ from 'lodash';
 
-import { BasicExpression, JoinedExpression } from '../expressions';
+import { BasicExpression, JoinedExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 import { basicExpression, basicGroup } from './basic';
 

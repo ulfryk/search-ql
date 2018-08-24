@@ -1,6 +1,6 @@
 import * as P from 'parsimmon';
 
-import { BasicExpression } from '../expressions';
+import { BasicExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 
 const startEnd = ({ EXACT_MATCHER }: SyntaxConfig) => P.string(EXACT_MATCHER);

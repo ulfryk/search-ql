@@ -4,7 +4,7 @@ import { expect } from 'chai';
 import { Map } from 'immutable';
 import * as _ from 'lodash';
 
-import { BasicExpression, LabelledExpression } from '../expressions';
+import { BasicExpression, LabelledExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 import { BasicExpressionTester } from './basic-expression';
 import { LabelledExpressionTester } from './labelled-expression';

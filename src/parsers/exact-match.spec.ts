@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import * as P from 'parsimmon';
 
-import { BasicExpression } from '../expressions';
+import { BasicExpression } from '../ast';
 import { SyntaxConfig } from '../syntax-config';
 import { exactMatch } from './exact-match';
 

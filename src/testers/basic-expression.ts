@@ -5,7 +5,7 @@ import { indexOf } from '@samwise-tech/core';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
-import { BasicExpression } from '../expressions';
+import { BasicExpression } from '../ast';
 import { Match } from '../match';
 import { SyntaxConfig } from '../syntax-config';
 import { Tester } from './tester';
