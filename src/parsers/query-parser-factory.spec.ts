@@ -60,17 +60,11 @@ describe('SearchQL parsers', () => {
 
       const validInput = [
         'aa',
-        'aa AND',
-        'aa OR',
-        'aa AND ',
-        'aa OR ',
-        'aa OR   ',
         `a${AND}`,
         `(((${OR}a)))`,
         '"aa:bb AND cc dd"',
         'aa : AA',
         'aa AND bb',
-        'aa AND bb AND',
         '(aa AND bb)',
         'aa AND (bb:BB OR cc) OR (dd AND (ee:EE OR ff))',
         'aaa AND bbb OR ccc AND ddd',
@@ -87,19 +81,10 @@ describe('SearchQL parsers', () => {
 
       const validOutput = [
         new BasicExpression('aa'),
-        new BasicExpression('aa'),
-        new BasicExpression('aa'),
-        new BasicExpression('aa'),
-        new BasicExpression('aa'),
-        new BasicExpression('aa'),
         new BasicExpression(`a${AND}`),
         new BasicExpression(`${OR}a`),
         new BasicExpression('aa:bb AND cc dd'),
         new LabelledExpression('aa', new BasicExpression('AA')),
-        new JoinedExpression(AND, Set([
-          new BasicExpression('aa'),
-          new BasicExpression('bb'),
-        ])),
         new JoinedExpression(AND, Set([
           new BasicExpression('aa'),
           new BasicExpression('bb'),

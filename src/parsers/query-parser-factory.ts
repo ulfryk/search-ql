@@ -22,12 +22,6 @@ export class QueryParserFactory {
     .then(logicalOperator(this.config))
     .skip(P.whitespace);
 
-  private readonly trailingOperator = P.seq(
-    P.whitespace,
-    logicalOperator(this.config),
-    P.whitespace.many(),
-    P.eof);
-
   constructor(
     public readonly parserNames: ParserName[],
     public readonly config: SyntaxConfig = new SyntaxConfig(),
@@ -45,7 +39,7 @@ export class QueryParserFactory {
   }
 
   private get subQuery(): P.Parser<Expression> {
-    return P.lazy(() => P.alt(...this.getParsers()).skip(this.trailingOperator.atMost(1)));
+    return P.lazy(() => P.alt(...this.getParsers()));
   }
 
   private get queryLogicalPart() {
