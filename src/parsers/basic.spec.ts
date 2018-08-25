@@ -1,9 +1,8 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
-import { Set } from 'immutable';
-import * as _ from 'lodash';
+import { zip } from 'lodash';
 
-import { AndOperator, BasicExpression, JoinedExpression, OrOperator } from '../ast';
+import { AndOperator, BasicExpression, BinaryOperationExpression, OrOperator } from '../ast';
 import { SyntaxConfig } from '../config';
 import { basicExpression, basicGroup } from './basic';
 
@@ -46,7 +45,7 @@ describe('SearchQL parsers', () => {
 
   describe('basicExpression', () => {
 
-    _.zip<any>(validInput, validOutput).forEach(([input, output]) => {
+    zip<any>(validInput, validOutput).forEach(([input, output]) => {
       describe(`for valid input: '${input}'`, () => {
         const parsed = basicExpression(config).parse(input);
 
@@ -88,25 +87,27 @@ describe('SearchQL parsers', () => {
     const validGroupsOutput = [
       new BasicExpression('ispum'),
       validOutput[0],
-      new JoinedExpression(AndOperator.one, Set([
+      new BinaryOperationExpression(AndOperator.one, [
         new BasicExpression('lorem'),
         new BasicExpression('ispum'),
-      ])),
-      new JoinedExpression(OrOperator.one, Set([
+      ]),
+      new BinaryOperationExpression(OrOperator.one, [
         validOutput[0],
         validOutput[1],
-      ])),
-      new JoinedExpression(AndOperator.one, Set([
-        new JoinedExpression(OrOperator.one, Set([
-          new JoinedExpression(AndOperator.one, Set([
-            new BasicExpression('lorem'),
-            new BasicExpression('ispum'),
-          ])),
-          validOutput[0],
-        ])),
-        new BasicExpression('dolor'),
+      ]),
+      new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(AndOperator.one, [
+          new BinaryOperationExpression(OrOperator.one, [
+            new BinaryOperationExpression(AndOperator.one, [
+              new BasicExpression('lorem'),
+              new BasicExpression('ispum'),
+            ]),
+            validOutput[0],
+          ]),
+          new BasicExpression('dolor'),
+        ]),
         validOutput[1],
-      ])),
+      ]),
     ];
 
     const invalidGroups = [
@@ -118,7 +119,7 @@ describe('SearchQL parsers', () => {
       g(`dolor ${AND}${validInput[0]}`),
     ].concat(invalidInput.map(g));
 
-    _.zip<any>(validGroups, validGroupsOutput).forEach(([input, output]) => {
+    zip<any>(validGroups, validGroupsOutput).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
         const parsed = basicGroup(config).parse(input);
 

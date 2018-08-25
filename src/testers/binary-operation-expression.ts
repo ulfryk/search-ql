@@ -1,13 +1,13 @@
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, JoinedExpression } from '../ast';
+import { BinaryOperationExpression, Expression } from '../ast';
 import { Match } from '../match';
 import { getBinaryOperatorRuntime } from './operators';
 import { Tester } from './tester';
 
-export class JoinedExpressionTester
-extends Tester<JoinedExpression, OrderedSet<Tester<Expression, any>>> {
+export class BinaryOperationExpressionTester
+extends Tester<BinaryOperationExpression, OrderedSet<Tester<Expression, any>>> {
 
   public test(values: Map<string, string>): Maybe<Map<string, Match>> {
     const { operator } = this.ast;

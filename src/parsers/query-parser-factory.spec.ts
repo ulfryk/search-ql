@@ -1,13 +1,12 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
-import { Set } from 'immutable';
 import { zip } from 'lodash';
 
 import {
   AndOperator,
   BasicExpression,
+  BinaryOperationExpression,
   Expression,
-  JoinedExpression,
   LabelledExpression,
   NotExpression,
   OrOperator,
@@ -53,7 +52,7 @@ const test = (
 
 describe('SearchQL parsers', () => {
 
-  describe('query', () => {
+  describe('QueryParserFactory', () => {
 
     describe('with all parsers', () => {
 
@@ -87,89 +86,91 @@ describe('SearchQL parsers', () => {
         new BasicExpression(`${OR}a`),
         new BasicExpression('aa:bb AND cc dd'),
         new LabelledExpression('aa', new BasicExpression('AA')),
-        new JoinedExpression(AndOperator.one, Set([
+        new BinaryOperationExpression(AndOperator.one, [
           new BasicExpression('aa'),
           new BasicExpression('bb'),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
           new BasicExpression('aa'),
           new BasicExpression('bb'),
-        ])),
-        new JoinedExpression(OrOperator.one, Set([
-          new JoinedExpression(AndOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(OrOperator.one, [
+          new BinaryOperationExpression(AndOperator.one, [
             new BasicExpression('aa'),
-            new JoinedExpression(OrOperator.one, Set([
+            new BinaryOperationExpression(OrOperator.one, [
               new LabelledExpression('bb', new BasicExpression('BB')),
               new BasicExpression('cc'),
-            ])),
-          ])),
-          new JoinedExpression(AndOperator.one, Set([
+            ]),
+          ]),
+          new BinaryOperationExpression(AndOperator.one, [
             new BasicExpression('dd'),
-            new JoinedExpression(OrOperator.one, Set([
+            new BinaryOperationExpression(OrOperator.one, [
               new LabelledExpression('ee', new BasicExpression('EE')),
               new BasicExpression('ff'),
-            ])),
-          ])),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
-          new JoinedExpression(OrOperator.one, Set([
-            new JoinedExpression(AndOperator.one, Set([
+            ]),
+          ]),
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
+          new BinaryOperationExpression(OrOperator.one, [
+            new BinaryOperationExpression(AndOperator.one, [
               new BasicExpression('aaa'),
               new BasicExpression('bbb'),
-            ])),
+            ]),
             new BasicExpression('ccc'),
-          ])),
+          ]),
           new BasicExpression('ddd'),
-        ])),
+        ]),
         new NotExpression(new BasicExpression('abc')),
-        new JoinedExpression(AndOperator.one, Set([
+        new BinaryOperationExpression(AndOperator.one, [
           new BasicExpression('aa'),
           new NotExpression(new BasicExpression('bb')),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
           new BasicExpression('aa'),
           new NotExpression(new BasicExpression('bb')),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
           new NotExpression(new BasicExpression('aaa')),
           new NotExpression(new BasicExpression('bbb')),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
-          new NotExpression(new JoinedExpression(OrOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
+          new NotExpression(new BinaryOperationExpression(OrOperator.one, [
             new BasicExpression('aaa'),
             new BasicExpression('bbb'),
-          ]))),
+          ])),
           new BasicExpression('ccc'),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
           new BasicExpression('aaa'),
           new NotExpression(new LabelledExpression('bb', new BasicExpression('BB'))),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
-          new JoinedExpression(AndOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
+          new BinaryOperationExpression(AndOperator.one, [
             new BasicExpression('aaa'),
-            new JoinedExpression(OrOperator.one, Set([
+            new BinaryOperationExpression(OrOperator.one, [
               new BasicExpression('bbb'),
               new BasicExpression('ccc'),
-            ])),
-          ])),
+            ]),
+          ]),
           new NotExpression(new BasicExpression('ddd')),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
-          new JoinedExpression(OrOperator.one, Set([
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
+          new BinaryOperationExpression(OrOperator.one, [
             new BasicExpression('aaa'),
             new BasicExpression('bbb'),
-          ])),
+          ]),
           new NotExpression(new BasicExpression('ccc')),
-        ])),
-        new JoinedExpression(AndOperator.one, Set([
-          new JoinedExpression(AndOperator.one, Set([
-            new BasicExpression('aaa'),
-            new BasicExpression('bbb'),
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
+          new BinaryOperationExpression(AndOperator.one, [
+            new BinaryOperationExpression(AndOperator.one, [
+              new BasicExpression('aaa'),
+              new BasicExpression('bbb'),
+            ]),
             new BasicExpression('ccc'),
-          ])),
+          ]),
           new NotExpression(new BasicExpression('ddd')),
-        ])),
+        ]),
       ];
 
       const invalidInput = [

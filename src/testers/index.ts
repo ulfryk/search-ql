@@ -1,8 +1,8 @@
-import { BasicExpression, Expression, JoinedExpression, LabelledExpression, NotExpression } from '../ast';
+import { BasicExpression, BinaryOperationExpression, Expression, LabelledExpression, NotExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 
 import { BasicExpressionTester } from './basic-expression';
-import { JoinedExpressionTester } from './joined-expression';
+import { BinaryOperationExpressionTester } from './binary-operation-expression';
 import { LabelledExpressionTester } from './labelled-expression';
 import { NotExpressionTester } from './not-expression';
 import { Tester } from './tester';
@@ -14,9 +14,9 @@ Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
     case BasicExpression:
       return new BasicExpressionTester(ast, config);
 
-    case JoinedExpression:
-      return new JoinedExpressionTester(
-        ast as any as JoinedExpression,
+    case BinaryOperationExpression:
+      return new BinaryOperationExpressionTester(
+        ast as any as BinaryOperationExpression,
         ast.value.map(Tester.fromAst(config)),
         config);
 
@@ -38,7 +38,7 @@ Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
 
 export {
   BasicExpressionTester,
-  JoinedExpressionTester,
+  BinaryOperationExpressionTester,
   LabelledExpressionTester,
   NotExpressionTester,
   Tester,

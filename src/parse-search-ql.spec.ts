@@ -1,11 +1,10 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
-import { Set } from 'immutable';
 import * as _ from 'lodash';
 import { Right } from 'monet';
 import { Failure } from 'parsimmon';
 
-import { AndOperator, BasicExpression, Expression, JoinedExpression, LabelledExpression, OrOperator } from './ast';
+import { AndOperator, BasicExpression, BinaryOperationExpression, Expression, LabelledExpression, OrOperator } from './ast';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
@@ -22,14 +21,14 @@ describe('SearchQL', () => {
       'first_name:Adam AND token_expired:true',
     ];
     const successfulOutputValues = [
-      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
+      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
-      ]))),
-      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
+      ])),
+      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
         new LabelledExpression('first_name', new BasicExpression('Adam')),
         new LabelledExpression('token_expired', new BasicExpression('true')),
-      ]))),
+      ])),
     ];
 
     const invalidInput = [
@@ -84,18 +83,18 @@ describe('SearchQL', () => {
       'first_name ~ Adam && token_expired ~ true',
     ];
     const successfulOutputValues = [
-      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
+      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
-      ]))),
-      Right<Failure, Expression>(new JoinedExpression(OrOperator.one, Set([
+      ])),
+      Right<Failure, Expression>(new BinaryOperationExpression(OrOperator.one, [
         new BasicExpression('aaa'),
         new BasicExpression('bbb'),
-      ]))),
-      Right<Failure, Expression>(new JoinedExpression(AndOperator.one, Set([
+      ])),
+      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
         new LabelledExpression('first_name', new BasicExpression('Adam')),
         new LabelledExpression('token_expired', new BasicExpression('true')),
-      ]))),
+      ])),
     ];
 
     const invalidInput = [
