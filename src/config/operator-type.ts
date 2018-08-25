@@ -1,5 +1,5 @@
 export const enum OperatorType {
-  And = 'AND',
-  Not = 'NOT',
-  Or = 'OR',
+  And = 'And',
+  Not = 'Not',
+  Or = 'Or',
 }

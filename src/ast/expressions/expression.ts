@@ -4,4 +4,7 @@ export abstract class Expression implements ISetoid {
   public abstract readonly value: any;
   public abstract equals(other: Expression): boolean;
   public abstract toString(): string;
+  public inspect(): string {
+    return this.toString();
+  }
 }

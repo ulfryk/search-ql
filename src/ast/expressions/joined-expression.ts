@@ -1,7 +1,7 @@
 import { Set } from 'immutable';
 
+import { MultiaryOperator } from '../operators';
 import { Expression } from './expression';
-import { MultiaryOperator } from './operators';
 
 export class JoinedExpression extends Expression {
 

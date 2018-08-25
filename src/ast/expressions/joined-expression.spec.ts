@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { Set } from 'immutable';
 import { zip } from 'lodash';
 
+import { AndOperator, Operator, OrOperator } from '../operators';
 import { BasicExpression } from './basic-expression';
 import { Expression } from './expression';
 import { JoinedExpression } from './joined-expression';
-import { AndOperator, Operator, OrOperator } from './operators';
 
 describe('SearchQL expressions', () => {
 

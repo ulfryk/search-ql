@@ -5,11 +5,8 @@ import { zip } from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
-import { BasicExpression } from './basic-expression';
-import { Expression } from './expression';
+import { BasicExpression, Expression, JoinedExpression, NotExpression } from './expressions';
 import { fromPairs } from './from-pairs';
-import { JoinedExpression } from './joined-expression';
-import { NotExpression } from './not-expression';
 import { AndOperator, OrOperator } from './operators';
 
 const config = new SyntaxConfig();
