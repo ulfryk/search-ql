@@ -1,6 +1,6 @@
-import { Maybe, Some } from 'monet';
+import { Maybe } from 'monet';
 
-import { Match } from '../../match';
+import { BinaryOperatorRuntime } from './binary-operator-runtime';
 
-export const or = (a: Maybe<Map<string, Match>>, b: () => Maybe<Map<string, Match>>) =>
-  a.cata(b, Some);
+export const or: BinaryOperatorRuntime = (leftSide, getRightSide) =>
+  leftSide.cata(getRightSide, left => Maybe.of(left));

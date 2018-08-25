@@ -1,8 +1,8 @@
 import { OperatorType } from '../../config';
 
-import { MultiaryOperator } from './multiary-operator';
+import { BinaryOperator } from './binary-operator';
 
-export class OrOperator extends MultiaryOperator {
+export class OrOperator extends BinaryOperator {
   public static readonly one = new OrOperator();
   public readonly type = OperatorType.Or;
 }

@@ -3,7 +3,7 @@ import { Maybe, None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
 import { BasicExpression, Expression, JoinedExpression, NotExpression } from './expressions';
-import { AndOperator, NotOperator, tokenToOperator } from './operators';
+import { AndOperator, BinaryOperator, NotOperator, tokenToOperator } from './operators';
 
 export const fromPairs =
   (pairs: [Maybe<string>, Expression][], config: SyntaxConfig): Expression =>
@@ -12,7 +12,7 @@ export const fromPairs =
           .flatMap(prev => token
             .map(tokenToOperator(config))
             .map(operator =>
-              prev instanceof JoinedExpression && !operator.is(NotOperator) ?
+              prev instanceof JoinedExpression && operator.is(BinaryOperator) ?
                 prev.add(operator, expression) as Expression :
                 operator.is(NotOperator) ?
                   new JoinedExpression(

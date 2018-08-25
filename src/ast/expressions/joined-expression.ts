@@ -1,16 +1,16 @@
 import { Set } from 'immutable';
 
-import { MultiaryOperator } from '../operators';
+import { BinaryOperator } from '../operators';
 import { Expression } from './expression';
 
 export class JoinedExpression extends Expression {
 
-  public static empty(operator: MultiaryOperator) {
+  public static empty(operator: BinaryOperator) {
     return new JoinedExpression(operator, Set<Expression>());
   }
 
   constructor(
-    public readonly operator: MultiaryOperator,
+    public readonly operator: BinaryOperator,
     public readonly value: Set<Expression>,
   ) { super(); }
 
@@ -21,7 +21,7 @@ export class JoinedExpression extends Expression {
       this.value.equals(other.value));
   }
 
-  public add(operator: MultiaryOperator, expression: Expression): JoinedExpression {
+  public add(operator: BinaryOperator, expression: Expression): JoinedExpression {
     return this.operator.equals(operator) ?
       new JoinedExpression(this.operator, this.value.add(expression)) :
       new JoinedExpression(operator, Set([this, expression]));

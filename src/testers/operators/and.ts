@@ -1,12 +1,10 @@
-import { Map } from 'immutable';
-import { Maybe } from 'monet';
-
 import { Match } from '../../match';
+import { BinaryOperatorRuntime } from './binary-operator-runtime';
 
-export const and = (a: Maybe<Map<string, Match>>, b: () => Maybe<Map<string, Match>>) =>
-  a.flatMap(someA => b()
-    .map(someB => someA.entrySeq()
-      .concat(someB.entrySeq())
+export const and: BinaryOperatorRuntime = (leftSide, getRightSide) =>
+  leftSide.flatMap(left => getRightSide()
+    .map(right => left.entrySeq()
+      .concat(right.entrySeq())
       .groupBy(([label]) => label)
       .map(group => group
         .map(([__, match]) => match)

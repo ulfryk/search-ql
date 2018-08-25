@@ -1,8 +1,8 @@
 import { OperatorType } from '../../config';
 
-import { MultiaryOperator } from './multiary-operator';
+import { UnaryOperator } from './unary-operator';
 
-export class NotOperator extends MultiaryOperator {
+export class NotOperator extends UnaryOperator {
   public static readonly one = new NotOperator();
   public readonly type = OperatorType.Not;
 }

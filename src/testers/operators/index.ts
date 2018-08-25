@@ -1,4 +1,4 @@
 export * from './and';
-export * from './get-multiary-operator';
-export * from './operator-runtime';
+export * from './binary-operator-runtime';
+export * from './get-binary-operator';
 export * from './or';
