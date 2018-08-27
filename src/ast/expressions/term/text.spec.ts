@@ -2,29 +2,36 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
-import { BasicExpression } from './basic-expression';
-import { Expression } from './expression';
-import { NotExpression } from './not-expression';
+import { Expression } from '../expression';
+import { TextExpression } from './text';
 
 describe('SearchQL expressions', () => {
 
-  describe('NotExpression', () => {
+  describe('TextExpression', () => {
+
+    describe('fromMatch() static method', () => {
+
+      it('should return instance of TextExpression', () => {
+        expect(TextExpression.fromMatch('aaa')).to.be.instanceof(TextExpression);
+      });
+
+    });
 
     describe('equals() method', () => {
 
       const lhs = [
-        new NotExpression(BasicExpression.fromMatch('')),
-        new NotExpression(BasicExpression.fromMatch('aaa  asdas as asd asdas dad ')),
+        TextExpression.fromMatch(''),
+        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
       ];
 
       const rhs = [
-        new NotExpression(BasicExpression.fromMatch('')),
-        new NotExpression(BasicExpression.fromMatch('aaa  asdas as asd asdas dad ')),
+        new TextExpression(''),
+        new TextExpression('aaa  asdas as asd asdas dad '),
       ];
 
       const rhsInvalid = [
-        new NotExpression(BasicExpression.fromMatch('aaa  asdas as asd asdas dad ')),
-        new NotExpression(BasicExpression.fromMatch('')),
+        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
+        new TextExpression(''),
       ];
 
       it('should return true for comparison with a reference', () => {

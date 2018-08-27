@@ -6,9 +6,10 @@ import { and } from './and';
 import { BinaryOperatorRuntime } from './binary-operator-runtime';
 import { or } from './or';
 
-const getRuntimes = ({ AND, OR }: SyntaxConfig) =>
+const getRuntimes = ({ AND, OR }: SyntaxConfig) => // LIKE,
   Map<BinaryOperator, BinaryOperatorRuntime>([
     [new AndOperator(AND), and],
+    // [new AndOperator(LIKE), like],
     [new OrOperator(OR), or],
   ]);
 

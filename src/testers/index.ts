@@ -1,29 +1,22 @@
-import { BasicExpression, BinaryOperationExpression, Expression, LabelledExpression, NotExpression } from '../ast';
+import { BinaryOperationExpression, Expression, NotExpression, TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 
-import { BasicExpressionTester } from './basic-expression';
 import { BinaryOperationExpressionTester } from './binary-operation-expression';
-import { LabelledExpressionTester } from './labelled-expression';
 import { NotExpressionTester } from './not-expression';
 import { Tester } from './tester';
+import { TextExpressionTester } from './text-expression';
 
 // tslint:disable-next-line:cyclomatic-complexity
 Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
   switch (ast.constructor) {
 
-    case BasicExpression:
-      return new BasicExpressionTester(ast, config);
+    case TextExpression:
+      return new TextExpressionTester(ast, config);
 
     case BinaryOperationExpression:
       return new BinaryOperationExpressionTester(
         ast as any as BinaryOperationExpression,
         ast.value.map(Tester.fromAst(config)),
-        config);
-
-    case LabelledExpression:
-      return new LabelledExpressionTester(
-        ast as any as LabelledExpression,
-        Tester.fromAst(config)(ast.value),
         config);
 
     case NotExpression:
@@ -37,9 +30,8 @@ Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
 };
 
 export {
-  BasicExpressionTester,
+  TextExpressionTester,
   BinaryOperationExpressionTester,
-  LabelledExpressionTester,
   NotExpressionTester,
   Tester,
 };

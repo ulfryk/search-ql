@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Right } from 'monet';
 import { Failure } from 'parsimmon';
 
-import { AndOperator, BasicExpression, BinaryOperationExpression, Expression, LabelledExpression, OrOperator } from './ast';
+import { AndOperator, BinaryOperationExpression, Expression, OrOperator, TextExpression } from './ast';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
@@ -14,21 +14,21 @@ describe('SearchQL', () => {
   describe('parseSearchQL with regular config', () => {
 
     const allParserNames =
-      [ParserName.Basic, ParserName.JoinedGroup, ParserName.Labelled, ParserName.Not];
+      [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
 
     const validInput = [
       'aaa AND bbb',
-      'first_name:Adam AND token_expired:true',
+      // 'first_name ~ Adam AND token_expired ~ true',
     ];
     const successfulOutputValues = [
       Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
-        new BasicExpression('aaa'),
-        new BasicExpression('bbb'),
+        new TextExpression('aaa'),
+        new TextExpression('bbb'),
       ])),
-      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
-        new LabelledExpression('first_name', new BasicExpression('Adam')),
-        new LabelledExpression('token_expired', new BasicExpression('true')),
-      ])),
+      // Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
+      //   new LabelledExpression('first_name', new TextExpression('Adam')),
+      //   new LabelledExpression('token_expired', new TextExpression('true')),
+      // ])),
     ];
 
     const invalidInput = [
@@ -72,29 +72,29 @@ describe('SearchQL', () => {
 
   describe('parseSearchQL with custom config', () => {
 
-    const config = SyntaxConfig.create({ AND: '&&', OR: '||', LABEL_DELIMITER: '~' });
+    const config = SyntaxConfig.create({ AND: '&&', OR: '||', LIKE: '~' });
 
     const allParserNames =
-      [ParserName.Basic, ParserName.JoinedGroup, ParserName.Labelled, ParserName.Not];
+      [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
 
     const validInput = [
       'aaa && bbb',
       'aaa || bbb',
-      'first_name ~ Adam && token_expired ~ true',
+      // 'first_name ~ Adam && token_expired ~ true',
     ];
     const successfulOutputValues = [
       Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
-        new BasicExpression('aaa'),
-        new BasicExpression('bbb'),
+        new TextExpression('aaa'),
+        new TextExpression('bbb'),
       ])),
       Right<Failure, Expression>(new BinaryOperationExpression(OrOperator.one, [
-        new BasicExpression('aaa'),
-        new BasicExpression('bbb'),
+        new TextExpression('aaa'),
+        new TextExpression('bbb'),
       ])),
-      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
-        new LabelledExpression('first_name', new BasicExpression('Adam')),
-        new LabelledExpression('token_expired', new BasicExpression('true')),
-      ])),
+      // Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
+      //   new LabelledExpression('first_name', new TextExpression('Adam')),
+      //   new LabelledExpression('token_expired', new TextExpression('true')),
+      // ])),
     ];
 
     const invalidInput = [

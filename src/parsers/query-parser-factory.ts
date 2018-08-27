@@ -6,14 +6,12 @@ import { Expression, fromPairs, NotExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 import { binaryOperator } from './binary-operator';
-import { labelledExpression } from './labelled';
 import { ParserName } from './names';
 
 export class QueryParserFactory {
 
   private readonly parserMappings = OrderedMap<ParserName, () => P.Parser<any>>([
-    [ParserName.JoinedGroup, () => this.groupedBinaryOperation],
-    [ParserName.Labelled, () => labelledExpression(this.config)],
+    [ParserName.BinaryOperation, () => this.groupedBinaryOperation],
     [ParserName.Not, () => this.notExpression],
     [ParserName.Basic, () => basicExpression(this.config)],
   ]);

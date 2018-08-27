@@ -3,23 +3,23 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { AndOperator, OrOperator } from '../operators';
-import { BasicExpression } from './basic-expression';
-import { BinaryOperationExpression } from './binary-operation-expression';
+import { BinaryOperationExpression } from './binary-operation';
 import { Expression } from './expression';
+import { TextExpression } from './term';
 
 describe('SearchQL expressions', () => {
 
   describe('BinaryOperationExpression', () => {
 
     let i = 111; // tslint:disable-line:no-let
-    const b = () => new BasicExpression('aaa' + i++); // Make sure values are not equal
+    const b = () => new TextExpression('aaa' + i++); // Make sure values are not equal
 
     const and = new BinaryOperationExpression(AndOperator.one, [b(), b()]);
     const or = new BinaryOperationExpression(OrOperator.one, [b(), b()]);
 
     describe('equals() method', () => {
 
-      const toAdd: [BasicExpression, BasicExpression] = [b(), b()];
+      const toAdd: [TextExpression, TextExpression] = [b(), b()];
 
       const lhs = [
         new BinaryOperationExpression(OrOperator.one, [and, or]),

@@ -2,6 +2,6 @@ import { Maybe } from 'monet';
 
 import { SyntaxConfig } from '../../config';
 
-export const matchBasicWord = (input: string, { AND, OR, restrictedSigns }: SyntaxConfig) =>
+export const matchBasicWord = (input: string, { binaryOperators, restrictedSigns }: SyntaxConfig) =>
   Maybe.fromNull(input.match(restrictedSigns))
-    .filter(([match]) => ![AND, OR].includes(match));
+    .filter(([match]) => !binaryOperators.includes(match));

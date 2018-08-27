@@ -2,17 +2,17 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { BasicExpression, NotExpression } from '../ast';
+import { NotExpression, TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
-import { BasicExpressionTester } from './basic-expression';
 import { NotExpressionTester } from './not-expression';
+import { TextExpressionTester } from './text-expression';
 
 const config = new SyntaxConfig();
 
 const getTester = (value: string): NotExpressionTester => {
-  const expr = new NotExpression(new BasicExpression(value));
+  const expr = new NotExpression(new TextExpression(value));
 
-  return new NotExpressionTester(expr, new BasicExpressionTester(expr.value, config), config);
+  return new NotExpressionTester(expr, new TextExpressionTester(expr.value, config), config);
 };
 
 describe('SearchQL testers', () => {

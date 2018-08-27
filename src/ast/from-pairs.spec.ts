@@ -4,7 +4,7 @@ import { zip } from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
-import { BasicExpression, BinaryOperationExpression, Expression, NotExpression } from './expressions';
+import { BinaryOperationExpression, Expression, NotExpression, TextExpression } from './expressions';
 import { fromPairs } from './from-pairs';
 import { AndOperator, OrOperator } from './operators';
 
@@ -16,74 +16,74 @@ describe('SearchQL expressions', () => {
   describe('fromPairs', () => {
 
     const validInput = [
-      [[None<string>(), new BasicExpression('aaa AND ) a:aaaa OR OR OR')]],
+      [[None<string>(), new TextExpression('aaa AND ) a:aaaa OR OR OR')]],
       [
-        [None<string>(), new BasicExpression('aaa')],
-        [Some(AND), new BasicExpression('bbb')],
+        [None<string>(), new TextExpression('aaa')],
+        [Some(AND), new TextExpression('bbb')],
       ],
       [
-        [None<string>(), new BasicExpression('aaa')],
-        [Some(NOT), new BasicExpression('bbb')],
+        [None<string>(), new TextExpression('aaa')],
+        [Some(NOT), new TextExpression('bbb')],
       ],
       [
-        [None<string>(), new BasicExpression('aaa')],
-        [Some(OR), new BasicExpression('bbb')],
-        [Some(AND), new BasicExpression('ccc')],
+        [None<string>(), new TextExpression('aaa')],
+        [Some(OR), new TextExpression('bbb')],
+        [Some(AND), new TextExpression('ccc')],
       ],
       [
-        [None<string>(), new BasicExpression('aaa')],
+        [None<string>(), new TextExpression('aaa')],
         [Some(OR), fromPairs([
-          [None<string>(), new BasicExpression('aaa')],
-          [Some(OR), new BasicExpression('bbb')],
-          [Some(AND), new BasicExpression('ccc')],
+          [None<string>(), new TextExpression('aaa')],
+          [Some(OR), new TextExpression('bbb')],
+          [Some(AND), new TextExpression('ccc')],
         ] as [Maybe<string>, Expression][], config)],
-        [Some(AND), new BasicExpression('ccc')],
+        [Some(AND), new TextExpression('ccc')],
       ],
       [
         [None<string>(), new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aaa'),
-          new BasicExpression('bbb'),
+          new TextExpression('aaa'),
+          new TextExpression('bbb'),
         ])],
-        [Some(NOT), new BasicExpression('ccc')],
+        [Some(NOT), new TextExpression('ccc')],
       ],
     ];
 
     const validOutput = [
-      new BasicExpression('aaa AND ) a:aaaa OR OR OR'),
+      new TextExpression('aaa AND ) a:aaaa OR OR OR'),
       new BinaryOperationExpression(AndOperator.one, [
-        new BasicExpression('aaa'),
-        new BasicExpression('bbb'),
+        new TextExpression('aaa'),
+        new TextExpression('bbb'),
       ]),
       new BinaryOperationExpression(AndOperator.one, [
-        new BasicExpression('aaa'),
-        new NotExpression(new BasicExpression('bbb')),
+        new TextExpression('aaa'),
+        new NotExpression(new TextExpression('bbb')),
       ]),
       new BinaryOperationExpression(AndOperator.one, [
         new BinaryOperationExpression(OrOperator.one, [
-          new BasicExpression('aaa'),
-          new BasicExpression('bbb'),
+          new TextExpression('aaa'),
+          new TextExpression('bbb'),
         ]),
-        new BasicExpression('ccc'),
+        new TextExpression('ccc'),
       ]),
       new BinaryOperationExpression(AndOperator.one, [
         new BinaryOperationExpression(OrOperator.one, [
-          new BasicExpression('aaa'),
+          new TextExpression('aaa'),
           new BinaryOperationExpression(AndOperator.one, [
             new BinaryOperationExpression(OrOperator.one, [
-              new BasicExpression('aaa'),
-              new BasicExpression('bbb'),
+              new TextExpression('aaa'),
+              new TextExpression('bbb'),
             ]),
-            new BasicExpression('ccc'),
+            new TextExpression('ccc'),
           ]),
         ]),
-        new BasicExpression('ccc'),
+        new TextExpression('ccc'),
       ]),
       new BinaryOperationExpression(AndOperator.one, [
         new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aaa'),
-          new BasicExpression('bbb'),
+          new TextExpression('aaa'),
+          new TextExpression('bbb'),
         ]),
-        new NotExpression(new BasicExpression('ccc')),
+        new NotExpression(new TextExpression('ccc')),
       ]),
     ];
 

@@ -1,1 +1,1 @@
-export enum ParserName { Basic, JoinedGroup, Labelled, Not }
+export enum ParserName { Basic, BinaryOperation, Not }

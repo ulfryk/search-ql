@@ -1,25 +1,41 @@
+import { Map } from 'immutable';
+
 import { OperatorType } from './operator-type';
 
 export class SyntaxConfig {
 
   public static create(
-    { AND, NOT, OR, GROUP_START, GROUP_END, EXACT_MATCHER, LABEL_DELIMITER }: Partial<SyntaxConfig>,
+    {
+      AND, LIKE, OR,
+      NOT,
+      GROUP_START, GROUP_END, EXACT_MATCHER,
+    }: Partial<SyntaxConfig>,
   ) {
-    return new SyntaxConfig(AND, NOT, OR, GROUP_START, GROUP_END, EXACT_MATCHER, LABEL_DELIMITER);
+    return new SyntaxConfig(AND, LIKE, OR, NOT, GROUP_START, GROUP_END, EXACT_MATCHER);
   }
 
+  public readonly operatorMapping = Map<string, OperatorType>([
+    [this.AND, OperatorType.And],
+    [this.LIKE, OperatorType.Like],
+    [this.NOT, OperatorType.Not],
+    [this.OR, OperatorType.Or],
+  ]);
+
   constructor(
+    // binary operators
     public readonly AND = 'AND',
-    public readonly NOT = 'NOT',
+    public readonly LIKE = 'LIKE',
     public readonly OR = 'OR',
+    // unary operators
+    public readonly NOT = 'NOT',
+    // grouping
     public readonly GROUP_START = '(',
     public readonly GROUP_END = ')',
     public readonly EXACT_MATCHER = '"',
-    public readonly LABEL_DELIMITER = ':',
   ) {}
 
   public get restricted() {
-    return [this.EXACT_MATCHER, this.GROUP_END, this.GROUP_START, this.LABEL_DELIMITER, 's']
+    return [this.EXACT_MATCHER, this.GROUP_END, this.GROUP_START, 's']
       .map(sign => `\\${sign}`)
       .join('');
   }
@@ -32,17 +48,16 @@ export class SyntaxConfig {
     return /^[\w_\.]+/;
   }
 
-  public get delimiter() {
-    return new RegExp(`\\s*${this.LABEL_DELIMITER}\\s*`);
+  public get binaryOperators() {
+    const { AND, LIKE, OR } = this;
+
+    return [AND, LIKE, OR];
   }
 
   public getOperatorType(token: string) {
-    switch (token) {
-      case this.AND: return OperatorType.And;
-      case this.NOT: return OperatorType.Not;
-      case this.OR: return OperatorType.Or;
-      default: throw Error(`No operator type for token: "${token}"`);
-    }
+    return this.operatorMapping.getMaybe(token).cata(() => {
+      throw Error(`No operator type for token: "${token}"`);
+    }, __ => __);
   }
 
 }

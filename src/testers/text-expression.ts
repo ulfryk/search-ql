@@ -5,15 +5,15 @@ import { indexOf } from '@samwise-tech/core';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
-import { BasicExpression } from '../ast';
+import { TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { Match } from '../match';
 import { Tester } from './tester';
 
-export class BasicExpressionTester extends Tester<BasicExpression, null> {
+export class TextExpressionTester extends Tester<TextExpression, null> {
 
   constructor(
-    public readonly ast: BasicExpression,
+    public readonly ast: TextExpression,
     public readonly config: SyntaxConfig,
   ) {
     super(ast, null, config);

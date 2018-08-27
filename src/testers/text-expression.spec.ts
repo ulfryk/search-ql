@@ -2,16 +2,16 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { BasicExpression } from '../ast';
+import { TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
-import { BasicExpressionTester } from './basic-expression';
+import { TextExpressionTester } from './text-expression';
 
-const getTester = (expr: BasicExpression) =>
-  new BasicExpressionTester(expr, new SyntaxConfig());
+const getTester = (expr: TextExpression) =>
+  new TextExpressionTester(expr, new SyntaxConfig());
 
 describe('SearchQL testers', () => {
 
-  describe('BasicExpressionTester', () => {
+  describe('TextExpressionTester', () => {
 
     // tslint:disable-next-line:no-unnecessary-type-assertion
     const values = Map([
@@ -26,11 +26,11 @@ describe('SearchQL testers', () => {
     const expressions = values.toArray()
       .map((val: string) => val.substr(-6, 5))
       .concat(values.toArray())
-      .map(BasicExpression.fromMatch);
+      .map(TextExpression.fromMatch);
 
     const notMatchingExpressions = values.toArray()
       .map((val, i) => `${i} ${val}`)
-      .map(BasicExpression.fromMatch);
+      .map(TextExpression.fromMatch);
 
     expressions.forEach(expression => {
       it(`should find expression "${expression}"`, () => {
@@ -47,7 +47,7 @@ describe('SearchQL testers', () => {
 
     it('should find expression "aaa" in few fields', () => {
       expect(
-        getTester(BasicExpression.fromMatch('aaa')).test(Map({
+        getTester(TextExpression.fromMatch('aaa')).test(Map({
           one: 'aaa bbb aaa aaa aaasda ddaaa',
           three: 'aaGaa bbb aadaaXaadaa ddddadd',
           two: 'aaa bbb aaaXaaa',

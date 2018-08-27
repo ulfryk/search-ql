@@ -4,18 +4,17 @@ import { zip } from 'lodash';
 
 import {
   AndOperator,
-  BasicExpression,
   BinaryOperationExpression,
   Expression,
-  LabelledExpression,
   NotExpression,
   OrOperator,
+  TextExpression,
 } from '../ast';
 import { SyntaxConfig } from '../config';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
-const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, LABEL_DELIMITER, OR } = new SyntaxConfig();
+const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = new SyntaxConfig();
 
 const test = (
   validInput: string[],
@@ -57,119 +56,119 @@ describe('SearchQL parsers', () => {
     describe('with all parsers', () => {
 
       const allParserNames =
-        [ParserName.Basic, ParserName.JoinedGroup, ParserName.Labelled, ParserName.Not];
+        [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
 
       const validInput = [
         'aa',
         `a${AND}`,
         `(((${OR}a)))`,
         '"aa:bb AND cc dd"',
-        'aa : AA',
+        // 'aa : AA',
         'aa AND bb',
         '(aa AND bb)',
-        'aa AND (bb:BB OR cc) OR (dd AND (ee:EE OR ff))',
+        // 'aa AND (bb:BB OR cc) OR (dd AND (ee ~ EE OR ff))',
         'aaa AND bbb OR ccc AND ddd',
         'NOT abc',
         'aa AND NOT bb',
         'aa NOT bb',
         'NOT aaa AND NOT bbb',
         'NOT (aaa OR bbb) AND ccc',
-        'aaa AND NOT bb:BB',
+        // 'aaa AND NOT bb ~ BB',
         'aaa AND (bbb OR ccc) NOT ddd',
         '(aaa OR bbb) NOT ccc',
         'aaa AND bbb AND ccc NOT ddd',
       ];
 
       const validOutput = [
-        new BasicExpression('aa'),
-        new BasicExpression(`a${AND}`),
-        new BasicExpression(`${OR}a`),
-        new BasicExpression('aa:bb AND cc dd'),
-        new LabelledExpression('aa', new BasicExpression('AA')),
+        new TextExpression('aa'),
+        new TextExpression(`a${AND}`),
+        new TextExpression(`${OR}a`),
+        new TextExpression('aa:bb AND cc dd'),
+        // new LabelledExpression('aa', new TextExpression('AA')),
         new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aa'),
-          new BasicExpression('bb'),
+          new TextExpression('aa'),
+          new TextExpression('bb'),
         ]),
         new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aa'),
-          new BasicExpression('bb'),
+          new TextExpression('aa'),
+          new TextExpression('bb'),
         ]),
-        new BinaryOperationExpression(OrOperator.one, [
-          new BinaryOperationExpression(AndOperator.one, [
-            new BasicExpression('aa'),
-            new BinaryOperationExpression(OrOperator.one, [
-              new LabelledExpression('bb', new BasicExpression('BB')),
-              new BasicExpression('cc'),
-            ]),
-          ]),
-          new BinaryOperationExpression(AndOperator.one, [
-            new BasicExpression('dd'),
-            new BinaryOperationExpression(OrOperator.one, [
-              new LabelledExpression('ee', new BasicExpression('EE')),
-              new BasicExpression('ff'),
-            ]),
-          ]),
-        ]),
+        // new BinaryOperationExpression(OrOperator.one, [
+        //   new BinaryOperationExpression(AndOperator.one, [
+        //     new TextExpression('aa'),
+        //     new BinaryOperationExpression(OrOperator.one, [
+        //       new LabelledExpression('bb', new TextExpression('BB')),
+        //       new TextExpression('cc'),
+        //     ]),
+        //   ]),
+        //   new BinaryOperationExpression(AndOperator.one, [
+        //     new TextExpression('dd'),
+        //     new BinaryOperationExpression(OrOperator.one, [
+        //       new LabelledExpression('ee', new TextExpression('EE')),
+        //       new TextExpression('ff'),
+        //     ]),
+        //   ]),
+        // ]),
         new BinaryOperationExpression(AndOperator.one, [
           new BinaryOperationExpression(OrOperator.one, [
             new BinaryOperationExpression(AndOperator.one, [
-              new BasicExpression('aaa'),
-              new BasicExpression('bbb'),
+              new TextExpression('aaa'),
+              new TextExpression('bbb'),
             ]),
-            new BasicExpression('ccc'),
+            new TextExpression('ccc'),
           ]),
-          new BasicExpression('ddd'),
+          new TextExpression('ddd'),
         ]),
-        new NotExpression(new BasicExpression('abc')),
+        new NotExpression(new TextExpression('abc')),
         new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aa'),
-          new NotExpression(new BasicExpression('bb')),
-        ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aa'),
-          new NotExpression(new BasicExpression('bb')),
+          new TextExpression('aa'),
+          new NotExpression(new TextExpression('bb')),
         ]),
         new BinaryOperationExpression(AndOperator.one, [
-          new NotExpression(new BasicExpression('aaa')),
-          new NotExpression(new BasicExpression('bbb')),
+          new TextExpression('aa'),
+          new NotExpression(new TextExpression('bb')),
+        ]),
+        new BinaryOperationExpression(AndOperator.one, [
+          new NotExpression(new TextExpression('aaa')),
+          new NotExpression(new TextExpression('bbb')),
         ]),
         new BinaryOperationExpression(AndOperator.one, [
           new NotExpression(new BinaryOperationExpression(OrOperator.one, [
-            new BasicExpression('aaa'),
-            new BasicExpression('bbb'),
+            new TextExpression('aaa'),
+            new TextExpression('bbb'),
           ])),
-          new BasicExpression('ccc'),
+          new TextExpression('ccc'),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new BasicExpression('aaa'),
-          new NotExpression(new LabelledExpression('bb', new BasicExpression('BB'))),
-        ]),
+        // new BinaryOperationExpression(AndOperator.one, [
+        //   new TextExpression('aaa'),
+        //   new NotExpression(new LabelledExpression('bb', new TextExpression('BB'))),
+        // ]),
         new BinaryOperationExpression(AndOperator.one, [
           new BinaryOperationExpression(AndOperator.one, [
-            new BasicExpression('aaa'),
+            new TextExpression('aaa'),
             new BinaryOperationExpression(OrOperator.one, [
-              new BasicExpression('bbb'),
-              new BasicExpression('ccc'),
+              new TextExpression('bbb'),
+              new TextExpression('ccc'),
             ]),
           ]),
-          new NotExpression(new BasicExpression('ddd')),
+          new NotExpression(new TextExpression('ddd')),
         ]),
         new BinaryOperationExpression(AndOperator.one, [
           new BinaryOperationExpression(OrOperator.one, [
-            new BasicExpression('aaa'),
-            new BasicExpression('bbb'),
+            new TextExpression('aaa'),
+            new TextExpression('bbb'),
           ]),
-          new NotExpression(new BasicExpression('ccc')),
+          new NotExpression(new TextExpression('ccc')),
         ]),
         new BinaryOperationExpression(AndOperator.one, [
           new BinaryOperationExpression(AndOperator.one, [
             new BinaryOperationExpression(AndOperator.one, [
-              new BasicExpression('aaa'),
-              new BasicExpression('bbb'),
+              new TextExpression('aaa'),
+              new TextExpression('bbb'),
             ]),
-            new BasicExpression('ccc'),
+            new TextExpression('ccc'),
           ]),
-          new NotExpression(new BasicExpression('ddd')),
+          new NotExpression(new TextExpression('ddd')),
         ]),
       ];
 
@@ -179,8 +178,8 @@ describe('SearchQL parsers', () => {
         ' ',
         AND,
         OR,
-        `123${LABEL_DELIMITER}a${LABEL_DELIMITER}sd`,
-        `${LABEL_DELIMITER}text`,
+        '123"asd',
+        '"text',
         `${GROUP_START}asd`,
         `asd${GROUP_END}`,
         `dasd${EXACT_MATCHER}a`,
@@ -192,18 +191,18 @@ describe('SearchQL parsers', () => {
 
     describe('with some parsers excluded', () => {
 
-      const subsetOfAllParsers = [ParserName.Basic, ParserName.JoinedGroup];
+      const subsetOfAllParsers = [ParserName.Basic, ParserName.BinaryOperation];
 
       const validInput = [
         'aa',
       ];
 
       const validOutput = [
-        new BasicExpression('aa'),
+        new TextExpression('aa'),
       ];
 
       const invalidInput = [
-        'desc:abc',
+        'desc abc AND',
         'NOT aaa',
       ];
 

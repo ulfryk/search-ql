@@ -3,22 +3,22 @@ import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
 import * as _ from 'lodash';
 
-import { AndOperator, BasicExpression, BinaryOperationExpression, Operator, OrOperator } from '../ast';
+import { AndOperator, BinaryOperationExpression, Operator, OrOperator, TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
-import { BasicExpressionTester } from './basic-expression';
 import { BinaryOperationExpressionTester } from './binary-operation-expression';
+import { TextExpressionTester } from './text-expression';
 
 const config = new SyntaxConfig();
 
 const getTester = (operator: Operator, values: string[]) => {
   const expr = new BinaryOperationExpression(
     operator,
-    values.map(BasicExpression.fromMatch) as [BasicExpression, BasicExpression]);
+    values.map(TextExpression.fromMatch) as [TextExpression, TextExpression]);
 
   return new BinaryOperationExpressionTester(
     expr,
     OrderedSet(expr.value)
-      .map((child: BasicExpression) => new BasicExpressionTester(child, config))
+      .map((child: TextExpression) => new TextExpressionTester(child, config))
       .toOrderedSet(),
     config);
 };
