@@ -1,9 +1,8 @@
 import { OperatorType, SyntaxConfig } from '../../config';
 
-import { AndOperator } from './and-operator';
-import { NotOperator } from './not-operator';
+import { AndOperator, OrOperator } from './binary';
 import { Operator } from './operator';
-import { OrOperator } from './or-operator';
+import { NotOperator } from './unary';
 
 export const tokenToOperator = (config: SyntaxConfig) => (token: string): Operator => {
   switch (config.getOperatorType(token)) {

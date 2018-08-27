@@ -1,9 +1,13 @@
 import { ISetoid } from '@samwise-tech/core';
 import { Maybe } from 'monet';
 
-import { OperatorType } from '../../config';
+import { OperatorType, SyntaxConfig } from '../../config';
 
 export abstract class Operator implements ISetoid {
+
+  public static fromToken(_config: SyntaxConfig): (token: string) => Operator {
+    throw Error('unimplemented');
+  }
 
   public abstract readonly type: OperatorType;
 

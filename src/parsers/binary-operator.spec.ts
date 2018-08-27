@@ -3,20 +3,20 @@ import { expect } from 'chai';
 import * as P from 'parsimmon';
 
 import { SyntaxConfig } from '../config';
-import { logicalOperator } from './logical-operator';
+import { binaryOperator } from './binary-operator';
 
 const config = new SyntaxConfig();
 const { AND, OR } = config;
 
 describe('SearchQL parsers', () => {
 
-  describe('logicalOperator', () => {
+  describe('binaryOperator', () => {
 
     const validInput = [AND, OR];
 
     validInput.forEach(input => {
       describe(`for '${input}'`, () => {
-        const parsed = logicalOperator(config).parse(input);
+        const parsed = binaryOperator(config).parse(input);
 
         it('should succeed', () => {
           expect(parsed.status).to.be.true;
@@ -33,7 +33,7 @@ describe('SearchQL parsers', () => {
       describe(`for '${input}'`, () => {
 
         it('should fail', () => {
-          expect(logicalOperator(config).parse(input).status).to.be.false;
+          expect(binaryOperator(config).parse(input).status).to.be.false;
         });
 
       });
@@ -41,7 +41,7 @@ describe('SearchQL parsers', () => {
 
     describe('for many valid occurrences', () => {
       const input = validInput.join(' ');
-      const parser = P.sepBy1(logicalOperator(config), P.whitespace);
+      const parser = P.sepBy1(binaryOperator(config), P.whitespace);
       const expectedOutput = validInput;
       const output = parser.parse(input);
 
@@ -57,7 +57,7 @@ describe('SearchQL parsers', () => {
 
     describe('for mixed input (valid occurrences mixed with invalid strings)', () => {
       const input = validInput.concat(['NOR', 'XOR', 'NAND']).join(' ');
-      const parser = P.sepBy1(logicalOperator(config), P.whitespace);
+      const parser = P.sepBy1(binaryOperator(config), P.whitespace);
       const output = parser.parse(input);
 
       it('should fail', () => {

@@ -1,6 +1,6 @@
-import { OperatorType } from '../../config';
+import { OperatorType } from '../../../config';
 
-import { UnaryOperator } from './unary-operator';
+import { UnaryOperator } from './unary';
 
 export class NotOperator extends UnaryOperator {
   public static readonly one = new NotOperator();

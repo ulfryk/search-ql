@@ -1,6 +1,6 @@
-import { OperatorType } from '../../config';
+import { OperatorType } from '../../../config';
 
-import { BinaryOperator } from './binary-operator';
+import { BinaryOperator } from './binary';
 
 export class AndOperator extends BinaryOperator {
   public static readonly one = new AndOperator();

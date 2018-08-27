@@ -5,21 +5,21 @@ import * as P from 'parsimmon';
 import { Expression, fromPairs, NotExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
+import { binaryOperator } from './binary-operator';
 import { labelledExpression } from './labelled';
-import { logicalOperator } from './logical-operator';
 import { ParserName } from './names';
 
 export class QueryParserFactory {
 
   private readonly parserMappings = OrderedMap<ParserName, () => P.Parser<any>>([
-    [ParserName.JoinedGroup, () => this.joinedGroup],
+    [ParserName.JoinedGroup, () => this.groupedBinaryOperation],
     [ParserName.Labelled, () => labelledExpression(this.config)],
     [ParserName.Not, () => this.notExpression],
     [ParserName.Basic, () => basicExpression(this.config)],
   ]);
 
-  private readonly operator = P.whitespace
-    .then(logicalOperator(this.config))
+  private readonly binaryOperator = P.whitespace
+    .then(binaryOperator(this.config))
     .skip(P.whitespace);
 
   constructor(
@@ -28,7 +28,7 @@ export class QueryParserFactory {
   ) {}
 
   public getParser(): P.Parser<Expression> {
-    return P.alt(this.joinedExpression, this.subQuery);
+    return P.alt(this.binaryOperation, this.subQuery);
   }
 
   private getParsers(): P.Parser<any>[] {
@@ -42,31 +42,35 @@ export class QueryParserFactory {
     return P.lazy(() => P.alt(...this.getParsers()));
   }
 
-  private get queryLogicalPart() {
-    return P.seqMap(this.operator, this.subQuery, (op, expression) => [Some(op), expression]);
+  private get rightHandSide() {
+    return P.seqMap(
+      this.binaryOperator,
+      this.subQuery,
+      (operator, expression) => [Some(operator), expression]);
   }
 
-  private get joinedExpression(): P.Parser<Expression> {
+  private get binaryOperation(): P.Parser<Expression> {
     return P.seqMap(
       this.subQuery,
-      this.queryLogicalPart.many(),
-      (head, tail) => [[None<string>(), head]].concat(tail),
+      this.rightHandSide.many(),
+      (leftOperand, operatorAndRightOperandExpression) =>
+        [[None<string>(), leftOperand]].concat(operatorAndRightOperandExpression),
     ).map((parser: [Maybe<string>, Expression][]) => fromPairs(parser, this.config));
   }
 
-  private get joinedGroup(): P.Parser<Expression> {
+  private get groupedBinaryOperation(): P.Parser<Expression> {
     return P.seqMap(
       P.string(this.config.GROUP_START).skip(P.optWhitespace),
-      this.joinedExpression,
+      this.binaryOperation,
       P.optWhitespace.then(P.string(this.config.GROUP_END)),
-      (_start, logical, _end) => logical);
+      (_leftBracket, operation, _rightBracket) => operation);
   }
 
   private get notExpression(): P.Parser<Expression> {
     return P.seqMap(
       P.string(this.config.NOT).skip(P.whitespace),
       this.subQuery,
-      (_operator, logical) => new NotExpression(logical));
+      (_operator, operand) => new NotExpression(operand));
   }
 
 }
