@@ -6,12 +6,30 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
 ### Added
-- configurability
+
+- allow custom configuration
+- operators and binary operation expressions
+  - `AND`, `OR` logical operators (used with `BinaryOperationExpression`)
+  - `LIKE` operator (replacement for `LabelledExpression`)
+  - `NOT` - (used with `NotExpression`, `UnaryOperationExpression` will be implemented soon)
+- `TermExpression` with sub expressions:
+  - `DateExpression`
+  - `NumberExpression`
+  - `SelectorExpression` (used with binary operator `LIKE` to replace `LabelledExpression`)
+  - `TextExpression` (replaces `BasicExpression`)
+
+### Removed
+
+- **breaking** drop `LabelledExpression`
+- **breaking** drop `BasicExpression`
+- **breaking** remove `test` method from expression
 
 ### Changed
+
 - **breaking** don't ignore trailing operator
-- **breaking** remove `test` method from expression (moved to Testers)
+- **breaking** input testing decoupled from AST
 
 ## 2.1.3 - 2018-08-02
 ### Fixed
