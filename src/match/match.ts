@@ -1,8 +1,6 @@
-// tslint:disable-next-line:no-import-side-effect
-import '@samwise-tech/immutable/Iterable/lastMaybe';
-
 import { ISetoid } from '@samwise-tech/core';
 import { Iterable, Map, OrderedSet } from 'immutable';
+import { Maybe } from 'monet';
 
 import { MatchError } from './error';
 import { MatchCoords } from './match-coords';
@@ -65,8 +63,8 @@ export class Match implements ISetoid {
         .map(singleCoords => singleCoords))
       .sort((a, b) => a.compare(b))
       .reduce((acc, next) =>
-        acc.lastMaybe().cata(
-        () => acc.concat(next),
+        Maybe.fromNull(acc.last()).cata(
+          () => acc.concat(next),
           (last: MatchCoords) => acc.butLast().concat(last.queueOrMerge(next))),
         Iterable([]) as Iterable<number, MatchCoords>)
       .sort((a, b) => a.compare(b))

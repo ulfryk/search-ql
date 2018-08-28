@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - **breaking** don't ignore trailing operator
 - **breaking** input testing decoupled from AST
 
+### Fixed
+
+- update dependencies
+
 ## 2.1.3 - 2018-08-02
 ### Fixed
 - update dependencies

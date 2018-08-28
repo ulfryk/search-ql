@@ -36,22 +36,22 @@
   },
   "dependencies": {
     "@samwise-tech/core": "^2.0.1",
-    "@samwise-tech/immutable": "^1.1.1",
-    "@types/parsimmon": "^1.6.2",
-    "parsimmon": "^1.7.3"
+    "immutable": "^3.8.2",
+    "monet": "0.9.0-alpha.4",
+    "parsimmon": "^1.12.0"
   },
   "devDependencies": {
     "@samwise-tech/forbidden-patterns": "1.0.4",
     "@samwise-tech/tslint-config": "1.0.6",
     "@types/chai": "4.1.4",
-    "@types/lodash": "4.14.115",
+    "@types/lodash": "4.14.116",
     "@types/mocha": "5.2.5",
-    "@types/node": "10.5.5",
+    "@types/node": "10.9.2",
+    "@types/parsimmon": "1.10.0",
     "chai": "4.1.2",
     "circular-dependency-plugin": "5.0.2",
     "core-js": "2.5.7",
-    "immutable": "^3.8.2",
-    "karma": "2.0.5",
+    "karma": "3.0.0",
     "karma-chai": "0.1.0",
     "karma-chrome-launcher": "2.2.0",
     "karma-firefox-launcher": "1.1.0",
@@ -60,16 +60,11 @@
     "karma-webpack": "3.0.0",
     "lodash": "4.17.10",
     "mocha": "5.2.0",
-    "monet": "0.9.0-alpha.4",
-    "ts-loader": "4.4.2",
-    "ts-node": "7.0.0",
+    "ts-loader": "4.5.0",
+    "ts-node": "7.0.1",
     "tslib": "1.9.3",
     "tslint": "5.11.0",
     "typescript": "3.0.1",
-    "webpack": "4.16.3"
-  },
-  "peerDependencies": {
-    "immutable": "^3.8.0",
-    "monet": "0.9.0-alpha.4"
+    "webpack": "4.17.1"
   }
 }

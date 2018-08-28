@@ -1,4 +1,5 @@
 import { Map } from 'immutable';
+import { Maybe } from 'monet';
 
 import { OperatorType } from './operator-type';
 
@@ -55,7 +56,7 @@ export class SyntaxConfig {
   }
 
   public getOperatorType(token: string) {
-    return this.operatorMapping.getMaybe(token).cata(() => {
+    return Maybe.fromNull(this.operatorMapping.get(token)).cata(() => {
       throw Error(`No operator type for token: "${token}"`);
     }, __ => __);
   }

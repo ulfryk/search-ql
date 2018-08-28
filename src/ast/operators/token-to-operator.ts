@@ -1,7 +1,5 @@
-// tslint:disable-next-line:no-import-side-effect
-import '@samwise-tech/immutable/Iterable/getMaybe';
-
 import { Map } from 'immutable';
+import { Maybe } from 'monet';
 
 import { OperatorType, SyntaxConfig } from '../../config';
 
@@ -17,6 +15,6 @@ const operatorMapping = Map<OperatorType, (token: string) => BinaryOperator>([
 ]);
 
 export const tokenToOperator = (config: SyntaxConfig) => (token: string): Operator =>
-  operatorMapping.getMaybe(config.getOperatorType(token)).cata(() => {
+  Maybe.fromNull(operatorMapping.get(config.getOperatorType(token))).cata(() => {
     throw Error(`Unknown OperatorType for token: "${token}"`);
   }, getOperator => getOperator(token));

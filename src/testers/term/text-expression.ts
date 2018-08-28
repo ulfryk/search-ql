@@ -1,6 +1,3 @@
-// tslint:disable-next-line:no-import-side-effect
-import '@samwise-tech/immutable/Iterable/lastMaybe';
-
 import { indexOf } from '@samwise-tech/core';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
@@ -31,7 +28,7 @@ export class TextExpressionTester extends Tester<TextExpression, null> {
   }
 
   private getIndexes(indexes = OrderedSet<number>()) {
-    const prevIndex = indexes.lastMaybe().fold(0)(lastIndex =>
+    const prevIndex = Maybe.fromNull(indexes.last()).fold(0)(lastIndex =>
       lastIndex + this.ast.preparedValue.length);
 
     return (input: string): OrderedSet<number> =>
