@@ -19,7 +19,7 @@ export class NotExpression extends Expression {
   }
 
   public toString() {
-    return `NOT ${this.value.toString()}`;
+    return `NOT ${this.value}`;
   }
 
 }

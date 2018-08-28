@@ -17,7 +17,7 @@ export const fromPairs =
                 BinaryOperationExpression.fromPair(operator)(lhs, rhs) :
                 // TODO: remove or re-implement AND-less NotExpression
                 // FIXME: …a pair with an unary operator?!?
-                BinaryOperationExpression.and(config.AND)(lhs, new NotExpression(rhs))))
+                BinaryOperationExpression.and(config.AND[0])(lhs, new NotExpression(rhs))))
           .orElse(Some(rhs)),
         None<Expression>())
       .orJust(TermExpression.empty()); // Should be validated as empty

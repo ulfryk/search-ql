@@ -7,6 +7,7 @@ import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 import { binaryOperator } from './binary-operator';
 import { ParserName } from './names';
+import { unaryOperator } from './unary-operator';
 
 export class QueryParserFactory {
 
@@ -64,9 +65,10 @@ export class QueryParserFactory {
       (_leftBracket, operation, _rightBracket) => operation);
   }
 
+  // TODO: change to unaryOperationExpression
   private get notExpression(): P.Parser<Expression> {
     return P.seqMap(
-      P.string(this.config.NOT).skip(P.whitespace),
+      unaryOperator(this.config).skip(P.whitespace),
       this.subQuery,
       (_operator, operand) => new NotExpression(operand));
   }

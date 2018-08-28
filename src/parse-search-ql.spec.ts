@@ -14,9 +14,9 @@ describe('SearchQL', () => {
   describe('parseSearchQL with regular config', () => {
 
     const { AND, LIKE } = new SyntaxConfig();
-    const And = new AndOperator(AND);
-    const Like = new LikeOperator(LIKE);
-    // const Or = new OrOperator(OR);
+    const And = new AndOperator(AND[0]);
+    const Like = new LikeOperator(LIKE[0]);
+    // const Or = new OrOperator(OR[0]);
 
     const allParserNames =
       [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
@@ -90,12 +90,12 @@ describe('SearchQL', () => {
 
   describe('parseSearchQL with custom config', () => {
 
-    const config = SyntaxConfig.create({ AND: '&&', OR: '||', LIKE: '~' });
+    const config = SyntaxConfig.create({ AND: ['&&'], OR: ['||'], LIKE: ['~='] });
 
     const { AND, LIKE, OR } = config;
-    const And = new AndOperator(AND);
-    const Like = new LikeOperator(LIKE);
-    const Or = new OrOperator(OR);
+    const And = new AndOperator(AND[0]);
+    const Like = new LikeOperator(LIKE[0]);
+    const Or = new OrOperator(OR[0]);
 
     const allParserNames =
       [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
@@ -103,9 +103,9 @@ describe('SearchQL', () => {
     const validInput = [
       'aaa && bbb',
       'aaa || bbb',
-      'first_name ~ Adam',
+      'first_name ~= Adam',
       // TODO: Add operator precedence
-      // 'first_name ~ Adam && token_expired ~ true',
+      // 'first_name ~= Adam && token_expired ~= true',
     ];
     const successfulOutputValues = [
       Right<Failure, Expression>(new BinaryOperationExpression(And, [

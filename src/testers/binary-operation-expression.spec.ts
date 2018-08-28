@@ -8,9 +8,9 @@ import { SyntaxConfig } from '../config';
 import { BinaryOperationExpressionTester, Tester } from './index';
 
 const config = new SyntaxConfig();
-const And = new AndOperator(config.AND);
-const Or = new OrOperator(config.OR);
-const Like = new LikeOperator(config.LIKE);
+const And = new AndOperator(config.AND[0]);
+const Or = new OrOperator(config.OR[0]);
+const Like = new LikeOperator(config.LIKE[0]);
 
 const getTester = (operator: Operator, values: [string, string]) => {
   const [lhs, rhs] = values.map(TermExpression.fromMatch);

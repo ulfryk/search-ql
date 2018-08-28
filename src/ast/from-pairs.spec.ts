@@ -10,11 +10,11 @@ import { AndOperator, LikeOperator, OrOperator } from './operators';
 
 const config = new SyntaxConfig();
 const { AND, LIKE, NOT, OR } = config;
-const And = new AndOperator(AND);
-const Like = new LikeOperator(LIKE);
-const Or = new OrOperator(OR);
+const And = new AndOperator(AND[0]);
+const Like = new LikeOperator(LIKE[0]);
+const Or = new OrOperator(OR[0]);
 
-describe('SearchQL expressions', () => {
+describe('SearchQL ast', () => {
 
   describe('fromPairs', () => {
 
@@ -22,36 +22,36 @@ describe('SearchQL expressions', () => {
       [[None<string>(), new TextExpression('aaa AND ) a:aaaa OR OR OR')]],
       [
         [None<string>(), new TextExpression('aaa')],
-        [Some(AND), new TextExpression('bbb')],
+        [Some(AND[0]), new TextExpression('bbb')],
       ],
       [
         [None<string>(), new TextExpression('first_name')],
-        [Some(LIKE), new TextExpression('John')],
+        [Some(LIKE[0]), new TextExpression('John')],
       ],
       [
         [None<string>(), new TextExpression('aaa')],
-        [Some(NOT), new TextExpression('bbb')],
+        [Some(NOT[0]), new TextExpression('bbb')],
       ],
       [
         [None<string>(), new TextExpression('aaa')],
-        [Some(OR), new TextExpression('bbb')],
-        [Some(AND), new TextExpression('ccc')],
+        [Some(OR[0]), new TextExpression('bbb')],
+        [Some(AND[1]), new TextExpression('ccc')],
       ],
       [
         [None<string>(), new TextExpression('aaa')],
-        [Some(OR), fromPairs([
+        [Some(OR[1]), fromPairs([
           [None<string>(), new TextExpression('aaa')],
-          [Some(OR), new TextExpression('bbb')],
-          [Some(AND), new TextExpression('ccc')],
+          [Some(OR[0]), new TextExpression('bbb')],
+          [Some(AND[0]), new TextExpression('ccc')],
         ] as [Maybe<string>, Expression][], config)],
-        [Some(AND), new TextExpression('ccc')],
+        [Some(AND[1]), new TextExpression('ccc')],
       ],
       [
         [None<string>(), new BinaryOperationExpression(And, [
           new TextExpression('aaa'),
           new TextExpression('bbb'),
         ])],
-        [Some(NOT), new TextExpression('ccc')],
+        [Some(NOT[1]), new TextExpression('ccc')],
       ],
     ];
 

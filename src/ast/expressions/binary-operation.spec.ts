@@ -9,8 +9,8 @@ import { Expression } from './expression';
 import { TextExpression } from './term';
 
 const { AND, OR } = new SyntaxConfig();
-const And = new AndOperator(AND);
-const Or = new OrOperator(OR);
+const And = new AndOperator(AND[0]);
+const Or = new OrOperator(OR[0]);
 
 describe('SearchQL expressions', () => {
 

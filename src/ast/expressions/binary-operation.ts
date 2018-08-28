@@ -66,7 +66,7 @@ export class BinaryOperationExpression extends Expression {
   }
 
   public toString() {
-    return this.value.map(expression => expression.toString()).join(` ${this.operator} `);
+    return this.value.map(String).join(` ${this.operator} `);
   }
 
 }

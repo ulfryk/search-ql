@@ -9,9 +9,9 @@ import { or } from './or';
 
 const getRuntimes = ({ AND, LIKE, OR }: SyntaxConfig) =>
   Map<BinaryOperator, BinaryOperatorRuntime>([
-    [new AndOperator(AND), and],
-    [new LikeOperator(LIKE), like],
-    [new OrOperator(OR), or],
+    ...AND.map(token => [new AndOperator(token), and]),
+    ...LIKE.map(token => [new LikeOperator(token), like]),
+    ...OR.map(token => [new OrOperator(token), or]),
   ]);
 
 export const getBinaryOperatorRuntime =

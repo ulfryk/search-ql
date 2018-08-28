@@ -17,9 +17,9 @@ import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, LIKE, OR } = new SyntaxConfig();
-const And = new AndOperator(AND);
-const Like = new LikeOperator(LIKE);
-const Or = new OrOperator(OR);
+const And = new AndOperator(AND[0]);
+const Like = new LikeOperator(LIKE[0]);
+const Or = new OrOperator(OR[0]);
 
 const test = (
   validInput: string[],
@@ -65,8 +65,8 @@ describe('SearchQL parsers', () => {
 
       const validInput = [
         'aa',
-        `a${AND}`,
-        `(((${OR}a)))`,
+        `a${AND[1]}`,
+        `(((${OR[1]}a)))`,
         '"aa:bb AND cc dd"',
         'aa LIKE AA',
         'aa AND bb',
@@ -88,8 +88,8 @@ describe('SearchQL parsers', () => {
 
       const validOutput = [
         new TextExpression('aa'),
-        new TextExpression(`a${AND}`),
-        new TextExpression(`${OR}a`),
+        new TextExpression(`a${AND[1]}`),
+        new TextExpression(`${OR[1]}a`),
         new TextExpression('aa:bb AND cc dd'),
         new BinaryOperationExpression(Like, [
           new SelectorExpression('aa'),
@@ -188,8 +188,8 @@ describe('SearchQL parsers', () => {
         'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
         'OR AND NOT (OR AND NOT) asd: asd not ASD:ASd',
         ' ',
-        AND,
-        OR,
+        ...AND,
+        ...OR,
         '123"asd',
         '"text',
         `${GROUP_START}asd`,
@@ -207,15 +207,21 @@ describe('SearchQL parsers', () => {
 
       const validInput = [
         'aa',
+        'bb & cc',
       ];
 
       const validOutput = [
         new TextExpression('aa'),
+        new BinaryOperationExpression(And, [
+          new TextExpression('bb'),
+          new TextExpression('cc'),
+        ]),
       ];
 
       const invalidInput = [
         'desc abc AND',
         'NOT aaa',
+        '! aaa',
       ];
 
       test(validInput, validOutput, invalidInput, subsetOfAllParsers);

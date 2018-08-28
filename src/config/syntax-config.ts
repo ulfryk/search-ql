@@ -16,20 +16,20 @@ export class SyntaxConfig {
   }
 
   public readonly operatorMapping = Map<string, OperatorType>([
-    [this.AND, OperatorType.And],
-    [this.LIKE, OperatorType.Like],
-    [this.NOT, OperatorType.Not],
-    [this.OR, OperatorType.Or],
+    ...this.AND.map(token => [token, OperatorType.And]),
+    ...this.LIKE.map(token => [token, OperatorType.Like]),
+    ...this.NOT.map(token => [token, OperatorType.Not]),
+    ...this.OR.map(token => [token, OperatorType.Or]),
   ]);
 
   constructor(
     // binary operators
-    public readonly AND = 'AND',
-    public readonly LIKE = 'LIKE',
-    public readonly OR = 'OR',
+    public readonly AND = ['AND', '&'],
+    public readonly LIKE = ['LIKE', '~'],
+    public readonly OR = ['OR', '|'],
     // unary operators
-    public readonly NOT = 'NOT',
-    // grouping
+    public readonly NOT = ['NOT', '!'],
+    // grouping (only one sign allowed at once)
     public readonly GROUP_START = '(',
     public readonly GROUP_END = ')',
     public readonly EXACT_MATCHER = '"',
@@ -52,7 +52,13 @@ export class SyntaxConfig {
   public get binaryOperators() {
     const { AND, LIKE, OR } = this;
 
-    return [AND, LIKE, OR];
+    return [...AND, ...LIKE, ...OR];
+  }
+
+  public get unaryOperators() {
+    const { NOT } = this;
+
+    return [...NOT];
   }
 
   public getOperatorType(token: string) {
