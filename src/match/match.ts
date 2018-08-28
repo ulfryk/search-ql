@@ -13,6 +13,12 @@ export class Match implements ISetoid {
     return new Match(input, Map<string, OrderedSet<MatchCoords>>());
   }
 
+  public static whole(input: string) {
+    return new Match(input, Map<string, OrderedSet<MatchCoords>>([
+      [input, OrderedSet([MatchCoords.fromIndex(input)(0)])],
+    ]));
+  }
+
   public static fromIndexes(text: string, phrase: string, indexes: OrderedSet<number>) {
     return new Match(text, indexes
       .map(MatchCoords.fromIndex(phrase))

@@ -2,8 +2,8 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { TextExpression } from '../ast';
-import { SyntaxConfig } from '../config';
+import { TextExpression } from '../../ast';
+import { SyntaxConfig } from '../../config';
 import { TextExpressionTester } from './text-expression';
 
 const getTester = (expr: TextExpression) =>

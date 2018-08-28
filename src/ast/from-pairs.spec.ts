@@ -4,12 +4,15 @@ import { zip } from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
-import { BinaryOperationExpression, Expression, NotExpression, TextExpression } from './expressions';
+import { BinaryOperationExpression, Expression, NotExpression, SelectorExpression, TextExpression } from './expressions';
 import { fromPairs } from './from-pairs';
-import { AndOperator, OrOperator } from './operators';
+import { AndOperator, LikeOperator, OrOperator } from './operators';
 
 const config = new SyntaxConfig();
-const { AND, NOT, OR } = config;
+const { AND, LIKE, NOT, OR } = config;
+const And = new AndOperator(AND);
+const Like = new LikeOperator(LIKE);
+const Or = new OrOperator(OR);
 
 describe('SearchQL expressions', () => {
 
@@ -20,6 +23,10 @@ describe('SearchQL expressions', () => {
       [
         [None<string>(), new TextExpression('aaa')],
         [Some(AND), new TextExpression('bbb')],
+      ],
+      [
+        [None<string>(), new TextExpression('first_name')],
+        [Some(LIKE), new TextExpression('John')],
       ],
       [
         [None<string>(), new TextExpression('aaa')],
@@ -40,7 +47,7 @@ describe('SearchQL expressions', () => {
         [Some(AND), new TextExpression('ccc')],
       ],
       [
-        [None<string>(), new BinaryOperationExpression(AndOperator.one, [
+        [None<string>(), new BinaryOperationExpression(And, [
           new TextExpression('aaa'),
           new TextExpression('bbb'),
         ])],
@@ -50,26 +57,30 @@ describe('SearchQL expressions', () => {
 
     const validOutput = [
       new TextExpression('aaa AND ) a:aaaa OR OR OR'),
-      new BinaryOperationExpression(AndOperator.one, [
+      new BinaryOperationExpression(And, [
         new TextExpression('aaa'),
         new TextExpression('bbb'),
       ]),
-      new BinaryOperationExpression(AndOperator.one, [
+      new BinaryOperationExpression(Like, [
+        new SelectorExpression('first_name'),
+        new TextExpression('John'),
+      ]),
+      new BinaryOperationExpression(And, [
         new TextExpression('aaa'),
         new NotExpression(new TextExpression('bbb')),
       ]),
-      new BinaryOperationExpression(AndOperator.one, [
-        new BinaryOperationExpression(OrOperator.one, [
+      new BinaryOperationExpression(And, [
+        new BinaryOperationExpression(Or, [
           new TextExpression('aaa'),
           new TextExpression('bbb'),
         ]),
         new TextExpression('ccc'),
       ]),
-      new BinaryOperationExpression(AndOperator.one, [
-        new BinaryOperationExpression(OrOperator.one, [
+      new BinaryOperationExpression(And, [
+        new BinaryOperationExpression(Or, [
           new TextExpression('aaa'),
-          new BinaryOperationExpression(AndOperator.one, [
-            new BinaryOperationExpression(OrOperator.one, [
+          new BinaryOperationExpression(And, [
+            new BinaryOperationExpression(Or, [
               new TextExpression('aaa'),
               new TextExpression('bbb'),
             ]),
@@ -78,8 +89,8 @@ describe('SearchQL expressions', () => {
         ]),
         new TextExpression('ccc'),
       ]),
-      new BinaryOperationExpression(AndOperator.one, [
-        new BinaryOperationExpression(AndOperator.one, [
+      new BinaryOperationExpression(And, [
+        new BinaryOperationExpression(And, [
           new TextExpression('aaa'),
           new TextExpression('bbb'),
         ]),

@@ -1,19 +1,17 @@
-import { Expression } from '../expression';
-
 import { TermExpression } from './term';
 
-export class TextExpression extends TermExpression {
+export class TextExpression extends TermExpression<string> {
 
   public static fromMatch(match: string) {
     return new TextExpression(match);
   }
 
-  constructor(value: string) {
-    super(value.toLowerCase());
+  public static fromTerm({ value }: TermExpression) {
+    return TextExpression.fromMatch(value);
   }
 
-  public equals(other: Expression): boolean {
-    return this === other || (other instanceof TextExpression && this.value === other.value);
+  constructor(value: string) {
+    super(value, value.toLowerCase());
   }
 
   public toString() {

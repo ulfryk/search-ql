@@ -1,10 +1,10 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
-import * as _ from 'lodash';
+import { zip } from 'lodash';
 import { Right } from 'monet';
 import { Failure } from 'parsimmon';
 
-import { AndOperator, BinaryOperationExpression, Expression, OrOperator, TextExpression } from './ast';
+import { AndOperator, BinaryOperationExpression, Expression, LikeOperator, OrOperator, SelectorExpression, TextExpression } from './ast';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
@@ -13,21 +13,39 @@ describe('SearchQL', () => {
 
   describe('parseSearchQL with regular config', () => {
 
+    const { AND, LIKE } = new SyntaxConfig();
+    const And = new AndOperator(AND);
+    const Like = new LikeOperator(LIKE);
+    // const Or = new OrOperator(OR);
+
     const allParserNames =
       [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
 
     const validInput = [
       'aaa AND bbb',
-      // 'first_name ~ Adam AND token_expired ~ true',
+      'token_expired LIKE true',
+      // TODO: Add operator precedence
+      // 'first_name LIKE Adam OR token_expired LIKE true',
     ];
     const successfulOutputValues = [
-      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
+      Right<Failure, Expression>(new BinaryOperationExpression(And, [
         new TextExpression('aaa'),
         new TextExpression('bbb'),
       ])),
-      // Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
-      //   new LabelledExpression('first_name', new TextExpression('Adam')),
-      //   new LabelledExpression('token_expired', new TextExpression('true')),
+      Right<Failure, Expression>(new BinaryOperationExpression(Like, [
+        new SelectorExpression('token_expired'),
+        new TextExpression('true'),
+      ])),
+      // TODO: Add operator precedence
+      // Right<Failure, Expression>(new BinaryOperationExpression(Or, [
+      //   new BinaryOperationExpression(Like, [
+      //     new SelectorExpression('first_name'),
+      //     new TextExpression('Adam'),
+      //   ]),
+      //   new BinaryOperationExpression(Like, [
+      //     new SelectorExpression('token_expired'),
+      //     new TextExpression('true'),
+      //   ]),
       // ])),
     ];
 
@@ -38,7 +56,7 @@ describe('SearchQL', () => {
       'des:: c: ipsum OR NOT dolor AND "john doe":"',
     ];
 
-    _.zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
+    zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
         const parsed = parseSearchQL(allParserNames)(input);
 
@@ -74,26 +92,44 @@ describe('SearchQL', () => {
 
     const config = SyntaxConfig.create({ AND: '&&', OR: '||', LIKE: '~' });
 
+    const { AND, LIKE, OR } = config;
+    const And = new AndOperator(AND);
+    const Like = new LikeOperator(LIKE);
+    const Or = new OrOperator(OR);
+
     const allParserNames =
       [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
 
     const validInput = [
       'aaa && bbb',
       'aaa || bbb',
+      'first_name ~ Adam',
+      // TODO: Add operator precedence
       // 'first_name ~ Adam && token_expired ~ true',
     ];
     const successfulOutputValues = [
-      Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
+      Right<Failure, Expression>(new BinaryOperationExpression(And, [
         new TextExpression('aaa'),
         new TextExpression('bbb'),
       ])),
-      Right<Failure, Expression>(new BinaryOperationExpression(OrOperator.one, [
+      Right<Failure, Expression>(new BinaryOperationExpression(Or, [
         new TextExpression('aaa'),
         new TextExpression('bbb'),
       ])),
-      // Right<Failure, Expression>(new BinaryOperationExpression(AndOperator.one, [
-      //   new LabelledExpression('first_name', new TextExpression('Adam')),
-      //   new LabelledExpression('token_expired', new TextExpression('true')),
+      Right<Failure, Expression>(new BinaryOperationExpression(Like, [
+        new SelectorExpression('first_name'),
+        new TextExpression('Adam'),
+      ])),
+      // TODO: Add operator precedence
+      // Right<Failure, Expression>(new BinaryOperationExpression(And, [
+      //   new BinaryOperationExpression(Like, [
+      //     new SelectorExpression('first_name'),
+      //     new TextExpression('Adam'),
+      //   ]),
+      //   new BinaryOperationExpression(Like, [
+      //     new SelectorExpression('token_expired'),
+      //     new TextExpression('true'),
+      //   ]),
       // ])),
     ];
 
@@ -104,7 +140,7 @@ describe('SearchQL', () => {
       'des~~ c~ ipsum || NOT dolor && "john doe"~"',
     ];
 
-    _.zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
+    zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
         const parsed = parseSearchQL(allParserNames, config)(input);
 

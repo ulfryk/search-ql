@@ -2,5 +2,6 @@ import * as P from 'parsimmon';
 
 import { SyntaxConfig } from '../config';
 
-export const binaryOperator = ({ AND, NOT, OR }: SyntaxConfig) =>
-  P.alt(...[AND, NOT, OR].map(operator => P.string(operator)));
+// FIXME: NOT should move out maybe ?
+export const binaryOperator = ({ binaryOperators, NOT }: SyntaxConfig) =>
+  P.alt(...[...binaryOperators, NOT].map(operator => P.string(operator)));

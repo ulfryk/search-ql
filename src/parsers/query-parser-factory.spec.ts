@@ -6,15 +6,20 @@ import {
   AndOperator,
   BinaryOperationExpression,
   Expression,
+  LikeOperator,
   NotExpression,
   OrOperator,
+  SelectorExpression,
   TextExpression,
 } from '../ast';
 import { SyntaxConfig } from '../config';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
-const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = new SyntaxConfig();
+const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, LIKE, OR } = new SyntaxConfig();
+const And = new AndOperator(AND);
+const Like = new LikeOperator(LIKE);
+const Or = new OrOperator(OR);
 
 const test = (
   validInput: string[],
@@ -63,17 +68,19 @@ describe('SearchQL parsers', () => {
         `a${AND}`,
         `(((${OR}a)))`,
         '"aa:bb AND cc dd"',
-        // 'aa : AA',
+        'aa LIKE AA',
         'aa AND bb',
         '(aa AND bb)',
-        // 'aa AND (bb:BB OR cc) OR (dd AND (ee ~ EE OR ff))',
+        // TODO: Add operator precedence
+        // 'aa AND (bb LIKE BB OR cc) OR (dd AND (ee LIKE EE OR ff))',
         'aaa AND bbb OR ccc AND ddd',
         'NOT abc',
         'aa AND NOT bb',
         'aa NOT bb',
         'NOT aaa AND NOT bbb',
         'NOT (aaa OR bbb) AND ccc',
-        // 'aaa AND NOT bb ~ BB',
+        // TODO: Add operator precedence
+        // 'aaa AND NOT bb LIKE BB',
         'aaa AND (bbb OR ccc) NOT ddd',
         '(aaa OR bbb) NOT ccc',
         'aaa AND bbb AND ccc NOT ddd',
@@ -84,34 +91,38 @@ describe('SearchQL parsers', () => {
         new TextExpression(`a${AND}`),
         new TextExpression(`${OR}a`),
         new TextExpression('aa:bb AND cc dd'),
-        // new LabelledExpression('aa', new TextExpression('AA')),
-        new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(Like, [
+          new SelectorExpression('aa'),
+          new TextExpression('AA'),
+        ]),
+        new BinaryOperationExpression(And, [
           new TextExpression('aa'),
           new TextExpression('bb'),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
           new TextExpression('aa'),
           new TextExpression('bb'),
         ]),
-        // new BinaryOperationExpression(OrOperator.one, [
-        //   new BinaryOperationExpression(AndOperator.one, [
+        // TODO: Add operator precedence
+        // new BinaryOperationExpression(Or, [
+        //   new BinaryOperationExpression(And, [
         //     new TextExpression('aa'),
-        //     new BinaryOperationExpression(OrOperator.one, [
+        //     new BinaryOperationExpression(Or, [
         //       new LabelledExpression('bb', new TextExpression('BB')),
         //       new TextExpression('cc'),
         //     ]),
         //   ]),
-        //   new BinaryOperationExpression(AndOperator.one, [
+        //   new BinaryOperationExpression(And, [
         //     new TextExpression('dd'),
-        //     new BinaryOperationExpression(OrOperator.one, [
+        //     new BinaryOperationExpression(Or, [
         //       new LabelledExpression('ee', new TextExpression('EE')),
         //       new TextExpression('ff'),
         //     ]),
         //   ]),
         // ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new BinaryOperationExpression(OrOperator.one, [
-            new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
+          new BinaryOperationExpression(Or, [
+            new BinaryOperationExpression(And, [
               new TextExpression('aaa'),
               new TextExpression('bbb'),
             ]),
@@ -120,49 +131,50 @@ describe('SearchQL parsers', () => {
           new TextExpression('ddd'),
         ]),
         new NotExpression(new TextExpression('abc')),
-        new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
           new TextExpression('aa'),
           new NotExpression(new TextExpression('bb')),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
           new TextExpression('aa'),
           new NotExpression(new TextExpression('bb')),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
           new NotExpression(new TextExpression('aaa')),
           new NotExpression(new TextExpression('bbb')),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new NotExpression(new BinaryOperationExpression(OrOperator.one, [
+        new BinaryOperationExpression(And, [
+          new NotExpression(new BinaryOperationExpression(Or, [
             new TextExpression('aaa'),
             new TextExpression('bbb'),
           ])),
           new TextExpression('ccc'),
         ]),
-        // new BinaryOperationExpression(AndOperator.one, [
+        // TODO: Add operator precedence
+        // new BinaryOperationExpression(And, [
         //   new TextExpression('aaa'),
         //   new NotExpression(new LabelledExpression('bb', new TextExpression('BB'))),
         // ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
+          new BinaryOperationExpression(And, [
             new TextExpression('aaa'),
-            new BinaryOperationExpression(OrOperator.one, [
+            new BinaryOperationExpression(Or, [
               new TextExpression('bbb'),
               new TextExpression('ccc'),
             ]),
           ]),
           new NotExpression(new TextExpression('ddd')),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new BinaryOperationExpression(OrOperator.one, [
+        new BinaryOperationExpression(And, [
+          new BinaryOperationExpression(Or, [
             new TextExpression('aaa'),
             new TextExpression('bbb'),
           ]),
           new NotExpression(new TextExpression('ccc')),
         ]),
-        new BinaryOperationExpression(AndOperator.one, [
-          new BinaryOperationExpression(AndOperator.one, [
-            new BinaryOperationExpression(AndOperator.one, [
+        new BinaryOperationExpression(And, [
+          new BinaryOperationExpression(And, [
+            new BinaryOperationExpression(And, [
               new TextExpression('aaa'),
               new TextExpression('bbb'),
             ]),

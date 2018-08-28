@@ -3,18 +3,18 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { Expression } from '../expression';
+import { SelectorExpression } from './selector';
 import { TermExpression } from './term';
-import { TextExpression } from './text';
 
 describe('SearchQL expressions', () => {
 
-  describe('TextExpression', () => {
+  describe('SelectorExpression', () => {
 
     describe('fromMatch() static method', () => {
 
-      it('should return instance of TextExpression', () => {
-        expect(TextExpression.fromMatch('aaa')).to.be.instanceof(TermExpression);
-        expect(TextExpression.fromMatch('aaa')).to.be.instanceof(TextExpression);
+      it('should return instance of SelectorExpression', () => {
+        expect(SelectorExpression.fromMatch('aaa')).to.be.instanceof(TermExpression);
+        expect(SelectorExpression.fromMatch('aaa')).to.be.instanceof(SelectorExpression);
       });
 
     });
@@ -22,18 +22,18 @@ describe('SearchQL expressions', () => {
     describe('equals() method', () => {
 
       const lhs = [
-        TextExpression.fromMatch(''),
-        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
+        SelectorExpression.fromMatch('empty'),
+        SelectorExpression.fromMatch('field_name'),
       ];
 
       const rhs = [
-        new TextExpression(''),
-        new TextExpression('aaa  asdas as asd asdas dad '),
+        new SelectorExpression('empty'),
+        new SelectorExpression('field_name'),
       ];
 
       const rhsInvalid = [
-        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
-        new TextExpression(''),
+        SelectorExpression.fromMatch('field_name'),
+        new SelectorExpression('empty'),
       ];
 
       it('should return true for comparison with a reference', () => {

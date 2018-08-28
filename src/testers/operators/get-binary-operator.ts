@@ -1,15 +1,16 @@
 import { Map } from 'immutable';
 
-import { AndOperator, BinaryOperator, OrOperator } from '../../ast';
+import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../../ast';
 import { SyntaxConfig } from '../../config';
 import { and } from './and';
 import { BinaryOperatorRuntime } from './binary-operator-runtime';
+import { like } from './like';
 import { or } from './or';
 
-const getRuntimes = ({ AND, OR }: SyntaxConfig) => // LIKE,
+const getRuntimes = ({ AND, LIKE, OR }: SyntaxConfig) =>
   Map<BinaryOperator, BinaryOperatorRuntime>([
     [new AndOperator(AND), and],
-    // [new AndOperator(LIKE), like],
+    [new LikeOperator(LIKE), like],
     [new OrOperator(OR), or],
   ]);
 

@@ -1,6 +1,6 @@
 import { TermExpression } from './term';
 
-export class SelectorExpression extends TermExpression {
+export class SelectorExpression extends TermExpression<string> {
 
   public static fromMatch(match: string) {
     return new SelectorExpression(match);
@@ -8,6 +8,10 @@ export class SelectorExpression extends TermExpression {
 
   public static fromTerm({ value }: TermExpression) {
     return SelectorExpression.fromMatch(value);
+  }
+
+  constructor(value: string) {
+    super(value, value.trim());
   }
 
 }

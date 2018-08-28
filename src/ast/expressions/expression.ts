@@ -7,4 +7,7 @@ export abstract class Expression implements ISetoid {
   public inspect(): string {
     return this.toString();
   }
+  public is<C extends typeof Expression>(ctor: C) {
+    return this instanceof ctor;
+  }
 }

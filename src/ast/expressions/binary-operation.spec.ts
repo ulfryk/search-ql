@@ -2,47 +2,57 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
+import { SyntaxConfig } from '../../config/syntax-config';
 import { AndOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
 import { Expression } from './expression';
 import { TextExpression } from './term';
 
+const { AND, OR } = new SyntaxConfig();
+const And = new AndOperator(AND);
+const Or = new OrOperator(OR);
+
 describe('SearchQL expressions', () => {
 
   describe('BinaryOperationExpression', () => {
 
-    let i = 111; // tslint:disable-line:no-let
-    const b = () => new TextExpression('aaa' + i++); // Make sure values are not equal
-
-    const and = new BinaryOperationExpression(AndOperator.one, [b(), b()]);
-    const or = new BinaryOperationExpression(OrOperator.one, [b(), b()]);
+    xdescribe('fromPair() method', () => {
+      xit('should properly create similarity expressions (LIKE)', () => { /* */ });
+      xit('should properly create logical expressions (AND, OR)', () => { /* */ });
+    });
 
     describe('equals() method', () => {
+
+      let i = 111; // tslint:disable-line:no-let
+      const b = () => new TextExpression('aaa' + i++); // Make sure values are not equal
+
+      const and = new BinaryOperationExpression(And, [b(), b()]);
+      const or = new BinaryOperationExpression(Or, [b(), b()]);
 
       const toAdd: [TextExpression, TextExpression] = [b(), b()];
 
       const lhs = [
-        new BinaryOperationExpression(OrOperator.one, [and, or]),
+        new BinaryOperationExpression(Or, [and, or]),
         or,
         and,
       ];
 
       const rhs = [
-        new BinaryOperationExpression(OrOperator.one, [
-          new BinaryOperationExpression(AndOperator.one, and.value),
-          new BinaryOperationExpression(OrOperator.one, or.value),
+        new BinaryOperationExpression(Or, [
+          new BinaryOperationExpression(And, and.value),
+          new BinaryOperationExpression(Or, or.value),
         ]),
-        new BinaryOperationExpression(OrOperator.one, or.value),
-        new BinaryOperationExpression(AndOperator.one, and.value),
+        new BinaryOperationExpression(Or, or.value),
+        new BinaryOperationExpression(And, and.value),
       ];
 
       const rhsInvalid = [
-        new BinaryOperationExpression(OrOperator.one, [
-          new BinaryOperationExpression(AndOperator.one, or.value),
-          new BinaryOperationExpression(OrOperator.one, and.value),
+        new BinaryOperationExpression(Or, [
+          new BinaryOperationExpression(And, or.value),
+          new BinaryOperationExpression(Or, and.value),
         ]),
-        new BinaryOperationExpression(AndOperator.one, toAdd),
-        new BinaryOperationExpression(AndOperator.one, toAdd),
+        new BinaryOperationExpression(And, toAdd),
+        new BinaryOperationExpression(And, toAdd),
       ];
 
       it('should return true for comparison with a reference', () => {

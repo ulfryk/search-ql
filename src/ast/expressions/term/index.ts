@@ -1,15 +1,21 @@
 import { DateExpression } from './date';
+import { isDate } from './is-date';
+import { isNumber } from './is-number';
 import { NumberExpression } from './number';
 import { TermExpression } from './term';
 import { TextExpression } from './text';
 
 TermExpression.fromMatch = (match: string): TermExpression => {
-  if (Number(match) === Number(match)) {
+  // TODO: Allow passing custom number matchers/parsers with config
+  if (isNumber(match)) {
     return NumberExpression.fromMatch(match);
   }
-  if (new Date(match).toJSON() != null) {
+
+  // TODO: Allow passing custom date matchers/parsers with config
+  if (isDate(match)) {
     return DateExpression.fromMatch(match);
   }
+
   return TextExpression.fromMatch(match);
 };
 

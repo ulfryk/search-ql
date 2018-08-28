@@ -5,14 +5,15 @@ import { Map } from 'immutable';
 import { NotExpression, TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { NotExpressionTester } from './not-expression';
-import { TextExpressionTester } from './text-expression';
+import { TextExpressionTester } from './term';
 
 const config = new SyntaxConfig();
 
 const getTester = (value: string): NotExpressionTester => {
-  const expr = new NotExpression(new TextExpression(value));
+  const text = new TextExpression(value);
+  const expr = new NotExpression(text);
 
-  return new NotExpressionTester(expr, new TextExpressionTester(expr.value, config), config);
+  return new NotExpressionTester(expr, new TextExpressionTester(text, config), config);
 };
 
 describe('SearchQL testers', () => {
