@@ -212,7 +212,7 @@ describe('SearchQL parsers', () => {
 
       const validOutput = [
         new TextExpression('aa'),
-        new BinaryOperationExpression(And, [
+        new BinaryOperationExpression(new AndOperator(AND[1]), [
           new TextExpression('bb'),
           new TextExpression('cc'),
         ]),

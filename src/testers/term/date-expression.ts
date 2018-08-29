@@ -1,5 +1,5 @@
 import { Map } from 'immutable';
-import { Maybe, None } from 'monet';
+import { Maybe, Some } from 'monet';
 
 import { DateExpression } from '../../ast';
 import { SyntaxConfig } from '../../config';
@@ -15,8 +15,12 @@ export class DateExpressionTester extends Tester<DateExpression, null> {
     super(ast, null, config);
   }
 
-  public test(_values: Map<string, string>): Maybe<Map<string, Match>> {
-    return None(); // TBD
+  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
+    return Some(values
+      .filter(value => DateExpression.prepareValue(value) === this.ast.preparedValue)
+      .map(value => Match.whole(value))
+      .toMap())
+    .filter(filtered => !filtered.isEmpty());
   }
 
 }

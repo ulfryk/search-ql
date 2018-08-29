@@ -6,8 +6,13 @@ export class DateExpression extends TermExpression<number> {
     return new DateExpression(match);
   }
 
+  // TODO: probably use config here
+  public static prepareValue(value: string) {
+    return Date.parse(value.trim());
+  }
+
   constructor(value: string) {
-    super(value, Date.parse(value.trim()));
+    super(value, DateExpression.prepareValue(value));
   }
 
 }

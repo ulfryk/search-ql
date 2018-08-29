@@ -6,8 +6,13 @@ export class NumberExpression extends TermExpression<number> {
     return new NumberExpression(match);
   }
 
+  // TODO: probably use config here
+  public static prepareValue(value: string) {
+    return Number(value.trim());
+  }
+
   constructor(value: string) {
-    super(value, Number(value.trim()));
+    super(value, NumberExpression.prepareValue(value));
   }
 
 }
