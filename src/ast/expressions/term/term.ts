@@ -24,6 +24,10 @@ export class TermExpression<PV = any> extends Expression {
     );
   }
 
+  public rebuild() {
+    return this;
+  }
+
   public toString() {
     return this.value;
   }

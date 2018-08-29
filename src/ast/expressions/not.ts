@@ -18,6 +18,16 @@ export class NotExpression extends Expression {
       this.value.equals(other.value));
   }
 
+  public rebuild() {
+    const newValue = this.value.rebuild();
+
+    if (this.value.equals(newValue)) {
+      return this;
+    }
+
+    return new NotExpression(newValue) as this;
+  }
+
   public toString() {
     return `NOT ${this.value}`;
   }

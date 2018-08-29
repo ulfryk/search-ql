@@ -20,4 +20,5 @@ export const fromPairs =
                 BinaryOperationExpression.and(config.AND[0])(lhs, new NotExpression(rhs))))
           .orElse(Some(rhs)),
         None<Expression>())
-      .orJust(TermExpression.empty()); // Should be validated as empty
+      .orJust(TermExpression.empty()) // Should be validated as empty/ `InvalidExpression` maybe?
+      .rebuild();

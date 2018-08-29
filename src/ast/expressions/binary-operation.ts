@@ -65,6 +65,17 @@ export class BinaryOperationExpression extends Expression {
       Set(this.value).equals(Set(other.value)));
   }
 
+  public rebuild() {
+    const [left, right] = this.value;
+    const [newLeft, newRight] = this.value.map(side => side.rebuild());
+
+    if (left.equals(newLeft) && right.equals(newRight)) {
+      return this;
+    }
+
+    return new BinaryOperationExpression(this.operator, [newLeft, newRight]) as this;
+  }
+
   public toString() {
     return this.value.map(String).join(` ${this.operator} `);
   }
