@@ -1,4 +1,4 @@
-import { OperatorType } from '../../../config';
+import { OperatorType } from '../../../common/model';
 
 import { UnaryOperator } from './unary';
 

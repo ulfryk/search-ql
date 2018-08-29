@@ -1,6 +1,7 @@
 import { ISetoid } from '@samwise-tech/core';
 
-import { OperatorType, SyntaxConfig } from '../../config';
+import { OperatorAssociativity, OperatorType } from '../../common/model';
+import { operatorAssociativity, operatorPrecedence, SyntaxConfig } from '../../config';
 
 export abstract class Operator implements ISetoid {
 
@@ -9,6 +10,14 @@ export abstract class Operator implements ISetoid {
   }
 
   public abstract readonly type: OperatorType;
+
+  public get associativity(): OperatorAssociativity {
+    return operatorAssociativity.get(this.type);
+  }
+
+  public get precedence(): number {
+    return operatorPrecedence.get(this.type);
+  }
 
   constructor(public readonly token: string) {}
 

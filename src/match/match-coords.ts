@@ -1,13 +1,5 @@
-import { ISetoid } from '@samwise-tech/core';
+import { compareNum, IOrd, Ordering } from '../common/model';
 import { MatchError } from './error';
-
-export enum Ordering { Lt = -1, Eq = 0, Gt = 1 }
-
-export interface IOrd<T> extends ISetoid {
-  compare(other: IOrd<T>): Ordering;
-}
-
-const compareNum = (a: number, b: number) => (a - b) / Math.abs(a - b) as Ordering;
 
 export class MatchCoords implements IOrd<MatchCoords> {
 

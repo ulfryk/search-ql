@@ -1,7 +1,8 @@
 import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
-import { OperatorType, SyntaxConfig } from '../../config';
+import { OperatorType } from '../../common/model';
+import { SyntaxConfig } from '../../config';
 
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from './binary';
 import { Operator } from './operator';

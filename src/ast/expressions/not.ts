@@ -25,7 +25,7 @@ export class NotExpression extends Expression {
       return this;
     }
 
-    return new NotExpression(newValue) as this;
+    return new NotExpression(newValue);
   }
 
   public toString() {

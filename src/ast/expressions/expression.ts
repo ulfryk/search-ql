@@ -1,9 +1,9 @@
 import { ISetoid } from '@samwise-tech/core';
 
-export abstract class Expression implements ISetoid {
+export abstract class Expression implements ISetoid { // TODO: Move to common/model
   public abstract readonly value: any;
   public abstract equals(other: Expression): boolean;
-  public abstract rebuild(): this;
+  public abstract rebuild(): Expression;
   public abstract toString(): string;
 
   public inspect(): string {

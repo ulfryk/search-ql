@@ -3,99 +3,40 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 import { Maybe, None, Some } from 'monet';
 
-import { SyntaxConfig } from '../config';
-import { BinaryOperationExpression, Expression, NotExpression, SelectorExpression, TextExpression } from './expressions';
+import { and, And, And0, config, like, Like0, not, Not, Not0, Or, or, Or0, txt } from '../testing/utils';
+import { Expression } from './expressions';
 import { fromPairs } from './from-pairs';
-import { AndOperator, LikeOperator, OrOperator } from './operators';
 
-const config = new SyntaxConfig();
-const { AND, LIKE, NOT, OR } = config;
-const And = new AndOperator(AND[0]);
-const Like = new LikeOperator(LIKE[0]);
-const Or = new OrOperator(OR[0]);
+const pairs = (initial: Expression, ...chain: [string, Expression][]) => [
+  [None<string>(), initial],
+  ...chain.map(([operator, rhs]) => [Some(operator), rhs]),
+] as [Maybe<string>, Expression][];
 
 describe('SearchQL ast', () => {
 
   describe('fromPairs', () => {
 
     const validInput = [
-      [[None<string>(), new TextExpression('aaa AND ) a:aaaa OR OR OR')]],
-      [
-        [None<string>(), new TextExpression('aaa')],
-        [Some(AND[0]), new TextExpression('bbb')],
-      ],
-      [
-        [None<string>(), new TextExpression('first_name')],
-        [Some(LIKE[0]), new TextExpression('John')],
-      ],
-      [
-        [None<string>(), new TextExpression('aaa')],
-        [Some(NOT[0]), new TextExpression('bbb')],
-      ],
-      [
-        [None<string>(), new TextExpression('aaa')],
-        [Some(OR[0]), new TextExpression('bbb')],
-        [Some(AND[1]), new TextExpression('ccc')],
-      ],
-      [
-        [None<string>(), new TextExpression('aaa')],
-        [Some(OR[1]), fromPairs([
-          [None<string>(), new TextExpression('aaa')],
-          [Some(OR[0]), new TextExpression('bbb')],
-          [Some(AND[0]), new TextExpression('ccc')],
-        ] as [Maybe<string>, Expression][], config)],
-        [Some(AND[1]), new TextExpression('ccc')],
-      ],
-      [
-        [None<string>(), new BinaryOperationExpression(And, [
-          new TextExpression('aaa'),
-          new TextExpression('bbb'),
-        ])],
-        [Some(NOT[1]), new TextExpression('ccc')],
-      ],
+      pairs(txt('aaa AND ) a:aaaa OR OR OR')),
+      pairs(txt('aaa'), [And0.token, txt('bbb')]),
+      pairs(txt('first_name'), [Like0.token, txt('John')]),
+      pairs(txt('aaa'), [Not0.token, txt('bbb')]),
+      pairs(txt('aaa'), [Or0.token, txt('bbb')], [And.token, txt('ccc')]),
+      pairs(txt('aaa'),
+        [Or.token, fromPairs(
+          pairs(txt('aaa'), [Or0.token, txt('bbb')], [And0.token, txt('ccc')]), config)],
+        [And.token, txt('ccc')]),
+      pairs(and(txt('aaa'), txt('bbb')), [Not.token, txt('ccc')]),
     ];
 
     const validOutput = [
-      new TextExpression('aaa AND ) a:aaaa OR OR OR'),
-      new BinaryOperationExpression(And, [
-        new TextExpression('aaa'),
-        new TextExpression('bbb'),
-      ]),
-      new BinaryOperationExpression(Like, [
-        new SelectorExpression('first_name'),
-        new TextExpression('John'),
-      ]),
-      new BinaryOperationExpression(And, [
-        new TextExpression('aaa'),
-        new NotExpression(new TextExpression('bbb')),
-      ]),
-      new BinaryOperationExpression(And, [
-        new BinaryOperationExpression(Or, [
-          new TextExpression('aaa'),
-          new TextExpression('bbb'),
-        ]),
-        new TextExpression('ccc'),
-      ]),
-      new BinaryOperationExpression(And, [
-        new BinaryOperationExpression(Or, [
-          new TextExpression('aaa'),
-          new BinaryOperationExpression(And, [
-            new BinaryOperationExpression(Or, [
-              new TextExpression('aaa'),
-              new TextExpression('bbb'),
-            ]),
-            new TextExpression('ccc'),
-          ]),
-        ]),
-        new TextExpression('ccc'),
-      ]),
-      new BinaryOperationExpression(And, [
-        new BinaryOperationExpression(And, [
-          new TextExpression('aaa'),
-          new TextExpression('bbb'),
-        ]),
-        new NotExpression(new TextExpression('ccc')),
-      ]),
+      txt('aaa AND ) a:aaaa OR OR OR'),
+      and(txt('aaa'), txt('bbb')),
+      like(txt('first_name'), txt('John')),
+      and(txt('aaa'), not(txt('bbb'))),
+      or(txt('aaa'), and(txt('bbb'), txt('ccc'))),
+      or(txt('aaa'), and(or(txt('aaa'), and(txt('bbb'), txt('ccc'))), txt('ccc'))),
+      and(and(txt('aaa'), txt('bbb')), not(txt('ccc'))),
     ];
 
     zip<any>(validInput, validOutput).forEach(([input, output]) => {
