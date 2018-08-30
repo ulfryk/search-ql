@@ -1,7 +1,7 @@
 import { Maybe, None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
-import { BinaryOperationChain } from './binary-operation-group';
+import { BinaryOperationChain } from './binary-operation-chain';
 import { Expression, TermExpression } from './expressions';
 import { Operator } from './operators';
 

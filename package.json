@@ -11,7 +11,6 @@
     "mocha": "mocha --opts ./mocha.opts './src/**/*.spec.ts'",
     "mocha:tdd:full": "yarn mocha --watch",
     "mocha:tdd": "yarn mocha:tdd:full --reporter min",
-    "mochaxx": "mocha --opts ./mocha.opts './src/ast/binary-operation-group/binary-operation-chain.spec.ts' --watch",
     "prepublishOnly": "yarn build",
     "test": "yarn check --integrity && yarn lint && yarn test-specs-for-only && yarn mocha && yarn karma && yarn build",
     "test-specs-for-only": "forbidden 'src/**/*.spec.ts' -p describe.only it.only"

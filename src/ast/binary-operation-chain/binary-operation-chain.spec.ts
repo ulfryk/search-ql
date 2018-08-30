@@ -211,7 +211,7 @@ describe('SearchQL ast', () => {
 
       });
 
-      describe('for raw And chains', () => {
+      describe('for And-only chains', () => {
         const [a, b, c, d, e, f] =
           ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(TextExpression.fromMatch);
 
@@ -235,7 +235,7 @@ describe('SearchQL ast', () => {
 
       });
 
-      describe('for raw Or chains', () => {
+      describe('for Or-only chains', () => {
         const [a, b, c, d, e, f] =
           ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(TextExpression.fromMatch);
 

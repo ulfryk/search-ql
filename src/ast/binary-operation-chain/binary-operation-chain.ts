@@ -20,6 +20,12 @@ export class BinaryOperationChain extends Expression {
   ) {
     super();
     Bind.to(this);
+    if (value.length !== operators.size + 1) {
+      throw new Error(
+        'BinaryOperationChain should contain exactly N + 1 expressions for N operators. ' +
+        `Trying to create instance with ${value.length} expressions ` +
+        `and ${operators.size} operators;`);
+    }
   }
 
   public append(nextRhs: Expression, config: SyntaxConfig) {
