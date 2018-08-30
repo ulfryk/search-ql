@@ -46,7 +46,7 @@
     "@types/chai": "4.1.4",
     "@types/lodash": "4.14.116",
     "@types/mocha": "5.2.5",
-    "@types/node": "10.9.2",
+    "@types/node": "10.9.3",
     "@types/parsimmon": "1.10.0",
     "chai": "4.1.2",
     "circular-dependency-plugin": "5.0.2",
@@ -64,7 +64,7 @@
     "ts-node": "7.0.1",
     "tslib": "1.9.3",
     "tslint": "5.11.0",
-    "typescript": "3.0.1",
+    "typescript": "3.0.3",
     "webpack": "4.17.1"
   }
 }
