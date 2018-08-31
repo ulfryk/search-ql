@@ -6,8 +6,10 @@ import { TextExpression } from '../../ast';
 import { SyntaxConfig } from '../../config';
 import { TextExpressionTester } from './text-expression';
 
+const config = new SyntaxConfig();
+
 const getTester = (expr: TextExpression) =>
-  new TextExpressionTester(expr, new SyntaxConfig());
+  new TextExpressionTester(expr, config);
 
 describe('SearchQL testers', () => {
 
@@ -21,10 +23,16 @@ describe('SearchQL testers', () => {
       'AND OR OR AND',
       'IpsUM-dolor_sitAMET',
       'hello world',
-    ].map((val, i) => [`label ${i}`, val.toLowerCase()])) as Map<string, string>;
+    ].map((val, i) => [`label ${i}`, val])) as Map<string, string>;
 
     const expressions = values.toArray()
-      .map((val: string) => val.substr(-6, 5))
+      .map((val, i) =>
+        i % 3 === 0 ?
+          val.toLowerCase() :
+          i % 3 === 1 ?
+            val.toLocaleUpperCase() :
+            val)
+      .map(val => val.substr(-6, 5))
       .concat(values.toArray())
       .map(TextExpression.fromMatch);
 

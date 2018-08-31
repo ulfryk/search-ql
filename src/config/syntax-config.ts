@@ -7,14 +7,15 @@ export class SyntaxConfig {
 
   public static create(
     {
+      caseSensitive,
       AND, LIKE, OR,
       NOT,
       GROUP_START, GROUP_END, EXACT_MATCHER,
       FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR,
     }: Partial<SyntaxConfig>,
   ) {
-    return new SyntaxConfig(AND, LIKE, OR, NOT, GROUP_START, GROUP_END, EXACT_MATCHER,
-      FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
+    return new SyntaxConfig(caseSensitive, AND, LIKE, OR, NOT, GROUP_START, GROUP_END,
+      EXACT_MATCHER, FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
   }
 
   public readonly operatorMapping = Map<string, OperatorType>([
@@ -25,6 +26,7 @@ export class SyntaxConfig {
   ]);
 
   constructor(
+    public caseSensitive = false,
     // binary operators
     public readonly AND = ['AND', '&'],
     public readonly LIKE = ['LIKE', '~'],

@@ -24,16 +24,24 @@ export class TextExpressionTester extends Tester<TextExpression, null> {
 
   private getMatches(values: Map<string, string>) {
     return (indexes: OrderedSet<number>, label: string): Match =>
-      Match.fromIndexes(values.get(label), this.ast.preparedValue, indexes);
+      Match.fromIndexes(values.get(label), this.refValue, indexes);
   }
 
   private getIndexes(indexes = OrderedSet<number>()) {
     const prevIndex = Maybe.fromNull(indexes.last()).fold(0)(lastIndex =>
-      lastIndex + this.ast.preparedValue.length);
+      lastIndex + this.refValue.length);
 
     return (input: string): OrderedSet<number> =>
-      indexOf(input.slice(prevIndex), this.ast.preparedValue)
+      indexOf(this.getValue(input).slice(prevIndex), this.refValue)
         .fold(indexes)(index => this.getIndexes(indexes.add(prevIndex + index))(input));
+  }
+
+  private get refValue(): string {
+    return this.getValue(this.ast.preparedValue);
+  }
+
+  private getValue(text: string) {
+    return this.config.caseSensitive ? text : text.toLowerCase();
   }
 
 }

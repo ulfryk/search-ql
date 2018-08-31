@@ -3,11 +3,18 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { Expression } from '../ast';
-import { and, And0, andNot, config, like, Like0, not, or, Or0, txt } from '../testing/utils';
+import { and, And0, andNot, config, fn, like, Like0, not, num, or, Or0, txt } from '../testing/utils';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
+
+const allParserNames = [
+  ParserName.Basic,
+  ParserName.BinaryOperation,
+  ParserName.Function,
+  ParserName.Not,
+];
 
 const test = (
   validInput: string[],
@@ -47,9 +54,6 @@ describe('SearchQL parsers', () => {
   describe('QueryParserFactory', () => {
 
     describe('with all parsers', () => {
-
-      const allParserNames =
-        [ParserName.Basic, ParserName.BinaryOperation, ParserName.Not];
 
       const validInput = [
         'aa',
@@ -114,25 +118,64 @@ describe('SearchQL parsers', () => {
 
     describe('with some parsers excluded', () => {
 
-      const subsetOfAllParsers = [ParserName.Basic, ParserName.BinaryOperation];
+      // TODO: Used parsers should have impact on restricted signs in SyntaxConfig
 
-      const validInput = [
-        'aa',
-        'bb & cc',
-      ];
+      [
 
-      const validOutput = [
-        txt('aa'),
-        and(txt('bb'), txt('cc')),
-      ];
+        {
+          invalidInput: ['test_function(aaa)', 'desc AND a', 'NOT aaa', 'z | aaa', '$#%564 *(&^@%#1 1~`1`'],
+          parsers: [ParserName.Basic],
+          validInput: ['aa', '"$#%564 *(&^@%#1 1~`1`"'],
+          validOutput: [txt('aa'), txt('$#%564 *(&^@%#1 1~`1`')],
+        },
 
-      const invalidInput = [
-        'desc abc AND',
-        'NOT aaa',
-        '! aaa',
-      ];
+        {
+          invalidInput: ['test_function(aaa)', 'desc abc AND', 'NOT aaa', '! aaa'],
+          parsers: [ParserName.Basic, ParserName.BinaryOperation],
+          validInput: ['aa', 'bb & cc'],
+          validOutput: [txt('aa'), and(txt('bb'), txt('cc'))],
+        },
 
-      test(validInput, validOutput, invalidInput, subsetOfAllParsers);
+        {
+          invalidInput: ['desc AND asd', 'NOT aaa', '! aaa'],
+          parsers: [ParserName.Basic, ParserName.Function],
+          validInput: [
+            'test_function(aaa)',
+            'test_function(aaa, test_function(aaa, bbb), 12)',
+          ],
+          validOutput: [
+            fn('test_function')(txt('aaa')),
+            fn('test_function')(txt('aaa'), fn('test_function')(txt('aaa'), txt('bbb')), num('12')),
+          ],
+        },
+
+        {
+          invalidInput: ['asd! !!asd', 'c NOT a', 'c & a'],
+          parsers: [ParserName.Basic, ParserName.Not],
+          validInput: ['! a', 'NOT a'],
+          validOutput: [not(txt('a')), not(txt('a'))],
+        },
+
+        {
+          invalidInput: ['abc'],
+          parsers: [ParserName.Function, ParserName.Not, ParserName.BinaryOperation],
+          validInput: [
+            '! test_function()',
+            'test_function() & test_function() | test_function()',
+            'test_function() ! test_function(NOT test_function())',
+          ],
+          validOutput: [
+            not(fn('test_function')()),
+            or(and(fn('test_function')(), fn('test_function')()), fn('test_function')()),
+            andNot(fn('test_function')(), fn('test_function')(not(fn('test_function')()))),
+          ],
+        },
+
+      ].forEach(({ invalidInput, parsers, validInput, validOutput }) => {
+        describe(`\n      - using only ${parsers.join(', ')} parsers`, () => {
+          test(validInput, validOutput, invalidInput, parsers);
+        });
+      });
 
     });
 

@@ -36,7 +36,6 @@ describe('SearchQL testers', () => {
         'AND OR OR AND',
         'IpsUM-dolor_sitAMET',
         'hello world',
-        'hello universe',
       ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
 
       const matchingTesters = [
@@ -45,7 +44,6 @@ describe('SearchQL testers', () => {
         getTester(And, ['AND', 'OR']),
         getTester(Or, ['dolor_sitAMET', 'world']),
         getTester(Or, ['xyz', 'ello wo']),
-        getTester(Like, ['label 6', 'ello uni']),
       ];
 
       const notMatchingTesters = [
@@ -54,7 +52,6 @@ describe('SearchQL testers', () => {
         getTester(And, ['AND', 'OOxx']),
         getTester(Or, ['dolor--sitAMET', 'worldx']),
         getTester(Or, ['xyz', 'ello woxx']),
-        getTester(Like, ['label 6', 'ello unix']),
       ];
 
       matchingTesters.forEach(tester => {
@@ -87,16 +84,62 @@ describe('SearchQL testers', () => {
           ' "ello wo": OrderedSet { [1, 8] }' +
           ' } } })');
 
-        expect(String(matchingTesters[5].test(values)))
-          .to.equal('Just(Map { "label 6": Match "hello universe" { Map {' +
-          ' "ello uni": OrderedSet { [1, 9] }' +
-          ' } } })');
       });
 
     });
 
-    xdescribe('similarity operations (LIKE)', () => {
-      xit('should', () => { /**/ });
+    describe('similarity operations (LIKE)', () => {
+
+      const values = Map<string, string>({
+        Title: 'SitAmetus',
+        age: '234',
+        description: 'hello universe',
+        first_name: 'Loremus',
+        last_name: 'IpsuMus',
+      });
+
+      const matchingTesters = [
+        getTester(Like, ['age', '234']),
+        getTester(Like, ['first_name', 'Mus']),
+        getTester(Like, ['last_name', 'mus']),
+        getTester(Like, ['description', 'ello uni']),
+        getTester(Like, ['Title', 'SitAmetus']),
+      ];
+
+      const notMatchingTesters = [
+        getTester(Like, ['age', '5']),
+        getTester(Like, ['first_name', 'umus']),
+        getTester(Like, ['last_name', 'emus']),
+        getTester(Like, ['description', 'elo unix']),
+        getTester(Like, ['title', 'sitametus']),
+      ];
+
+      matchingTesters.forEach(tester => {
+        it(`should find expression "${tester.ast}"`, () => {
+          expect(tester.test(values).isSome()).to.be.true;
+          expect(tester.test(values).some().isEmpty()).to.be.false;
+        });
+      });
+
+      notMatchingTesters.forEach(tester => {
+        it(`should not find expression "${tester.ast}"`, () => {
+          expect(tester.test(values).isSome()).to.be.false;
+        });
+      });
+
+      it('should build proper Match output', () => {
+
+        expect(String(matchingTesters[3].test(values)))
+          .to.equal('Just(Map { "description": Match "hello universe" { Map {' +
+            ' "ello uni": OrderedSet { [1, 9] }' +
+          ' } } })');
+
+        expect(String(matchingTesters[4].test(values)))
+          .to.equal('Just(Map { "Title": Match "SitAmetus" { Map {' +
+            ' "sitametus": OrderedSet { [0, 9] }' +
+          ' } } })');
+
+      });
     });
 
   });

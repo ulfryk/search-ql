@@ -3,22 +3,51 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { SyntaxConfig } from '../../config/syntax-config';
-import { AndOperator, OrOperator } from '../operators';
+import { AndOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
 import { Expression } from './expression';
-import { TextExpression } from './term';
+import { NumberExpression, SelectorExpression, TextExpression } from './term';
 
-const { AND, OR } = new SyntaxConfig();
+const { AND, LIKE, OR } = new SyntaxConfig();
 const And = new AndOperator(AND[0]);
+const Like = new LikeOperator(LIKE[0]);
 const Or = new OrOperator(OR[0]);
 
 describe('SearchQL expressions', () => {
 
   describe('BinaryOperationExpression', () => {
 
-    xdescribe('fromPair() method', () => {
-      xit('should properly create similarity expressions (LIKE)', () => { /* */ });
-      xit('should properly create logical expressions (AND, OR)', () => { /* */ });
+    describe('fromPair() method', () => {
+
+      it('should properly create similarity expressions (LIKE)', () => {
+        expect(BinaryOperationExpression.fromPair(Like)(
+          new TextExpression('aaa'),
+          new NumberExpression('123'),
+        )).to.deep.equal(new BinaryOperationExpression(Like, [
+          new SelectorExpression('aaa'),
+          new TextExpression('123'),
+        ]));
+      });
+
+      it('should properly create logical expressions (AND, OR)', () => {
+
+        expect(BinaryOperationExpression.fromPair(And)(
+          new NumberExpression('123'),
+          new TextExpression('aaa'),
+        )).to.deep.equal(new BinaryOperationExpression(And, [
+          new TextExpression('123'),
+          new TextExpression('aaa'),
+        ]));
+
+        expect(BinaryOperationExpression.fromPair(Or)(
+          new TextExpression('aaa'),
+          new NumberExpression('123'),
+        )).to.deep.equal(new BinaryOperationExpression(Or, [
+          new TextExpression('aaa'),
+          new TextExpression('123'),
+        ]));
+
+      });
     });
 
     describe('equals() method', () => {

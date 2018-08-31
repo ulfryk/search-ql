@@ -11,7 +11,7 @@ export class TextExpression extends TermExpression<string> {
   }
 
   constructor(value: string) {
-    super(value, value.toLowerCase().trim());
+    super(value, value.trim());
   }
 
   public toString() {
