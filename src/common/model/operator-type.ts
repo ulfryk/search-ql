@@ -1,4 +1,4 @@
-export const enum OperatorType { // TODO: Move to common/model
+export const enum OperatorType {
   And = 'And',
   Like = 'Like',
   Not = 'Not',

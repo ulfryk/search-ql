@@ -2,6 +2,7 @@ import { Bind } from '@samwise-tech/core';
 import { List, Set } from 'immutable';
 import { Maybe } from 'monet';
 
+import { ValueType } from '../../common/model';
 import { SyntaxConfig } from '../../config';
 import { Expression, NotExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
@@ -13,6 +14,8 @@ export class BinaryOperationChain extends Expression {
   public static init(initialLhs: Expression) {
     return new BinaryOperationChain([initialLhs], List());
   }
+
+  public readonly returnType: ValueType.Boolean;
 
   constructor(
     public readonly value: ReadonlyArray<Expression>,

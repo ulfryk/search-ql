@@ -2,20 +2,21 @@ import { Map, Set } from 'immutable';
 import { Maybe } from 'monet';
 
 import { OperatorType } from '../common/model';
+import { builtInFunctions as allBuiltInFunctions, FunctionConfig } from './function';
 
 export class SyntaxConfig {
 
   public static create(
     {
-      caseSensitive,
+      caseSensitive, builtInFunctions, customFunctions,
       AND, LIKE, OR,
       NOT,
       GROUP_START, GROUP_END, EXACT_MATCHER,
       FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR,
     }: Partial<SyntaxConfig>,
   ) {
-    return new SyntaxConfig(caseSensitive, AND, LIKE, OR, NOT, GROUP_START, GROUP_END,
-      EXACT_MATCHER, FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
+    return new SyntaxConfig(caseSensitive, builtInFunctions, customFunctions, AND, LIKE, OR, NOT,
+      GROUP_START, GROUP_END, EXACT_MATCHER, FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
   }
 
   public readonly operatorMapping = Map<string, OperatorType>([
@@ -25,8 +26,15 @@ export class SyntaxConfig {
     ...this.OR.map(token => [token, OperatorType.Or]),
   ]);
 
-  constructor(
-    public caseSensitive = false,
+  public readonly functions = Map<string, FunctionConfig>([
+    ...this.builtInFunctions,
+    ...this.customFunctions,
+  ].map(fnConfig => [fnConfig.name, fnConfig]));
+
+  constructor( // add `parserNames configuration option here
+    public readonly caseSensitive: boolean = false,
+    public readonly builtInFunctions: FunctionConfig[] = allBuiltInFunctions,
+    public readonly customFunctions: FunctionConfig[] = [],
     // binary operators
     public readonly AND = ['AND', '&'],
     public readonly LIKE = ['LIKE', '~'],

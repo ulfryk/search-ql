@@ -1,4 +1,4 @@
-import { compareNum, IOrd, Ordering } from '../common/model';
+import { compareNum, IOrd, Ordering } from '../ord';
 import { MatchError } from './error';
 
 export class MatchCoords implements IOrd<MatchCoords> {

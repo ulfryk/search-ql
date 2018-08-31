@@ -2,8 +2,8 @@ import { Map } from 'immutable';
 import { Maybe, Some } from 'monet';
 
 import { SelectorExpression } from '../../ast';
+import { Match } from '../../common/model';
 import { SyntaxConfig } from '../../config';
-import { Match } from '../../match';
 import { Tester } from '../tester';
 
 export class SelectorExpressionTester extends Tester<SelectorExpression, null> {

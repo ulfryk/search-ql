@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { Set } from 'immutable';
 
-import { Ordering } from '../common/model';
+import { Ordering } from '../ord';
 import { MatchCoords } from './match-coords';
 
 const text = ('Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor' +

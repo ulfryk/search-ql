@@ -1,9 +1,8 @@
 import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
-import { Expression } from '../../ast';
-import { Match } from '../../match';
+import { Match } from '../model';
 
-export type FunctionRuntime = (...args: Expression[]) =>
+export type FunctionRuntime =
   (values: Map<string, string>, ...matches: Maybe<Map<string, Match>>[]) =>
     Maybe<Map<string, Match>>;

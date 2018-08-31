@@ -2,7 +2,7 @@ import { Map } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { Expression, NotExpression } from '../../ast';
-import { Match } from '../../match';
+import { Match } from '../../common/model';
 import { Tester } from '../tester';
 
 export class NotExpressionTester extends Tester<NotExpression, Tester<Expression, any>> {

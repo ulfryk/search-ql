@@ -1,7 +1,7 @@
 import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
-import { Match } from '../../match';
+import { Match } from '../model';
 
 export type BinaryOperatorRuntime = (
   a: Maybe<Map<string, Match>>,

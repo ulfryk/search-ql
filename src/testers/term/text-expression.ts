@@ -3,8 +3,8 @@ import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
 import { TextExpression } from '../../ast';
+import { Match } from '../../common/model';
 import { SyntaxConfig } from '../../config';
-import { Match } from '../../match';
 import { Tester } from '../tester';
 
 export class TextExpressionTester extends Tester<TextExpression, null> {

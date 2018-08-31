@@ -1,8 +1,10 @@
-import { Ordering } from '../../common/model';
+import { Ordering, ValueType } from '../../common/model';
 import { BinaryOperationExpression, Expression } from '../expressions';
 import { OperatorContext } from './operator-context';
 
 export class BinaryOperationContext extends Expression {
+
+  public readonly returnType: ValueType.Boolean;
 
   constructor(
     public readonly value: OperatorContext,

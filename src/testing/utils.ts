@@ -1,7 +1,7 @@
 import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
-import { SyntaxConfig } from '../config';
 import { ValueType } from '../common/model';
+import { SyntaxConfig } from '../config';
 
 const config = new SyntaxConfig();
 const { AND, LIKE, NOT, OR } = config;

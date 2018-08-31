@@ -1,9 +1,9 @@
 import { Map } from 'immutable';
 
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../../ast';
+import { BinaryOperatorRuntime } from '../../common/runtimes';
 import { SyntaxConfig } from '../../config';
 import { and } from './and';
-import { BinaryOperatorRuntime } from './binary-operator-runtime';
 import { like } from './like';
 import { or } from './or';
 

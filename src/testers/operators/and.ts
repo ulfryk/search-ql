@@ -1,5 +1,5 @@
-import { Match } from '../../match';
-import { BinaryOperatorRuntime } from './binary-operator-runtime';
+import { Match } from '../../common/model';
+import { BinaryOperatorRuntime } from '../../common/runtimes';
 
 export const and: BinaryOperatorRuntime = (leftSide, getRightSide) =>
   leftSide.flatMap(left => getRightSide()

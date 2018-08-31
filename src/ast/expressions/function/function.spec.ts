@@ -3,6 +3,7 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
+import { ValueType } from '../../../common/model';
 import { Expression } from '../expression';
 import { DateExpression, TermExpression, TextExpression } from '../term';
 import { FunctionExpression } from './function';
@@ -14,21 +15,21 @@ describe('SearchQL expressions', () => {
     describe('equals() method', () => {
 
       const lhs = [
-        new FunctionExpression(List(), 'return_null'),
-        new FunctionExpression(List([TermExpression.fromMatch('lorem')]), 'id'),
-        new FunctionExpression(List([TermExpression.fromMatch('2018-01-01')]), 'is_date'),
+        new FunctionExpression(List(), 'return_null', ValueType.Boolean),
+        new FunctionExpression(List([TermExpression.fromMatch('lorem')]), 'id', ValueType.Boolean),
+        new FunctionExpression(List([TermExpression.fromMatch('2018-01-01')]), 'is_date', ValueType.Boolean),
       ];
 
       const rhs = [
-        new FunctionExpression(List(), 'return_null'),
-        new FunctionExpression(List([new TextExpression('lorem')]), 'id'),
-        new FunctionExpression(List([new DateExpression('2018-01-01')]), 'is_date'),
+        new FunctionExpression(List(), 'return_null', ValueType.Boolean),
+        new FunctionExpression(List([new TextExpression('lorem')]), 'id', ValueType.Boolean),
+        new FunctionExpression(List([new DateExpression('2018-01-01')]), 'is_date', ValueType.Boolean),
       ];
 
       const rhsInvalid = [
-        new FunctionExpression(List([TermExpression.fromMatch('lorem')]), 'return_null'),
-        new FunctionExpression(List([TermExpression.fromMatch('lorem')]), 'idx'),
-        new FunctionExpression(List([TermExpression.fromMatch('2018-01-02')]), 'is_date'),
+        new FunctionExpression(List([TermExpression.fromMatch('lorem')]), 'return_null', ValueType.Boolean),
+        new FunctionExpression(List([TermExpression.fromMatch('lorem')]), 'idx', ValueType.Boolean),
+        new FunctionExpression(List([TermExpression.fromMatch('2018-01-02')]), 'is_date', ValueType.Boolean),
       ];
 
       it('should return true for comparison with a reference', () => {

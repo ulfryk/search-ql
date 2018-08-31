@@ -2,7 +2,7 @@ import { Map, OrderedSet } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { BinaryOperationExpression, Expression } from '../../ast';
-import { Match } from '../../match';
+import { Match } from '../../common/model';
 import { getBinaryOperatorRuntime } from '../operators';
 import { Tester } from '../tester';
 

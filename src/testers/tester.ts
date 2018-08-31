@@ -2,8 +2,8 @@ import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
 import { Expression } from '../ast';
+import { Match } from '../common/model';
 import { SyntaxConfig } from '../config';
-import { Match } from '../match';
 
 export abstract class Tester<A extends Expression, C> {
 

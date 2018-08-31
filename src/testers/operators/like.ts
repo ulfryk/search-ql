@@ -1,4 +1,4 @@
-import { BinaryOperatorRuntime } from './binary-operator-runtime';
+import { BinaryOperatorRuntime } from '../../common/runtimes';
 
 export const like: BinaryOperatorRuntime = (labels, getExpression) =>
   labels

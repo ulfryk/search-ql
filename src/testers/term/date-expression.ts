@@ -2,8 +2,8 @@ import { Map } from 'immutable';
 import { Maybe, Some } from 'monet';
 
 import { DateExpression } from '../../ast';
+import { Match } from '../../common/model';
 import { SyntaxConfig } from '../../config';
-import { Match } from '../../match';
 import { Tester } from '../tester';
 
 export class DateExpressionTester extends Tester<DateExpression, null> {
