@@ -4,6 +4,10 @@ import { Expression } from '../expression';
 
 export class FunctionExpression extends Expression {
 
+  public static fromParseResult(name: string, args: Expression[]) {
+    return new FunctionExpression(List(args), name);
+  }
+
   constructor(
     public readonly value: List<Expression>,
     public readonly name: string,

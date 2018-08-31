@@ -14,4 +14,12 @@ export class ParseFailure implements Failure {
     public readonly query: string,
   ) {}
 
+  public toString() {
+    const indent = '    ';
+
+    return `ParseError in query: \n${indent}"""\n${indent}${this.query}\n${indent}"""\n` +
+      `${indent}- expected ${this.expected.map(e => `"${e}"`).join(' or ')} at ` +
+      `line ${this.index.line} column ${this.index.column} (offset: ${this.index.offset})`;
+  }
+
 }

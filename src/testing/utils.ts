@@ -1,4 +1,4 @@
-import { BinaryOperationExpression, DateExpression, Expression, NotExpression, NumberExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
+import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { SyntaxConfig } from '../config';
 
@@ -38,6 +38,9 @@ const not = (v: Expression) => new NotExpression(v);
 const andNot = (l: Expression, r: Expression, op: AndOperator = And0) =>
   and(l, not(r), op);
 
+const fn = (name: string) => (...args: Expression[]) =>
+  FunctionExpression.fromParseResult(name, args);
+
 export {
   config,
   date, num, term, txt, txtFrom,
@@ -45,4 +48,5 @@ export {
   like, Like, Like0,
   not, Not, Not0,
   or, Or, Or0,
+  fn,
 };

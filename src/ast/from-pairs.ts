@@ -1,12 +1,13 @@
-import { Maybe, None, Some } from 'monet';
+import { None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
 import { BinaryOperationChain } from './binary-operation-chain';
 import { Expression, TermExpression } from './expressions';
+import { OOPair } from './oopair';
 import { Operator } from './operators';
 
 export const fromPairs =
-  (pairs: [Maybe<string>, Expression][], config: SyntaxConfig): Expression =>
+  (pairs: OOPair[], config: SyntaxConfig): Expression =>
     pairs
       .reduce(
         (acc, [token, rhs]) => acc

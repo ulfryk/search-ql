@@ -1,16 +1,17 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
 import { zip } from 'lodash';
-import { Maybe, None, Some } from 'monet';
+import { None, Some } from 'monet';
 
 import { and, And, And0, config, like, Like0, not, Not, Not0, Or, or, Or0, txt } from '../testing/utils';
 import { Expression } from './expressions';
 import { fromPairs } from './from-pairs';
+import { OOPair } from './oopair';
 
 const pairs = (initial: Expression, ...chain: [string, Expression][]) => [
   [None<string>(), initial],
   ...chain.map(([operator, rhs]) => [Some(operator), rhs]),
-] as [Maybe<string>, Expression][];
+] as OOPair[];
 
 describe('SearchQL ast', () => {
 

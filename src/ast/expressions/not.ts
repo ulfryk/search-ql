@@ -6,6 +6,10 @@ export class NotExpression extends Expression {
     return new NotExpression(value);
   }
 
+  public static fromParseResult(__: string, operand: Expression) {
+    return NotExpression.of(operand);
+  }
+
   constructor(
     public readonly value: Expression,
   ) {
