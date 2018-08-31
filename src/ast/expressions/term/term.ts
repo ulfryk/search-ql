@@ -1,3 +1,4 @@
+import { ValueType } from '../../../common/model';
 import { Expression } from '../expression';
 
 export class TermExpression<PV = any> extends Expression {
@@ -9,6 +10,8 @@ export class TermExpression<PV = any> extends Expression {
   public static empty() {
     return new TermExpression('', null);
   }
+
+  public readonly returnType: ValueType = ValueType.Text;
 
   constructor(
     public readonly value: string,

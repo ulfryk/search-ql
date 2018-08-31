@@ -1,7 +1,10 @@
 import { ISetoid } from '@samwise-tech/core';
 
+import { ValueType } from '../../common/model';
+
 export abstract class Expression implements ISetoid { // TODO: Move to common/model
   public abstract readonly value: any;
+  public abstract readonly returnType: ValueType;
   public abstract equals(other: Expression): boolean;
   public abstract rebuild(): Expression;
   public abstract toString(): string;

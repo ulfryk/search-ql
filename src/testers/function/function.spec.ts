@@ -4,11 +4,12 @@ import { Map } from 'immutable';
 import * as _ from 'lodash';
 
 import { Expression, FunctionExpression } from '../../ast';
+import { ValueType } from '../../common/model';
 import { config, txt } from '../../testing/utils';
 import { FunctionExpressionTester, Tester } from '../index';
 
 const getTester = (name: string, ...args: Expression[]) => {
-  const expr = FunctionExpression.fromParseResult(name, args);
+  const expr = FunctionExpression.fromParseResult(ValueType.Boolean)(name, args);
 
   return new FunctionExpressionTester(
     expr,

@@ -1,5 +1,6 @@
 import { Set } from 'immutable';
 
+import { ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../operators';
 import { Expression } from './expression';
 import { SelectorExpression, TermExpression, TextExpression } from './term';
@@ -47,6 +48,8 @@ export class BinaryOperationExpression extends Expression {
       return new BinaryOperationExpression(operator, [lhs, rhs]);
     };
   }
+
+  public readonly returnType = ValueType.Boolean;
 
   constructor(
     public readonly operator: BinaryOperator,

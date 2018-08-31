@@ -1,22 +1,27 @@
 import { List } from 'immutable';
 
+import { ValueType } from '../../../common/model';
 import { Expression } from '../expression';
 
 export class FunctionExpression extends Expression {
 
-  public static fromParseResult(name: string, args: Expression[]) {
-    return new FunctionExpression(List(args), name);
+  public static fromParseResult(returnType: ValueType) {
+    return (name: string, args: Expression[]) =>
+      new FunctionExpression(List(args), name, returnType);
   }
 
   constructor(
     public readonly value: List<Expression>,
     public readonly name: string,
+    public readonly returnType: ValueType,
   ) { super(); }
 
+  // tslint:disable-next-line:cyclomatic-complexity
   public equals(other: Expression): boolean {
     return this === other || (
       other instanceof FunctionExpression &&
       this.name === other.name &&
+      this.returnType === other.returnType &&
       this.value.equals(other.value)
     );
   }
@@ -28,7 +33,7 @@ export class FunctionExpression extends Expression {
       return this;
     }
 
-    return new FunctionExpression(newValue, this.name);
+    return new FunctionExpression(newValue, this.name, this.returnType);
   }
 
   public toString() {

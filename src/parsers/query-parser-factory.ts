@@ -2,6 +2,7 @@ import { OrderedMap } from 'immutable';
 import * as P from 'parsimmon';
 
 import { Expression, fromPairs, FunctionExpression, initialPair, NotExpression, OOPair, restPair } from '../ast';
+import { ValueType } from '../common/model';
 import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 import { binaryOperator } from './binary-operator';
@@ -75,7 +76,10 @@ export class QueryParserFactory {
   }
 
   private get function(): P.Parser<Expression> {
-    return P.seqMap(this.functionName, this.functionArgs, FunctionExpression.fromParseResult);
+    return P.seqMap(
+      this.functionName,
+      this.functionArgs,
+      FunctionExpression.fromParseResult(ValueType.Boolean));
   }
 
   private get functionArgs(): P.Parser<Expression[]> {

@@ -1,6 +1,7 @@
 import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { SyntaxConfig } from '../config';
+import { ValueType } from '../common/model';
 
 const config = new SyntaxConfig();
 const { AND, LIKE, NOT, OR } = config;
@@ -38,8 +39,8 @@ const not = (v: Expression) => new NotExpression(v);
 const andNot = (l: Expression, r: Expression, op: AndOperator = And0) =>
   and(l, not(r), op);
 
-const fn = (name: string) => (...args: Expression[]) =>
-  FunctionExpression.fromParseResult(name, args);
+const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expression[]) =>
+  FunctionExpression.fromParseResult(returnType)(name, args);
 
 export {
   config,

@@ -1,3 +1,4 @@
+import { ValueType } from '../../common/model';
 import { Expression } from './expression';
 
 export class NotExpression extends Expression {
@@ -9,6 +10,8 @@ export class NotExpression extends Expression {
   public static fromParseResult(__: string, operand: Expression) {
     return NotExpression.of(operand);
   }
+
+  public readonly returnType = ValueType.Boolean;
 
   constructor(
     public readonly value: Expression,
