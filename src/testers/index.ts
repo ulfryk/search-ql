@@ -1,10 +1,11 @@
-import { BinaryOperationExpression, DateExpression, Expression, NotExpression, NumberExpression, SelectorExpression, TextExpression } from '../ast';
+import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, SelectorExpression, TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 
-import { BinaryOperationExpressionTester } from './binary-operation-expression';
-import { NotExpressionTester } from './not-expression';
+import { BinaryOperationExpressionTester } from './binary-operation';
+import { FunctionExpressionTester } from './function';
 import { DateExpressionTester, NumberExpressionTester, SelectorExpressionTester, TextExpressionTester } from './term';
 import { Tester } from './tester';
+import { NotExpressionTester } from './unary-operation';
 
 // tslint:disable-next-line:cyclomatic-complexity
 Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
@@ -28,6 +29,12 @@ Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
         ast.value.map(Tester.fromAst(config)),
         config);
 
+    case FunctionExpression:
+      return new FunctionExpressionTester(
+        ast as FunctionExpression,
+        ast.value.map(Tester.fromAst(config)),
+        config);
+
     // TODO: UnaryOperationExpression
     case NotExpression:
       return new NotExpressionTester(
@@ -40,8 +47,9 @@ Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
 };
 
 export {
-  TextExpressionTester,
   BinaryOperationExpressionTester,
+  FunctionExpressionTester,
   NotExpressionTester,
   Tester,
+  TextExpressionTester,
 };

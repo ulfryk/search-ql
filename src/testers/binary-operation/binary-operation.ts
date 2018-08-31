@@ -1,10 +1,10 @@
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { BinaryOperationExpression, Expression } from '../ast';
-import { Match } from '../match';
-import { getBinaryOperatorRuntime } from './operators';
-import { Tester } from './tester';
+import { BinaryOperationExpression, Expression } from '../../ast';
+import { Match } from '../../match';
+import { getBinaryOperatorRuntime } from '../operators';
+import { Tester } from '../tester';
 
 export class BinaryOperationExpressionTester
 extends Tester<BinaryOperationExpression, OrderedSet<Tester<Expression, any>>> {

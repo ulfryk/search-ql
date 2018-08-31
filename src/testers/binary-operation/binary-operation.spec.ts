@@ -3,14 +3,9 @@ import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
 import * as _ from 'lodash';
 
-import { AndOperator, BinaryOperationExpression, Expression, LikeOperator, Operator, OrOperator, TermExpression } from '../ast';
-import { SyntaxConfig } from '../config';
-import { BinaryOperationExpressionTester, Tester } from './index';
-
-const config = new SyntaxConfig();
-const And = new AndOperator(config.AND[0]);
-const Or = new OrOperator(config.OR[0]);
-const Like = new LikeOperator(config.LIKE[0]);
+import { BinaryOperationExpression, Expression, Operator, TermExpression } from '../../ast';
+import { And0, config, Like0, Or0 } from '../../testing/utils';
+import { BinaryOperationExpressionTester, Tester } from '../index';
 
 const getTester = (operator: Operator, values: [string, string]) => {
   const [lhs, rhs] = values.map(TermExpression.fromMatch);
@@ -39,19 +34,19 @@ describe('SearchQL testers', () => {
       ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
 
       const matchingTesters = [
-        getTester(And, ['All', 'good']),
-        getTester(And, ['asdffa', 'SDFAS']),
-        getTester(And, ['AND', 'OR']),
-        getTester(Or, ['dolor_sitAMET', 'world']),
-        getTester(Or, ['xyz', 'ello wo']),
+        getTester(And0, ['All', 'good']),
+        getTester(And0, ['asdffa', 'SDFAS']),
+        getTester(And0, ['AND', 'OR']),
+        getTester(Or0, ['dolor_sitAMET', 'world']),
+        getTester(Or0, ['xyz', 'ello wo']),
       ];
 
       const notMatchingTesters = [
-        getTester(And, ['All', 'is good']),
-        getTester(And, ['asdffa', 'SDFASx']),
-        getTester(And, ['AND', 'OOxx']),
-        getTester(Or, ['dolor--sitAMET', 'worldx']),
-        getTester(Or, ['xyz', 'ello woxx']),
+        getTester(And0, ['All', 'is good']),
+        getTester(And0, ['asdffa', 'SDFASx']),
+        getTester(And0, ['AND', 'OOxx']),
+        getTester(Or0, ['dolor--sitAMET', 'worldx']),
+        getTester(Or0, ['xyz', 'ello woxx']),
       ];
 
       matchingTesters.forEach(tester => {
@@ -99,19 +94,19 @@ describe('SearchQL testers', () => {
       });
 
       const matchingTesters = [
-        getTester(Like, ['age', '234']),
-        getTester(Like, ['first_name', 'Mus']),
-        getTester(Like, ['last_name', 'mus']),
-        getTester(Like, ['description', 'ello uni']),
-        getTester(Like, ['Title', 'SitAmetus']),
+        getTester(Like0, ['age', '234']),
+        getTester(Like0, ['first_name', 'Mus']),
+        getTester(Like0, ['last_name', 'mus']),
+        getTester(Like0, ['description', 'ello uni']),
+        getTester(Like0, ['Title', 'SitAmetus']),
       ];
 
       const notMatchingTesters = [
-        getTester(Like, ['age', '5']),
-        getTester(Like, ['first_name', 'umus']),
-        getTester(Like, ['last_name', 'emus']),
-        getTester(Like, ['description', 'elo unix']),
-        getTester(Like, ['title', 'sitametus']),
+        getTester(Like0, ['age', '5']),
+        getTester(Like0, ['first_name', 'umus']),
+        getTester(Like0, ['last_name', 'emus']),
+        getTester(Like0, ['description', 'elo unix']),
+        getTester(Like0, ['title', 'sitametus']),
       ];
 
       matchingTesters.forEach(tester => {

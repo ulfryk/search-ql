@@ -2,10 +2,10 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { NotExpression, TextExpression } from '../ast';
-import { SyntaxConfig } from '../config';
+import { NotExpression, TextExpression } from '../../ast';
+import { SyntaxConfig } from '../../config';
+import { TextExpressionTester } from '../term';
 import { NotExpressionTester } from './not-expression';
-import { TextExpressionTester } from './term';
 
 const config = new SyntaxConfig();
 
