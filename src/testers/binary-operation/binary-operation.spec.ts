@@ -1,7 +1,6 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
-import * as _ from 'lodash';
 
 import { BinaryOperationExpression, Expression, Operator, TermExpression } from '../../ast';
 import { And0, config, Like0, Or0 } from '../../testing/utils';

@@ -31,7 +31,7 @@ export class SyntaxConfig {
     ...this.customFunctions,
   ].map(fnConfig => [fnConfig.name, fnConfig]));
 
-  constructor( // add `parserNames configuration option here
+  constructor( // add `parserNames` configuration option here
     public readonly caseSensitive: boolean = false,
     public readonly builtInFunctions: FunctionConfig[] = allBuiltInFunctions,
     public readonly customFunctions: FunctionConfig[] = [],

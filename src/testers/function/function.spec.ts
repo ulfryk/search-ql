@@ -1,7 +1,6 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
 import { Map } from 'immutable';
-import * as _ from 'lodash';
 
 import { Expression, FunctionExpression } from '../../ast';
 import { ValueType } from '../../common/model';
