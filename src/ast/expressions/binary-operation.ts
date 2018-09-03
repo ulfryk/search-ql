@@ -1,7 +1,7 @@
 import { Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { TEXT_TYPES, ValueType } from '../../common/model';
+import { paramTypes, ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../operators';
 import { Expression } from './expression';
 import { InvalidExpression } from './invalid';
@@ -101,12 +101,12 @@ export class BinaryOperationExpression extends Expression {
   }
 
   private checkLikeTypes(newLeft: Expression, newRight: Expression): Maybe<string> {
-    if (!TEXT_TYPES.some(type => type === newLeft.returnType)) {
-      return this.getError('L', newLeft.returnType, TEXT_TYPES);
+    if (!paramTypes.get(ValueType.Text)(newLeft.returnType)) {
+      return this.getError('L', newLeft.returnType, ValueType.Text);
     }
 
-    if (!TEXT_TYPES.some(type => type === newRight.returnType)) {
-      return this.getError('R', newLeft.returnType, TEXT_TYPES);
+    if (!paramTypes.get(ValueType.Text)(newRight.returnType)) {
+      return this.getError('R', newLeft.returnType, ValueType.Text);
     }
 
     return None();
@@ -114,11 +114,11 @@ export class BinaryOperationExpression extends Expression {
 
   private checkBooleanTypes(newLeft: Expression, newRight: Expression): Maybe<string> {
     if (this.isSideTypeValid(newLeft)) {
-      return this.getError('L', newLeft.returnType, [ValueType.Boolean]);
+      return this.getError('L', newLeft.returnType, ValueType.Boolean);
     }
 
     if (this.isSideTypeValid(newRight)) {
-      return this.getError('R', newRight.returnType, [ValueType.Boolean]);
+      return this.getError('R', newRight.returnType, ValueType.Boolean);
     }
 
     return None();
@@ -128,10 +128,10 @@ export class BinaryOperationExpression extends Expression {
     return !side.is(TermExpression as any) && side.returnType !== ValueType.Boolean;
   }
 
-  private getError(side: 'L' | 'R', actual: ValueType, expected: ReadonlyArray<ValueType>): Maybe<string> {
+  private getError(side: 'L' | 'R', actual: ValueType, expected: ValueType): Maybe<string> {
     return Some(
       `${side}HS of ${this.operator.token} expression has ` +
-      `to be a ${expected.join('/')} expression, but instead found ${actual}`);
+      `to be a ${expected} expression, but instead found ${actual}`);
   }
 
 }

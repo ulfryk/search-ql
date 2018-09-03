@@ -2,6 +2,7 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
+import { paramTypes } from '../../../common/model';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { Expression } from '../expression';
 import { InvalidExpression } from '../invalid';
@@ -81,7 +82,7 @@ export class FunctionExpression extends Expression {
     const invalidInitialArgs = zip(
         this.config.args.slice(0, initialArgs.size).toArray(),
         initialArgs.toArray())
-      .filter(([config, arg]) => config.type !== arg.returnType)
+      .filter(([config, arg]) => !paramTypes.get(config.type)(arg.returnType))
       .map(([config, arg]) =>
         `"${config.label}" should be ${config.type} but is ${arg.returnType}`);
 
@@ -91,7 +92,7 @@ export class FunctionExpression extends Expression {
 
     const invalidRestArgs = this.config.argsRest
       .map(({ type }) => restArgs
-        .filter(arg => arg.returnType !== type)
+        .filter(arg => !paramTypes.get(type)(arg.returnType))
         .map(arg =>
           `rest arg should be ${type} but is ${arg.returnType}`))
       .filter(errors => !errors.isEmpty());
