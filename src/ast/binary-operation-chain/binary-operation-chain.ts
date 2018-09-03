@@ -4,16 +4,18 @@ import { Maybe } from 'monet';
 
 import { ValueType } from '../../common/model';
 import { SyntaxConfig } from '../../config';
-import { Expression, NotExpression } from '../expressions';
+import { Expression, InterimExpression, NotExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
 import { BinaryOperationContext } from './binary-operation-context';
 import { OperatorContext } from './operator-context';
 
-export class BinaryOperationChain extends Expression {
+export class BinaryOperationChain extends InterimExpression {
 
   public static init(initialLhs: Expression) {
     return new BinaryOperationChain([initialLhs], List());
   }
+
+  public readonly name: 'BinaryOperationChain';
 
   public readonly returnType: ValueType.Boolean;
 
@@ -67,14 +69,6 @@ export class BinaryOperationChain extends Expression {
     return this.operators.reduce(
       (acc, next) => `${acc} ${next.operator} ${this.value[next.rightIndex]}`,
       String(this.value[0]));
-  }
-
-  public isValid(): boolean {
-    throw Error('BinaryOperationChain is a temporary construction. Its validity is not known.');
-  }
-
-  public checkTypes(): Expression {
-    throw Error('BinaryOperationChain is a temporary construction. Its type is not known.');
   }
 
   public reshape(): Expression {

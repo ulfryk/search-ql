@@ -1,8 +1,10 @@
 import { Ordering, ValueType } from '../../common/model';
-import { BinaryOperationExpression, Expression } from '../expressions';
+import { BinaryOperationExpression, Expression, InterimExpression } from '../expressions';
 import { OperatorContext } from './operator-context';
 
-export class BinaryOperationContext extends Expression {
+export class BinaryOperationContext extends InterimExpression {
+
+  public readonly name: 'BinaryOperationContext';
 
   public readonly returnType: ValueType.Boolean;
 
@@ -24,14 +26,6 @@ export class BinaryOperationContext extends Expression {
 
   public toString() {
     return `( ${this.left} ${this.value} ${this.right} )`;
-  }
-
-  public isValid(): boolean {
-    throw Error('BinaryOperationContext is a temporary construction. Its validity is not known.');
-  }
-
-  public checkTypes(): Expression {
-    throw Error('BinaryOperationContext is a temporary construction. Its type is not known.');
   }
 
   public reshape(): BinaryOperationExpression {
