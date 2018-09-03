@@ -29,6 +29,10 @@ export class NotExpression extends Expression {
       this.value.equals(other.value));
   }
 
+  public isValid() {
+    return this.value.isValid();
+  }
+
   public checkTypes() {
     return this.getError()
       .foldLeft(this.clone(this.value.checkTypes()))(InvalidExpression.fromError);

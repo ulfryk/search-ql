@@ -35,6 +35,10 @@ export class FunctionExpression extends Expression {
     );
   }
 
+  public isValid() {
+    return this.value.every(operand => operand.isValid());
+  }
+
   public reshape() {
     return this.clone(this.value.map(arg => arg.reshape()).toList());
   }

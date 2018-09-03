@@ -69,6 +69,10 @@ export class BinaryOperationChain extends Expression {
       String(this.value[0]));
   }
 
+  public isValid(): boolean {
+    throw Error('BinaryOperationChain is a temporary construction. Its validity is not known.');
+  }
+
   public checkTypes(): Expression {
     throw Error('BinaryOperationChain is a temporary construction. Its type is not known.');
   }

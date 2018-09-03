@@ -24,6 +24,10 @@ export class InvalidExpression extends Expression {
     );
   }
 
+  public isValid() {
+    return false;
+  }
+
   public checkTypes() {
     return this;
   }

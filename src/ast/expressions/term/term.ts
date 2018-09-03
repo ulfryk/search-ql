@@ -27,6 +27,10 @@ export class TermExpression<PV = any> extends Expression {
     );
   }
 
+  public isValid() {
+    return true;
+  }
+
   public checkTypes() {
     return this;
   }

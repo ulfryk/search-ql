@@ -57,6 +57,10 @@ export class BinaryOperationExpression extends Expression {
       Set(this.value).equals(Set(other.value)));
   }
 
+  public isValid() {
+    return this.value.every(operand => operand.isValid());
+  }
+
   public checkTypes() {
     const [newLeft, newRight] = this.value.map(side => side.checkTypes());
 

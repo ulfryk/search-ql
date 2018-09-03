@@ -8,6 +8,7 @@ export abstract class Expression implements ISetoid {
   public abstract equals(other: Expression): boolean;
   public abstract reshape(): Expression;
   public abstract checkTypes(): Expression;
+  public abstract isValid(): boolean;
   public abstract toString(): string;
 
   public inspect(): string {
