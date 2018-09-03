@@ -1,14 +1,17 @@
 import { ISetoid } from '@samwise-tech/core';
 import { List } from 'immutable';
+import { Maybe } from 'monet';
 
 import { ValueType } from '../../common/model';
 import { FunctionRuntime } from '../../common/runtimes';
+import { FunctionArg, OptionalFunctionArg } from './function-arg';
 
 export class FunctionConfig implements ISetoid {
 
   constructor(
     public readonly name: string,
-    public readonly argTypes: List<ValueType>, // maybe Map<ArgLabel, ArgType> ?
+    public readonly args: List<FunctionArg>,
+    public readonly argsRest: Maybe<OptionalFunctionArg>,
     public readonly returnType: ValueType,
     public readonly runtime: FunctionRuntime,
   ) {}
@@ -16,7 +19,7 @@ export class FunctionConfig implements ISetoid {
   public equals(other: FunctionConfig) {
     return this === other || (
       this.name === other.name &&
-      this.argTypes.equals(other.argTypes) &&
+      this.args.equals(other.args) &&
       this.returnType === other.returnType
     );
   }

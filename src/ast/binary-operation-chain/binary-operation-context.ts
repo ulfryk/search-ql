@@ -26,10 +26,14 @@ export class BinaryOperationContext extends Expression {
     return `( ${this.left} ${this.value} ${this.right} )`;
   }
 
-  public rebuild(): BinaryOperationExpression {
+  public checkTypes(): Expression {
+    throw Error('BinaryOperationChain is a temporary construction. Its type is not known.');
+  }
+
+  public reshape(): BinaryOperationExpression {
     return BinaryOperationExpression.fromPair(this.value.operator)(
-      this.left.rebuild(),
-      this.right.rebuild());
+      this.left.reshape(),
+      this.right.reshape());
   }
 
   public append(operator: OperatorContext, rhs: Expression) {

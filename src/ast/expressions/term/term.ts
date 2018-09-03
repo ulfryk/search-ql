@@ -27,7 +27,11 @@ export class TermExpression<PV = any> extends Expression {
     );
   }
 
-  public rebuild() {
+  public checkTypes() {
+    return this;
+  }
+
+  public reshape() {
     return this;
   }
 

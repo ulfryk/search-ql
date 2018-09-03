@@ -69,8 +69,12 @@ export class BinaryOperationChain extends Expression {
       String(this.value[0]));
   }
 
-  public rebuild(): Expression {
-    return this.toContext().rebuild();
+  public checkTypes(): Expression {
+    throw Error('BinaryOperationChain is a temporary construction. Its type is not known.');
+  }
+
+  public reshape(): Expression {
+    return this.toContext().reshape();
   }
 
   private toContext(): Expression {

@@ -17,4 +17,4 @@ export const fromPairs =
           .orElse(Some(BinaryOperationChain.init(rhs))),
         None<BinaryOperationChain>())
       .orJust(TermExpression.empty()) // Should be validated as empty/ `InvalidExpression` maybe?
-      .rebuild();
+      .reshape();

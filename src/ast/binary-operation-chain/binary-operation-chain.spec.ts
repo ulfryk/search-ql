@@ -12,7 +12,7 @@ const buildChain = (initial: Expression, ...chain: [Operator, Expression][]) =>
     BinaryOperationChain.init(initial));
 
 const testRebuildMethod = (chain: BinaryOperationChain, expected: Expression) => {
-  const expression = chain.rebuild();
+  const expression = chain.reshape();
 
   describe(`chain: ${chain}`, () => {
 

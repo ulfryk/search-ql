@@ -1,5 +1,9 @@
+import { None, Some } from 'monet';
+
 import { ValueType } from '../../common/model';
 import { Expression } from './expression';
+import { InvalidExpression } from './invalid';
+import { TermExpression } from './term';
 
 export class NotExpression extends Expression {
 
@@ -25,9 +29,20 @@ export class NotExpression extends Expression {
       this.value.equals(other.value));
   }
 
-  public rebuild() {
-    const newValue = this.value.rebuild();
+  public checkTypes() {
+    return this.getError()
+      .foldLeft(this.clone(this.value.checkTypes()))(InvalidExpression.fromError);
+  }
 
+  public reshape() {
+    return this.clone(this.value.reshape());
+  }
+
+  public toString() {
+    return `NOT ${this.value}`;
+  }
+
+  private clone(newValue: Expression): Expression {
     if (this.value.equals(newValue)) {
       return this;
     }
@@ -35,8 +50,15 @@ export class NotExpression extends Expression {
     return new NotExpression(newValue);
   }
 
-  public toString() {
-    return `NOT ${this.value}`;
+  private getError() {
+    if (
+      this.value.is(TermExpression as any) ||
+      this.value.returnType === ValueType.Boolean
+    ) {
+      return None();
+    }
+
+    return Some('Operand of NOT operation should be a BOOLEAN');
   }
 
 }

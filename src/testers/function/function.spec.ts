@@ -2,13 +2,13 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { Expression, FunctionExpression } from '../../ast';
+import { Expression } from '../../ast';
 import { ValueType } from '../../common/model';
-import { config, txt } from '../../testing/utils';
+import { config, fn, txt } from '../../testing/utils';
 import { FunctionExpressionTester, Tester } from '../index';
 
 const getTester = (name: string, ...args: Expression[]) => {
-  const expr = FunctionExpression.fromParseResult(ValueType.Boolean)(name, args);
+  const expr = fn(name, ValueType.Boolean)(...args);
 
   return new FunctionExpressionTester(
     expr,

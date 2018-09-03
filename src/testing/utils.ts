@@ -1,7 +1,10 @@
+import { List } from 'immutable';
+import { None } from 'monet';
+
 import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { ValueType } from '../common/model';
-import { SyntaxConfig } from '../config';
+import { FunctionConfig, OptionalFunctionArg, SyntaxConfig } from '../config';
 
 const config = new SyntaxConfig();
 const { AND, LIKE, NOT, OR } = config;
@@ -40,7 +43,14 @@ const andNot = (l: Expression, r: Expression, op: AndOperator = And0) =>
   and(l, not(r), op);
 
 const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expression[]) =>
-  FunctionExpression.fromParseResult(returnType)(name, args);
+  FunctionExpression.fromParseResult(new FunctionConfig(
+    name,
+    List(args.map(({ returnType: t }, i) => OptionalFunctionArg.fromType(t, `arg${i}`))),
+    None(),
+    returnType,
+    // tslint:disable-next-line:no-unnecessary-callback-wrapper
+    () => None(),
+  ), args);
 
 export {
   config,
