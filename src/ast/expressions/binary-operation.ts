@@ -113,7 +113,7 @@ export class BinaryOperationExpression extends Expression {
     }
 
     if (!paramTypes.get(ValueType.Text)(newRight.returnType)) {
-      return this.getError('R', newLeft.returnType, ValueType.Text);
+      return this.getError('R', newRight.returnType, ValueType.Text);
     }
 
     return None();
