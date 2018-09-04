@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `SelectorExpression` (used with binary operator `LIKE` to replace `LabelledExpression`)
   - `TextExpression` (replaces `BasicExpression`)
 - operators precedence and associativity
+- **breaking** type checking
 
 ### Removed
 - **breaking** drop `LabelledExpression`
