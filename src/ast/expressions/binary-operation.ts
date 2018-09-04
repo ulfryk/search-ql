@@ -1,7 +1,7 @@
 import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { paramTypes, ValueType } from '../../common/model';
+import { isBooleanType, isSubtype, ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../operators';
 import { Expression } from './expression';
 import { InvalidExpression } from './invalid';
@@ -65,7 +65,7 @@ export class BinaryOperationExpression extends Expression {
     const [newLeft, newRight] = this.value.map(side => side.checkTypes());
 
     return this.check(newLeft, newRight)
-      .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromError);
+      .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
   }
 
   public reshape() {
@@ -95,7 +95,7 @@ export class BinaryOperationExpression extends Expression {
     return new BinaryOperationExpression(this.operator, [newLeft, newRight]);
   }
 
-  private check(newLeft: Expression, newRight: Expression): Maybe<string> {
+  private check(newLeft: Expression, newRight: Expression): Maybe<string[]> {
     if (this.operator.is(LikeOperator)) {
       return this.checkLikeTypes(newLeft, newRight);
     }
@@ -107,32 +107,32 @@ export class BinaryOperationExpression extends Expression {
     return None();
   }
 
-  private checkLikeTypes(newLeft: Expression, newRight: Expression): Maybe<string> {
-    if (!paramTypes.get(ValueType.Text)(newLeft.returnType)) {
-      return this.getError('L', newLeft.returnType, ValueType.Text);
-    }
-
-    if (!paramTypes.get(ValueType.Text)(newRight.returnType)) {
-      return this.getError('R', newRight.returnType, ValueType.Text);
-    }
-
-    return None();
+  private checkLikeTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    return Some([
+      ...this.getLikeSideErrors('L', newLeft.returnType),
+      ...this.getLikeSideErrors('R', newRight.returnType),
+    ]).filter(errors => errors.length > 0);
   }
 
-  private checkBooleanTypes(newLeft: Expression, newRight: Expression): Maybe<string> {
-    if (this.isSideTypeValid(newLeft)) {
-      return this.getError('L', newLeft.returnType, ValueType.Boolean);
-    }
+  private getLikeSideErrors(side: 'L' | 'R', actual: ValueType): string[] {
+    return isSubtype(actual, ValueType.Text) ? [] :
+      this.getError(side, actual, ValueType.Text).toList().toArray();
+  }
 
-    if (this.isSideTypeValid(newRight)) {
-      return this.getError('R', newRight.returnType, ValueType.Boolean);
-    }
+  private checkBooleanTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    return Some([
+      ...this.getLogicalSideErrors('L', newLeft),
+      ...this.getLogicalSideErrors('R', newRight),
+    ]).filter(errors => errors.length > 0);
+  }
 
-    return None();
+  private getLogicalSideErrors(side: 'L' | 'R', e: Expression): string[] {
+    return this.isSideTypeValid(e) ?
+      this.getError(side, e.returnType, ValueType.Boolean).toList().toArray() : [];
   }
 
   private isSideTypeValid(side: Expression): boolean {
-    return !side.is(TermExpression as any) && side.returnType !== ValueType.Boolean;
+    return !side.is(TermExpression as any) && !isBooleanType(side.returnType);
   }
 
   private getError(side: 'L' | 'R', actual: ValueType, expected: ValueType): Maybe<string> {

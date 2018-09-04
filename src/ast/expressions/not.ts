@@ -1,7 +1,7 @@
 import { List } from 'immutable';
-import { None, Some } from 'monet';
+import { Some } from 'monet';
 
-import { ValueType } from '../../common/model';
+import { isBooleanType, ValueType } from '../../common/model';
 import { Expression } from './expression';
 import { InvalidExpression } from './invalid';
 import { TermExpression } from './term';
@@ -60,14 +60,10 @@ export class NotExpression extends Expression {
   }
 
   private getError() {
-    if (
-      this.value.is(TermExpression as any) ||
-      this.value.returnType === ValueType.Boolean
-    ) {
-      return None();
-    }
-
-    return Some('Operand of NOT operation should be a BOOLEAN');
+    return Some(this.value)
+      .filter(value => !(isBooleanType(value.returnType) || value.is(TermExpression as any)))
+      .map(({ returnType }) =>
+        `Operand of NOT operation should be a BOOLEAN, but got ${returnType}`);
   }
 
 }

@@ -9,6 +9,7 @@ const enum ValueType {
 }
 
 const TEXT_TYPES: ReadonlyArray<ValueType> = [
+  ValueType.Any,
   ValueType.Date,
   ValueType.Number,
   ValueType.Text,
@@ -36,10 +37,15 @@ const paramTypes = Map<ValueType, (t: ValueType) => boolean>({
   [ValueType.Text]: isTextType,
 });
 
+const isSubtype = (t: ValueType, ofT: ValueType): boolean =>
+  paramTypes.get(ofT)(t);
+
 export {
+  isAnyType,
   isBooleanType,
   isDateType,
   isNumberType,
+  isSubtype,
   isTextType,
   paramTypes,
   TEXT_TYPES,

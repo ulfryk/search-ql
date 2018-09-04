@@ -13,6 +13,6 @@ export const validate = (e: Expression): Either<TypeFailure[], Expression> => {
 
   return Left(validated.toList()
     .filter(node => node instanceof InvalidExpression)
-    .map(({ error }: InvalidExpression) => new TypeFailure(error))
+    .flatMap(({ errors }: InvalidExpression) => errors.map(error => new TypeFailure(error)))
     .toArray());
 };

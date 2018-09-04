@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
-import { paramTypes } from '../../../common/model';
+import { isSubtype } from '../../../common/model';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { Expression } from '../expression';
 import { InvalidExpression } from '../invalid';
@@ -45,9 +45,9 @@ export class FunctionExpression extends Expression {
   }
 
   public checkTypes() {
-    return this.getError()
+    return this.getErrors()
       .foldLeft(this.clone(this.value.map(arg => arg.checkTypes()).toList()))(
-        InvalidExpression.fromError);
+        InvalidExpression.fromErrors);
   }
 
   public toString() {
@@ -68,43 +68,55 @@ export class FunctionExpression extends Expression {
     return new FunctionExpression(args, this.config);
   }
 
-  // tslint:disable-next-line:cyclomatic-complexity
-  private getError(): Maybe<string> {
-    const restArgs = this.value.slice(this.config.args.size);
+  private getErrors(): Maybe<string[]> {
+    const restArgs = this.value.slice(this.config.args.size).toList();
+    const initialArgs = this.value.slice(0, this.config.args.size).toList();
+    const requiredArgsCount = this.config.args
+      .filter(arg => arg instanceof RequiredFunctionArg)
+      .size;
 
-    if (!restArgs.isEmpty() && this.config.argsRest.isNone()) {
-      return Some(
-        `Function "${this.name}" accepts ${this.config.args.size} args but got ${this.value.size}`);
-    }
+    return Some([
+      ...this.getTooMuchArgsErrors(restArgs),
+      ...this.getToFewArgsErrors(initialArgs.size, requiredArgsCount),
+      ...this.getInitialArgsErrors(initialArgs),
+      ...this.getRestArgsErrors(restArgs),
+    ]).filter(errors => errors.length > 0);
+  }
 
-    const initialArgs = this.value.slice(0, this.config.args.size);
-    const requiredArgs = this.config.args.filter(arg => arg instanceof RequiredFunctionArg);
+  private getTooMuchArgsErrors(restArgs: List<Expression>) {
+    return !restArgs.isEmpty() && this.config.argsRest.isNone() ?
+      [`Function "${this.name}" accepts ${this.config.args.size} args but got ${this.value.size}`] :
+      [];
+  }
 
-    if (initialArgs.size < requiredArgs.size) {
-      return Some(
-        `Function "${this.name}" requires ${requiredArgs.size} args but got ${initialArgs.size}`);
-    }
+  private getToFewArgsErrors(initialArgsCount: number, requiredArgsCount: number) {
+    return initialArgsCount < requiredArgsCount ?
+      [`Function "${this.name}" requires ${requiredArgsCount} args but got ${initialArgsCount}`] :
+      [];
+  }
 
-    const invalidInitialArgs = zip(
-        this.config.args.slice(0, initialArgs.size).toArray(),
-        initialArgs.toArray())
-      .filter(([config, arg]) => !paramTypes.get(config.type)(arg.returnType))
-      .map(([config, arg]) =>
-        `"${config.label}" should be ${config.type} but is ${arg.returnType}`);
+  private getInitialArgsErrors(initialArgs: List<Expression>): string[] {
+    return zip(
+      this.config.args.slice(0, initialArgs.size).toArray(),
+      initialArgs.toArray())
+    .map(([config, arg], index) =>
+      ({ arg, config, index, valid: isSubtype(arg.returnType, config.type) }))
+    .filter(({ valid }) => !valid)
+    .map(( { arg, config, index }) =>
+      `Function "${this.name}" has wrong arg passed: "${config.label}" (${index} param) ` +
+      `should be ${config.type} but is ${arg.returnType}`);
+  }
 
-    if (invalidInitialArgs.length > 0) {
-      return Some(`Function "${this.name}" has wrong args passed: ${invalidInitialArgs.join('; ')}`);
-    }
-
-    const invalidRestArgs = this.config.argsRest
+  private getRestArgsErrors(restArgs: List<Expression>): string[] {
+    return this.config.argsRest
       .map(({ type }) => restArgs
-        .filter(arg => !paramTypes.get(type)(arg.returnType))
-        .map(arg =>
-          `rest arg should be ${type} but is ${arg.returnType}`))
-      .filter(errors => !errors.isEmpty());
-
-    return invalidRestArgs.map(errors =>
-      `Function "${this.name}" has wrong rest args passed: ${errors.join('; ')}`);
+        .map((arg, index) => ({ arg, index, valid: isSubtype(arg.returnType, type) }))
+        .filter(({ valid }) => !valid)
+        .map(({ arg, index }) =>
+          `Function "${this.name}" has wrong ${index + 1} rest arg passed, ` +
+          `should be ${type} but is ${arg.returnType}`))
+      .filter(errors => !errors.isEmpty())
+      .fold([])(errors => errors.toArray());
   }
 
 }

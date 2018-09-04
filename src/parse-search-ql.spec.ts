@@ -25,14 +25,14 @@ describe('SearchQL', () => {
       'aaa & bbb',
       'token_expired ~ true',
       'first_name ~ Adam | token_expired ~ true',
-      'test_function(aaa, bbb)',
+      'test_function(aaa, "b(b & b)")',
     ];
 
     const successfulOutputValues = [
       and(txt('aaa'), txt('bbb')),
       like(txt('token_expired'), txt('true')),
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
-      fn('test_function')(txt('aaa'), txt('bbb')),
+      fn('test_function')(txt('aaa'), txt('b(b & b)')),
     ].map(Either.of);
 
     const invalidInput = [
@@ -45,13 +45,23 @@ describe('SearchQL', () => {
     const invalidTypesInput = [
       'token_expired ~ (aaa & bbb)',
       'test_function(aaa, (token_expired ~ true))',
-      'test_function(test_function(aaa), bbb, ccc)',
+      'test_function(test_function(aaa), (token_expired ~ true), (! ccc))',
+      'test_function(aaa, bbb, (! ccc)) ~ (! "John Doe")',
     ];
 
     const invalidTypesOutput = [
-      'TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
-      'TypeError: Function "test_function" has wrong rest args passed: rest arg should be TEXT but is BOOLEAN',
-      'TypeError: Function "test_function" has wrong rest args passed: rest arg should be TEXT but is BOOLEAN',
+      ['TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2 rest arg passed, should be TEXT but is BOOLEAN'],
+      [
+        'TypeError: Function "test_function" has wrong 1 rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 2 rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 3 rest arg passed, should be TEXT but is BOOLEAN',
+      ],
+      [
+        'TypeError: LHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
+        'TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
+        'TypeError: Function "test_function" has wrong 3 rest arg passed, should be TEXT but is BOOLEAN',
+      ],
     ];
 
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
@@ -95,7 +105,7 @@ describe('SearchQL', () => {
         });
 
         it('should proper type error information', () => {
-          expect(parsed.left().map(String)).to.deep.equal([invalidTypesOutput[i]]);
+          expect(parsed.left().map(String)).to.deep.equal(invalidTypesOutput[i]);
         });
 
       });

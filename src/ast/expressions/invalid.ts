@@ -1,4 +1,4 @@
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
 
 import { Expression } from './expression';
 import { TermExpression } from './term';
@@ -6,17 +6,21 @@ import { TermExpression } from './term';
 export class InvalidExpression extends Expression {
 
   public static fromError(original: Expression, error: string) {
-    return new InvalidExpression(original, error);
+    return InvalidExpression.fromErrors(original, [error]);
+  }
+
+  public static fromErrors(original: Expression, errors: string[]) {
+    return new InvalidExpression(original, Set(errors));
   }
 
   public static empty(error: string) {
-    return new InvalidExpression(TermExpression.empty(), error);
+    return InvalidExpression.fromError(TermExpression.empty(), error);
   }
 
   constructor(
     public readonly value: Expression,
     // TEMPORARY, should be a class extending same base as ParseFailure
-    public readonly error: string,
+    public readonly errors: Set<string>,
   ) { super(); }
 
   public get returnType() {
@@ -27,7 +31,7 @@ export class InvalidExpression extends Expression {
     return this === other || (
       other instanceof InvalidExpression &&
       this.value.equals(other.value) &&
-      this.error === other.error
+      this.errors.equals(other.errors)
     );
   }
 
@@ -44,11 +48,11 @@ export class InvalidExpression extends Expression {
   }
 
   public toString() {
-    return `InvalidExpression: ${this.error}. EXPRESSION[ ${this.value} ]`;
+    return `InvalidExpression: ${this.errors.join('; ')}. EXPRESSION[ ${this.value} ]`;
   }
 
   public toList() {
-    return List([this]);
+    return List([this]).concat(this.value.toList()).toList();
   }
 
 }
