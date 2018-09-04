@@ -1,7 +1,9 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
+import { List } from 'immutable';
 import { zip } from 'lodash';
 
+import { Expression } from '../expression';
 import { DateExpression } from './date';
 import { TermExpression } from './term';
 
@@ -63,6 +65,26 @@ describe('SearchQL expressions', () => {
       it('should return false for instances of different value', () => {
         zip<DateExpression>(lhs, rhsInvalid).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.false;
+        });
+      });
+
+    });
+
+    describe('toList() method', () => {
+
+      const lhs = [
+        new DateExpression('Tue Aug 28 2018'),
+        DateExpression.fromMatch('2000-01-01'),
+      ];
+
+      const rhs = [
+        List([lhs[0]]),
+        List([lhs[1]]),
+      ];
+
+      it('should properly build up list of expressions', () => {
+        zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toList().equals(right)).to.be.true;
         });
       });
 

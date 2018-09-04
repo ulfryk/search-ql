@@ -1,3 +1,5 @@
+import { List } from 'immutable';
+
 import { Expression } from './expression';
 import { TermExpression } from './term';
 
@@ -43,6 +45,10 @@ export class InvalidExpression extends Expression {
 
   public toString() {
     return `InvalidExpression: ${this.error}. EXPRESSION[ ${this.value} ]`;
+  }
+
+  public toList() {
+    return List([this]);
   }
 
 }

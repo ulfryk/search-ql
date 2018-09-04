@@ -1,3 +1,5 @@
+import { List } from 'immutable';
+
 import { Expression } from './expression';
 
 export abstract class InterimExpression extends Expression {
@@ -10,6 +12,10 @@ export abstract class InterimExpression extends Expression {
 
   public checkTypes(): Expression {
     throw Error(`${this.errorPrefix} Its type is not known.`);
+  }
+
+  public toList(): List<Expression> {
+    throw Error(`${this.errorPrefix} Can not be converted to a List.`);
   }
 
   private get errorPrefix() {

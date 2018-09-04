@@ -1,4 +1,4 @@
-import { Set } from 'immutable';
+import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { paramTypes, ValueType } from '../../common/model';
@@ -76,6 +76,13 @@ export class BinaryOperationExpression extends Expression {
 
   public toString() {
     return this.value.map(String).join(` ${this.operator} `);
+  }
+
+  public toList() {
+    return List([this])
+      .concat(List(this.value)
+        .flatMap(operand => operand.toList()))
+      .toList();
   }
 
   private clone(newLeft: Expression, newRight: Expression): Expression {

@@ -1,3 +1,4 @@
+import { List } from 'immutable';
 import { None, Some } from 'monet';
 
 import { ValueType } from '../../common/model';
@@ -44,6 +45,10 @@ export class NotExpression extends Expression {
 
   public toString() {
     return `NOT ${this.value}`;
+  }
+
+  public toList() {
+    return List([this]).concat(this.value.toList()).toList();
   }
 
   private clone(newValue: Expression): Expression {

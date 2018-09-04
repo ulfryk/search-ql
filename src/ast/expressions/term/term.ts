@@ -1,3 +1,5 @@
+import { List } from 'immutable';
+
 import { ValueType } from '../../../common/model';
 import { Expression } from '../expression';
 
@@ -41,6 +43,10 @@ export class TermExpression<PV = any> extends Expression {
 
   public toString() {
     return this.value;
+  }
+
+  public toList() {
+    return List([this]);
   }
 
 }

@@ -1,4 +1,5 @@
 import { ISetoid } from '@samwise-tech/core';
+import { List } from 'immutable';
 
 import { ValueType } from '../../common/model';
 
@@ -10,6 +11,7 @@ export abstract class Expression implements ISetoid {
   public abstract checkTypes(): Expression;
   public abstract isValid(): boolean;
   public abstract toString(): string;
+  public abstract toList(): List<Expression>;
 
   public inspect(): string {
     return this.toString();

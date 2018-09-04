@@ -1,5 +1,6 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
+import { List } from 'immutable';
 import { zip } from 'lodash';
 
 import { Expression } from '../expression';
@@ -60,6 +61,26 @@ describe('SearchQL expressions', () => {
       it('should return false for instances of different value', () => {
         zip<Expression>(lhs, rhsInvalid).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.false;
+        });
+      });
+
+    });
+
+    describe('toList() method', () => {
+
+      const lhs = [
+        NumberExpression.fromMatch('12'),
+        new NumberExpression('0'),
+      ];
+
+      const rhs = [
+        List([lhs[0]]),
+        List([lhs[1]]),
+      ];
+
+      it('should properly build up list of expressions', () => {
+        zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toList().equals(right)).to.be.true;
         });
       });
 

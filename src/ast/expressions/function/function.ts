@@ -54,6 +54,12 @@ export class FunctionExpression extends Expression {
     return `${this.name}( ${this.value.join(' , ')} )`;
   }
 
+  public toList() {
+    return List([this])
+      .concat(this.value.flatMap(operand => operand.toList()))
+      .toList();
+  }
+
   private clone(args: List<Expression>): Expression {
     if (args.equals(this.value)) {
       return this;

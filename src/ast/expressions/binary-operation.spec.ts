@@ -1,5 +1,6 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
+import { List } from 'immutable';
 import { zip } from 'lodash';
 
 import { SyntaxConfig } from '../../config/syntax-config';
@@ -100,6 +101,37 @@ describe('SearchQL expressions', () => {
       it('should return false for instances of different shape', () => {
         zip<Expression>(lhs, rhsInvalid).forEach(([left, right]) => {
           expect(left.equals(right)).to.be.false;
+        });
+      });
+
+    });
+
+    describe('toList() method', () => {
+
+      const lhs = [
+        new BinaryOperationExpression(Like, [
+          new SelectorExpression('aaa'),
+          new TextExpression('123'),
+        ]),
+        new BinaryOperationExpression(And, [
+          new TextExpression('123'),
+          new TextExpression('aaa'),
+        ]),
+        new BinaryOperationExpression(Or, [
+          new TextExpression('aaa'),
+          new TextExpression('123'),
+        ]),
+      ];
+
+      const rhs = [
+        List([lhs[0], lhs[0].value[0], lhs[0].value[1]]),
+        List([lhs[1], lhs[1].value[0], lhs[1].value[1]]),
+        List([lhs[2], lhs[2].value[0], lhs[2].value[1]]),
+      ];
+
+      it('should properly build up list of expressions', () => {
+        zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toList().equals(right)).to.be.true;
         });
       });
 

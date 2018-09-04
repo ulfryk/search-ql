@@ -165,6 +165,28 @@ describe('SearchQL expressions', () => {
 
     });
 
+    describe('toList() method', () => {
+
+      const lhs = [
+        fn('return_null'),
+        fn('id', TermExpression.fromMatch('lorem')),
+        fn('is_date', TermExpression.fromMatch('2018-01-01')),
+      ];
+
+      const rhs = [
+        List([lhs[0]]),
+        List([lhs[1], lhs[1].value.first()]),
+        List([lhs[2], lhs[2].value.first()]),
+      ];
+
+      it('should properly build up list of expressions', () => {
+        zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toList().equals(right)).to.be.true;
+        });
+      });
+
+    });
+
   });
 
 });
