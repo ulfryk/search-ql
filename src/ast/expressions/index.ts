@@ -4,4 +4,5 @@ export * from './expression';
 export * from './interim';
 export * from './invalid';
 export * from './not';
+export * from './validate';
 export * from './term';

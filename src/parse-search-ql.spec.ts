@@ -4,6 +4,7 @@ import { zip } from 'lodash';
 import { Either } from 'monet';
 
 import { AndOperator, LikeOperator, OrOperator } from './ast';
+import { ParseFailure } from './common/model';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
@@ -47,6 +48,12 @@ describe('SearchQL', () => {
       'test_function(test_function(aaa), bbb, ccc)',
     ];
 
+    const invalidTypesOutput = [
+      'TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
+      'TypeError: Function "test_function" has wrong rest args passed: rest arg should be TEXT but is BOOLEAN',
+      'TypeError: Function "test_function" has wrong rest args passed: rest arg should be TEXT but is BOOLEAN',
+    ];
+
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
         const parsed = parseSearchQL(allParserNames)(input);
@@ -71,22 +78,24 @@ describe('SearchQL', () => {
         });
 
         it('should provide original input', () => {
-          expect(parsed.cata(({ query }) => query, () => null)).to.equal(input);
+          expect(parsed.cata(
+            f => f.map(({ query }: ParseFailure) => query)[0],
+            () => null)).to.equal(input);
         });
 
       });
     });
 
-    invalidTypesInput.forEach(input => {
+    invalidTypesInput.forEach((input, i) => {
       describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
         const parsed = parseSearchQL(allParserNames)(input);
 
-        it('should return right', () => {
-          expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
+        it('should return Left', () => {
+          expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
         });
 
-        it('should provide original input', () => {
-          expect(parsed.right().isValid()).to.be.false;
+        it('should proper type error information', () => {
+          expect(parsed.left().map(String)).to.deep.equal([invalidTypesOutput[i]]);
         });
 
       });
@@ -165,7 +174,9 @@ describe('SearchQL', () => {
         });
 
         it('should provide original input', () => {
-          expect(parsed.cata(({ query }) => query, () => null)).to.equal(input);
+          expect(parsed.cata(
+            f => f.map(({ query }: ParseFailure) => query)[0],
+            () => null)).to.equal(input);
         });
 
       });
