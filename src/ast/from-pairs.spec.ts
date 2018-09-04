@@ -42,7 +42,7 @@ describe('SearchQL ast', () => {
 
     zip<any>(validInput, validOutput).forEach(([input, output]) => {
       it(`should properly build expression for: ${output}`, () => {
-        expect(fromPairs(input, config).equals(output)).to.be.true;
+        expect(fromPairs(input, config).reshape().equals(output)).to.be.true;
       });
     });
 

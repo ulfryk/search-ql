@@ -31,8 +31,8 @@ const test = (
       });
 
       it('should provide proper value', () => {
-        expect(parsed.status && parsed.value.equals(output)).to.be.true;
-        expect(parsed.status ? String(parsed.value) : null).to.equal(String(output));
+        expect(parsed.status && parsed.value.reshape().equals(output)).to.be.true;
+        expect(parsed.status ? String(parsed.value.reshape()) : null).to.equal(String(output));
       });
 
     });

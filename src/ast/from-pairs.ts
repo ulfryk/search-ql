@@ -2,7 +2,7 @@ import { None, Some } from 'monet';
 
 import { SyntaxConfig } from '../config';
 import { BinaryOperationChain } from './binary-operation-chain';
-import { Expression, TermExpression } from './expressions';
+import { Expression, InvalidExpression } from './expressions';
 import { OOPair } from './oopair';
 import { Operator } from './operators';
 
@@ -16,5 +16,4 @@ export const fromPairs =
             .map<Expression>(group.append(rhs, config)))
           .orElse(Some(BinaryOperationChain.init(rhs))),
         None<BinaryOperationChain>())
-      .orJust(TermExpression.empty()) // Should be validated as empty/ `InvalidExpression` maybe?
-      .reshape();
+      .orJust(InvalidExpression.empty('No valid expression found.'));

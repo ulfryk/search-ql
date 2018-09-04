@@ -13,7 +13,7 @@ export const parseSearchQL = (parserNames: ParserName[], config?: SyntaxConfig) 
     const parsed = queryParserConfigured.parse(query);
 
     return parsed.status ?
-      Right<ParseFailure, Expression>(parsed.value.checkTypes()) :
+      Right<ParseFailure, Expression>(parsed.value.reshape().checkTypes()) :
       Left<ParseFailure, Expression>(ParseFailure.fromFailure(parsed as Failure, query));
   };
 };

@@ -1,9 +1,14 @@
 import { Expression } from './expression';
+import { TermExpression } from './term';
 
 export class InvalidExpression extends Expression {
 
   public static fromError(original: Expression, error: string) {
     return new InvalidExpression(original, error);
+  }
+
+  public static empty(error: string) {
+    return new InvalidExpression(TermExpression.empty(), error);
   }
 
   constructor(

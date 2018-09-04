@@ -41,6 +41,12 @@ describe('SearchQL', () => {
       'des:: c: ipsum OR NOT dolor AND "john doe":"',
     ];
 
+    const invalidTypesInput = [
+      'token_expired ~ (aaa & bbb)',
+      'test_function(aaa, (token_expired ~ true))',
+      'test_function(test_function(aaa), bbb, ccc)',
+    ];
+
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
         const parsed = parseSearchQL(allParserNames)(input);
@@ -66,6 +72,21 @@ describe('SearchQL', () => {
 
         it('should provide original input', () => {
           expect(parsed.cata(({ query }) => query, () => null)).to.equal(input);
+        });
+
+      });
+    });
+
+    invalidTypesInput.forEach(input => {
+      describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
+        const parsed = parseSearchQL(allParserNames)(input);
+
+        it('should return right', () => {
+          expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
+        });
+
+        it('should provide original input', () => {
+          expect(parsed.right().isValid()).to.be.false;
         });
 
       });
