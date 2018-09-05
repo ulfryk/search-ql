@@ -51,16 +51,16 @@ describe('SearchQL', () => {
 
     const invalidTypesOutput = [
       ['TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN'],
-      ['TypeError: Function "test_function" has wrong 2 rest arg passed, should be TEXT but is BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
       [
-        'TypeError: Function "test_function" has wrong 1 rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2 rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3 rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
       ],
       [
         'TypeError: LHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
         'TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3 rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
       ],
     ];
 
@@ -104,7 +104,7 @@ describe('SearchQL', () => {
           expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
         });
 
-        it('should proper type error information', () => {
+        it('should yield proper type error information', () => {
           expect(parsed.left().map(String)).to.deep.equal(invalidTypesOutput[i]);
         });
 

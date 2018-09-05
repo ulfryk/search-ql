@@ -3,6 +3,7 @@ import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
 import { isSubtype } from '../../../common/model';
+import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { Expression } from '../expression';
 import { InvalidExpression } from '../invalid';
@@ -103,8 +104,9 @@ export class FunctionExpression extends Expression {
       ({ arg, config, index, valid: isSubtype(arg.returnType, config.type) }))
     .filter(({ valid }) => !valid)
     .map(( { arg, config, index }) =>
-      `Function "${this.name}" has wrong arg passed: "${config.label}" (${index} param) ` +
-      `should be ${config.type} but is ${arg.returnType}`);
+      `Function "${this.name}" has wrong arg passed: "${config.label}" ` +
+      `(${toOrdinal(index + 1)} param) should be ${config.type} but ` +
+      `is ${arg.returnType}`);
   }
 
   private getRestArgsErrors(restArgs: List<Expression>): string[] {
@@ -113,7 +115,7 @@ export class FunctionExpression extends Expression {
         .map((arg, index) => ({ arg, index, valid: isSubtype(arg.returnType, type) }))
         .filter(({ valid }) => !valid)
         .map(({ arg, index }) =>
-          `Function "${this.name}" has wrong ${index + 1} rest arg passed, ` +
+          `Function "${this.name}" has wrong ${toOrdinal(index + 1)} rest arg passed, ` +
           `should be ${type} but is ${arg.returnType}`))
       .filter(errors => !errors.isEmpty())
       .fold([])(errors => errors.toArray());
