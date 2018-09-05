@@ -1,6 +1,6 @@
 import { List, Set } from 'immutable';
 
-import { Expression } from './expression';
+import { Expression } from '../../common/model';
 import { TermExpression } from './term';
 
 export class InvalidExpression extends Expression {

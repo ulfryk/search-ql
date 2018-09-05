@@ -8,7 +8,7 @@ import { ParseFailure } from './common/model';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
-import { and, fn, like, or, txt } from './testing/utils';
+import { and, fn, like, or, term, txt } from './testing/utils';
 
 const allParserNames = [
   ParserName.Basic,
@@ -29,9 +29,9 @@ describe('SearchQL', () => {
     ];
 
     const successfulOutputValues = [
-      and(txt('aaa'), txt('bbb')),
-      like(txt('token_expired'), txt('true')),
-      or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
+      and(term('aaa'), term('bbb')),
+      like(txt('token_expired'), term('true')),
+      or(like(txt('first_name'), term('Adam')), like(txt('token_expired'), term('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
     ].map(Either.of);
 
@@ -43,14 +43,12 @@ describe('SearchQL', () => {
     ];
 
     const invalidTypesInput = [
-      'token_expired ~ (aaa & bbb)',
       'test_function(aaa, (token_expired ~ true))',
       'test_function(test_function(aaa), (token_expired ~ true), (! ccc))',
       'test_function(aaa, bbb, (! ccc)) ~ (! "John Doe")',
     ];
 
     const invalidTypesOutput = [
-      ['TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN'],
       ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
       [
         'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
@@ -59,7 +57,6 @@ describe('SearchQL', () => {
       ],
       [
         'TypeError: LHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
-        'TypeError: RHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
         'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
       ],
     ];
@@ -137,12 +134,12 @@ describe('SearchQL', () => {
     ];
 
     const successfulOutputValues = [
-      and(txt('aaa'), txt('bbb'), AndC),
-      or(txt('aaa'), txt('bbb'), OrC),
-      like(txt('first_name'), txt('Adam'), LikeC),
+      and(term('aaa'), term('bbb'), AndC),
+      or(term('aaa'), term('bbb'), OrC),
+      like(txt('first_name'), term('Adam'), LikeC),
       and(
-        like(txt('first_name'), txt('Adam'), LikeC),
-        like(txt('token_expired'), txt('true'), LikeC),
+        like(txt('first_name'), term('Adam'), LikeC),
+        like(txt('token_expired'), term('true'), LikeC),
         AndC),
       fn('test_function')(txt('aaa'), txt('bbb')),
     ].map(Either.of);

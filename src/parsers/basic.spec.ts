@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
-import { Expression, NumberExpression, TermExpression, TextExpression } from '../ast';
+import { TermExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 
@@ -22,28 +22,14 @@ describe('SearchQL parsers', () => {
   ];
 
   const validOutput = [
-    ...[
-      'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
-      'OR AND NOT (OR AND NOT) asd: asd not ASD:ASd',
-      '  ',
-    ].map(TextExpression.fromMatch),
-    ...[
-      validInput[3],
-      validInput[4],
-      validInput[5],
-      validInput[6],
-    ].map(TermExpression.fromMatch),
-  ];
-
-  const validOutputType = [
-    TextExpression,
-    TextExpression,
-    TextExpression,
-    TextExpression,
-    TextExpression,
-    NumberExpression,
-    TextExpression,
-  ];
+    'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
+    'OR AND NOT (OR AND NOT) asd: asd not ASD:ASd',
+    '  ',
+    validInput[3],
+    validInput[4],
+    validInput[5],
+    validInput[6],
+  ].map(TermExpression.of);
 
   const invalidInput = [
     'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
@@ -59,8 +45,8 @@ describe('SearchQL parsers', () => {
 
   describe('basicExpression', () => {
 
-    zip<any>(validInput, validOutput, validOutputType)
-      .forEach(([input, output, type]) => {
+    zip<any>(validInput, validOutput)
+      .forEach(([input, output]) => {
         describe(`for valid input: '${input}'`, () => {
           const parsed = basicExpression(config).parse(input);
 
@@ -69,9 +55,7 @@ describe('SearchQL parsers', () => {
           });
 
           it('should be evaluated to proper expression type', () => {
-            expect(parsed.status ? parsed.value : null).to.be.instanceOf(Expression);
             expect(parsed.status ? parsed.value : null).to.be.instanceOf(TermExpression);
-            expect(parsed.status ? parsed.value : null).to.be.instanceOf(type);
           });
 
           it('should provide proper value', () => {

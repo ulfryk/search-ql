@@ -1,4 +1,4 @@
 export const isNumber = (value: string): boolean =>
-  Number(value) === parseFloat(value) ||
+  Number(value.trim()) === parseFloat(value.trim()) ||
   // tslint:disable-next-line:radix
-  Number(value) === parseInt(value);
+  Number(value.trim()) === parseInt(value.trim());

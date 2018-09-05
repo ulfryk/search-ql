@@ -3,11 +3,11 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
+import { Expression } from '../../common/model';
 import { SyntaxConfig } from '../../config/syntax-config';
 import { AndOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
-import { Expression } from './expression';
-import { NumberExpression, SelectorExpression, TextExpression } from './term';
+import { NumberExpression, TermExpression, TextExpression } from './term';
 
 const { AND, LIKE, OR } = new SyntaxConfig();
 const And = new AndOperator(AND[0]);
@@ -25,8 +25,8 @@ describe('SearchQL expressions', () => {
           new TextExpression('aaa'),
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Like, [
-          new SelectorExpression('aaa'),
-          new TextExpression('123'),
+          new TextExpression('aaa'),
+          TermExpression.of('123'),
         ]));
       });
 
@@ -36,16 +36,16 @@ describe('SearchQL expressions', () => {
           new NumberExpression('123'),
           new TextExpression('aaa'),
         )).to.deep.equal(new BinaryOperationExpression(And, [
-          new TextExpression('123'),
-          new TextExpression('aaa'),
+          TermExpression.of('123'),
+          TermExpression.of('aaa'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(Or)(
           new TextExpression('aaa'),
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Or, [
-          new TextExpression('aaa'),
-          new TextExpression('123'),
+          TermExpression.of('aaa'),
+          TermExpression.of('123'),
         ]));
 
       });
@@ -110,7 +110,7 @@ describe('SearchQL expressions', () => {
 
       const lhs = [
         new BinaryOperationExpression(Like, [
-          new SelectorExpression('aaa'),
+          new TextExpression('aaa'),
           new TextExpression('123'),
         ]),
         new BinaryOperationExpression(And, [

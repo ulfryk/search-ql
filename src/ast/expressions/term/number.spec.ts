@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression } from '../expression';
+import { Expression } from '../../../common/model';
 import { NumberExpression } from './number';
 import { TermExpression } from './term';
 
@@ -11,11 +11,11 @@ describe('SearchQL expressions', () => {
 
   describe('NumberExpression', () => {
 
-    describe('fromMatch() static method', () => {
+    describe('of() static method', () => {
 
       it('should return instance of NumberExpression', () => {
-        expect(NumberExpression.fromMatch('1')).to.be.instanceof(TermExpression);
-        expect(NumberExpression.fromMatch('1')).to.be.instanceof(NumberExpression);
+        expect(NumberExpression.of('1')).to.be.instanceof(TermExpression);
+        expect(NumberExpression.of('1')).to.be.instanceof(NumberExpression);
       });
 
     });
@@ -23,11 +23,11 @@ describe('SearchQL expressions', () => {
     describe('equals() method', () => {
 
       const lhs = [
-        NumberExpression.fromMatch('1'),
-        NumberExpression.fromMatch('2.00'),
-        NumberExpression.fromMatch('003.00'),
-        NumberExpression.fromMatch('4e2'),
-        NumberExpression.fromMatch('-.01'),
+        NumberExpression.of('1'),
+        NumberExpression.of('2.00'),
+        NumberExpression.of('003.00'),
+        NumberExpression.of('4e2'),
+        NumberExpression.of('-.01'),
       ];
 
       const rhs = [
@@ -39,11 +39,11 @@ describe('SearchQL expressions', () => {
       ];
 
       const rhsInvalid = [
-        NumberExpression.fromMatch('1.1'),
+        NumberExpression.of('1.1'),
         new NumberExpression('0'),
-        NumberExpression.fromMatch('3.01'),
+        NumberExpression.of('3.01'),
         new NumberExpression('-400'),
-        NumberExpression.fromMatch('-0.001'),
+        NumberExpression.of('-0.001'),
       ];
 
       it('should return true for comparison with a reference', () => {
@@ -69,7 +69,7 @@ describe('SearchQL expressions', () => {
     describe('toList() method', () => {
 
       const lhs = [
-        NumberExpression.fromMatch('12'),
+        NumberExpression.of('12'),
         new NumberExpression('0'),
       ];
 

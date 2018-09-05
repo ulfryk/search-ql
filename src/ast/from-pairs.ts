@@ -1,8 +1,9 @@
 import { None, Some } from 'monet';
 
+import { Expression } from '../common/model';
 import { SyntaxConfig } from '../config';
 import { BinaryOperationChain } from './binary-operation-chain';
-import { Expression, InvalidExpression } from './expressions';
+import { InvalidExpression } from './expressions';
 import { OOPair } from './oopair';
 import { Operator } from './operators';
 

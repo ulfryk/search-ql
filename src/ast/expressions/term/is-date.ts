@@ -1,1 +1,1 @@
-export const isDate = (value: string) => new Date(value).toJSON() != null;
+export const isDate = (value: string) => new Date(value.trim()).toJSON() != null;

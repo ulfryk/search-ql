@@ -1,14 +1,19 @@
 import { ValueType } from '../../../common/model';
+import { isNumber } from './is-number';
 import { TermExpression } from './term';
 
 export class NumberExpression extends TermExpression<number> {
 
-  public static fromMatch(match: string) {
-    return new NumberExpression(match);
+  public static fromTerm(term: TermExpression) {
+    return isNumber(term.value) ? NumberExpression.of(term.value) : term;
+  }
+
+  public static of(value: string) {
+    return new NumberExpression(value);
   }
 
   // TODO: probably use config here
-  public static prepareValue(value: string) {
+  public static prepareValue(value: string): number {
     return Number(value.trim());
   }
 

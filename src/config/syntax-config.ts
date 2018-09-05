@@ -26,15 +26,15 @@ export class SyntaxConfig {
     ...this.OR.map(token => [token, OperatorType.Or]),
   ]);
 
-  public readonly functions = Map<string, FunctionConfig>([
+  public readonly functions = Map<string, FunctionConfig<any>>([
     ...this.builtInFunctions,
     ...this.customFunctions,
   ].map(fnConfig => [fnConfig.name, fnConfig]));
 
   constructor( // add `parserNames` configuration option here
     public readonly caseSensitive: boolean = false,
-    public readonly builtInFunctions: FunctionConfig[] = allBuiltInFunctions,
-    public readonly customFunctions: FunctionConfig[] = [],
+    public readonly builtInFunctions: FunctionConfig<any>[] = allBuiltInFunctions,
+    public readonly customFunctions: FunctionConfig<any>[] = [],
     // binary operators
     public readonly AND = ['AND', '&'],
     public readonly LIKE = ['LIKE', '~'],

@@ -10,4 +10,4 @@ export const basicWord = (config: SyntaxConfig) => P.custom<string>((success, fa
   matchBasicWord(input.substring(i), config)
     .map(([match]) => match)
     .cata(() => fail(i, 'not a valid word'), match => success(i + match.length, match)))
-  .map(TermExpression.fromMatch);
+  .map(TermExpression.of);

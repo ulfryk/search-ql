@@ -1,9 +1,9 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { None } from 'monet';
 
-import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
+import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
-import { ValueType } from '../common/model';
+import { Expression, NodeEvaluation, ValueType } from '../common/model';
 import { FunctionConfig, OptionalFunctionArg, SyntaxConfig } from '../config';
 
 const config = new SyntaxConfig();
@@ -30,8 +30,8 @@ const and = (l: Expression, r: Expression, op: AndOperator = And) =>
 
 const like = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) =>
   new BinaryOperationExpression(op, [
-    SelectorExpression.fromTerm(l),
-    TextExpression.fromTerm(r),
+    new TextExpression(l.value),
+    TermExpression.of(r.value),
   ]);
 
 const or = (l: Expression, r: Expression, op: OrOperator = Or) =>
@@ -49,7 +49,7 @@ const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expressio
     None(),
     returnType,
     // tslint:disable-next-line:no-unnecessary-callback-wrapper
-    () => None(),
+    () => () => NodeEvaluation.ofBoolean(Map(), null)(false),
   ), args);
 
 export {

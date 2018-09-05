@@ -2,18 +2,18 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { TextExpression } from '../../ast';
+import { fromMatch, TermExpression } from '../../ast';
 import { SyntaxConfig } from '../../config';
-import { TextExpressionTester } from './text-expression';
+import { TermExpressionTester } from './term-expression';
 
 const config = new SyntaxConfig();
 
-const getTester = (expr: TextExpression) =>
-  new TextExpressionTester(expr, config);
+const getTester = (expr: TermExpression) =>
+  new TermExpressionTester(expr, config);
 
 describe('SearchQL testers', () => {
 
-  describe('TextExpressionTester', () => {
+  describe('TermExpressionTester', () => {
 
     // tslint:disable-next-line:no-unnecessary-type-assertion
     const values = Map([
@@ -34,28 +34,28 @@ describe('SearchQL testers', () => {
             val)
       .map(val => val.substr(-6, 5))
       .concat(values.toArray())
-      .map(TextExpression.fromMatch);
+      .map(fromMatch);
 
     const notMatchingExpressions = values.toArray()
       .map((val, i) => `${i} ${val}`)
-      .map(TextExpression.fromMatch);
+      .map(fromMatch);
 
     expressions.forEach(expression => {
       it(`should find expression "${expression}"`, () => {
-        expect(getTester(expression).test(values).isSome()).to.be.true;
-        expect(getTester(expression).test(values).some().isEmpty()).to.be.false;
+        expect(getTester(expression).test(values).matches().isSome()).to.be.true;
+        expect(getTester(expression).test(values).matches().some().isEmpty()).to.be.false;
       });
     });
 
     notMatchingExpressions.forEach(expression => {
       it(`should not find expression "${expression}"`, () => {
-        expect(getTester(expression).test(values).isSome()).to.be.false;
+        expect(getTester(expression).test(values).matches().isSome()).to.be.false;
       });
     });
 
     it('should find expression "aaa" in few fields', () => {
       expect(
-        getTester(TextExpression.fromMatch('aaa')).test(Map({
+        getTester(fromMatch('aaa')).test(Map({
           one: 'aaa bbb aaa aaa aaasda ddaaa',
           three: 'aaGaa bbb aadaaXaadaa ddddadd',
           two: 'aaa bbb aaaXaaa',

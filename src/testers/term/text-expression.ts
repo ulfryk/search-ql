@@ -1,13 +1,11 @@
-import { indexOf } from '@samwise-tech/core';
-import { Map, OrderedSet } from 'immutable';
-import { Maybe, Some } from 'monet';
+import { Map } from 'immutable';
 
 import { TextExpression } from '../../ast';
-import { Match } from '../../common/model';
+import { NodeEvaluation } from '../../common/model';
 import { SyntaxConfig } from '../../config';
 import { Tester } from '../tester';
 
-export class TextExpressionTester extends Tester<TextExpression, null> {
+export class TextExpressionTester extends Tester<string, TextExpression, null> {
 
   constructor(
     public readonly ast: TextExpression,
@@ -16,32 +14,8 @@ export class TextExpressionTester extends Tester<TextExpression, null> {
     super(ast, null, config);
   }
 
-  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
-    return Some(values.map(this.getIndexes()).filter(indexes => !indexes.isEmpty()))
-      .filter(groupedIndexes => !groupedIndexes.isEmpty())
-      .map(groupedIndexes => groupedIndexes.map(this.getMatches(values)).toMap());
-  }
-
-  private getMatches(values: Map<string, string>) {
-    return (indexes: OrderedSet<number>, label: string): Match =>
-      Match.fromIndexes(values.get(label), this.refValue, indexes);
-  }
-
-  private getIndexes(indexes = OrderedSet<number>()) {
-    const prevIndex = Maybe.fromNull(indexes.last()).fold(0)(lastIndex =>
-      lastIndex + this.refValue.length);
-
-    return (input: string): OrderedSet<number> =>
-      indexOf(this.getValue(input).slice(prevIndex), this.refValue)
-        .fold(indexes)(index => this.getIndexes(indexes.add(prevIndex + index))(input));
-  }
-
-  private get refValue(): string {
-    return this.getValue(this.ast.preparedValue);
-  }
-
-  private getValue(text: string) {
-    return this.config.caseSensitive ? text : text.toLowerCase();
+  public test(values: Map<string, string>) {
+    return NodeEvaluation.ofText(values, this.ast)(this.ast.value);
   }
 
 }

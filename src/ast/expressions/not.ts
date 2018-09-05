@@ -1,8 +1,7 @@
 import { List } from 'immutable';
 import { Some } from 'monet';
 
-import { isBooleanType, ValueType } from '../../common/model';
-import { Expression } from './expression';
+import { Expression, isBooleanType, ValueType } from '../../common/model';
 import { InvalidExpression } from './invalid';
 import { TermExpression } from './term';
 

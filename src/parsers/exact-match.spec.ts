@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import * as P from 'parsimmon';
 
-import { TextExpression } from '../ast';
+import { TermExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { exactMatch } from './exact-match';
 
@@ -29,7 +29,7 @@ describe('SearchQL parsers', () => {
         });
 
         it('should provide proper value', () => {
-          expect(parsed.status ? parsed.value : null).to.deep.equal(new TextExpression(input));
+          expect(parsed.status ? parsed.value : null).to.deep.equal(TermExpression.of(input));
         });
 
       });
@@ -48,7 +48,7 @@ describe('SearchQL parsers', () => {
     describe('for many valid occurrences', () => {
       const input = validExactMatchInput.map(__ => `"${__}"`).join(' ');
       const parser = P.sepBy1(exactMatch(config), P.whitespace);
-      const expectedOutput = validExactMatchInput.map(TextExpression.fromMatch);
+      const expectedOutput = validExactMatchInput.map(TermExpression.of);
 
       it('should succeed', () => {
         const output = parser.parse(input);

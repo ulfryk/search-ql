@@ -1,11 +1,10 @@
 import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { isBooleanType, isSubtype, ValueType } from '../../common/model';
+import { Expression, isBooleanType, isSubtype, ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../operators';
-import { Expression } from './expression';
 import { InvalidExpression } from './invalid';
-import { SelectorExpression, TermExpression, TextExpression } from './term';
+import { TermExpression, TextExpression } from './term';
 
 const BI = 2;
 
@@ -13,7 +12,7 @@ export class BinaryOperationExpression extends Expression {
 
   public static and(token: string) {
     return (lhs: Expression, rhs: Expression) =>
-      new BinaryOperationExpression(new AndOperator(token), [lhs, rhs]);
+      BinaryOperationExpression.fromPair(new AndOperator(token))(lhs, rhs);
   }
 
   public static fromPair(operator: BinaryOperator) {
@@ -22,15 +21,15 @@ export class BinaryOperationExpression extends Expression {
 
       if (operator.is(LikeOperator)) {
         return new BinaryOperationExpression(operator, [
-          lhs.is(TermExpression as any) ? SelectorExpression.fromTerm(lhs as any) : lhs,
-          rhs.is(TermExpression as any) ? TextExpression.fromTerm(rhs as any) : rhs,
+          lhs.is(TermExpression as any) ? TextExpression.fromTerm(lhs as any) : lhs,
+          rhs.is(TermExpression as any) ? TermExpression.of(rhs.value) : rhs,
         ]);
       }
 
       if (operator.is(AndOperator) || operator.is(OrOperator)) {
         return new BinaryOperationExpression(operator, [
-          lhs.is(TermExpression as any) ? TextExpression.fromTerm(lhs as any) : lhs,
-          rhs.is(TermExpression as any) ? TextExpression.fromTerm(rhs as any) : rhs,
+          lhs.is(TermExpression as any) ? TermExpression.of(lhs.value) : lhs,
+          rhs.is(TermExpression as any) ? TermExpression.of(rhs.value) : rhs,
         ]);
       }
 
@@ -109,14 +108,14 @@ export class BinaryOperationExpression extends Expression {
 
   private checkLikeTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
     return Some([
-      ...this.getLikeSideErrors('L', newLeft.returnType),
-      ...this.getLikeSideErrors('R', newRight.returnType),
+      ...this.getLikeSideErrors('L', newLeft.returnType, ValueType.Text),
+      ...this.getLikeSideErrors('R', newRight.returnType, ValueType.Boolean),
     ]).filter(errors => errors.length > 0);
   }
 
-  private getLikeSideErrors(side: 'L' | 'R', actual: ValueType): string[] {
-    return isSubtype(actual, ValueType.Text) ? [] :
-      this.getError(side, actual, ValueType.Text).toList().toArray();
+  private getLikeSideErrors(side: 'L' | 'R', actual: ValueType, superType: ValueType): string[] {
+    return isSubtype(actual, superType) ? [] :
+      this.getError(side, actual, superType).toList().toArray();
   }
 
   private checkBooleanTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {

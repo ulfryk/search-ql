@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression } from '../expression';
+import { Expression } from '../../../common/model';
 import { DateExpression } from './date';
 import { TermExpression } from './term';
 
@@ -11,11 +11,11 @@ describe('SearchQL expressions', () => {
 
   describe('DateExpression', () => {
 
-    describe('fromMatch() static method', () => {
+    describe('of() static method', () => {
 
       it('should return instance of DateExpression', () => {
-        expect(DateExpression.fromMatch('1')).to.be.instanceof(TermExpression);
-        expect(DateExpression.fromMatch('1')).to.be.instanceof(DateExpression);
+        expect(DateExpression.of('1')).to.be.instanceof(TermExpression);
+        expect(DateExpression.of('1')).to.be.instanceof(DateExpression);
       });
 
     });
@@ -27,11 +27,11 @@ describe('SearchQL expressions', () => {
       const dateC = new Date(Date.now() + 5563400);
 
       const lhs = [
-        DateExpression.fromMatch('28 Aug 2018'),
-        DateExpression.fromMatch('9 Jul 2018 GMT'),
-        DateExpression.fromMatch(dateA.toJSON()),
-        DateExpression.fromMatch(dateB.toDateString()),
-        DateExpression.fromMatch(String(dateC)),
+        DateExpression.of('28 Aug 2018'),
+        DateExpression.of('9 Jul 2018 GMT'),
+        DateExpression.of(dateA.toJSON()),
+        DateExpression.of(dateB.toDateString()),
+        DateExpression.of(String(dateC)),
       ];
 
       const rhs = [
@@ -43,10 +43,10 @@ describe('SearchQL expressions', () => {
       ];
 
       const rhsInvalid = [
-        DateExpression.fromMatch('15 Aug 2017'),
+        DateExpression.of('15 Aug 2017'),
         new DateExpression('Tue Aug 28 2018'),
         new DateExpression('2000-01-01'),
-        DateExpression.fromMatch('2000-01-01'),
+        DateExpression.of('2000-01-01'),
         new DateExpression('2000-01-01'),
       ];
 
@@ -74,7 +74,7 @@ describe('SearchQL expressions', () => {
 
       const lhs = [
         new DateExpression('Tue Aug 28 2018'),
-        DateExpression.fromMatch('2000-01-01'),
+        DateExpression.of('2000-01-01'),
       ];
 
       const rhs = [

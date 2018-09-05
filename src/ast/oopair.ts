@@ -1,6 +1,6 @@
 import { Maybe, None, Some } from 'monet';
 
-import { Expression } from './expressions';
+import { Expression } from '../common/model';
 
 // TODO: Consider creating class for this…
 type OOPair = [Maybe<string>, Expression];

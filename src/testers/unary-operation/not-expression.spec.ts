@@ -4,7 +4,7 @@ import { Map } from 'immutable';
 
 import { NotExpression, TextExpression } from '../../ast';
 import { SyntaxConfig } from '../../config';
-import { TextExpressionTester } from '../term';
+import { TermExpressionTester } from '../term';
 import { NotExpressionTester } from './not-expression';
 
 const config = new SyntaxConfig();
@@ -13,7 +13,7 @@ const getTester = (value: string): NotExpressionTester => {
   const text = new TextExpression(value);
   const expr = new NotExpression(text);
 
-  return new NotExpressionTester(expr, new TextExpressionTester(text, config), config);
+  return new NotExpressionTester(expr, new TermExpressionTester(text, config), config);
 };
 
 describe('SearchQL testers', () => {
@@ -41,13 +41,13 @@ describe('SearchQL testers', () => {
 
     matchingTesters.forEach(tester => {
       it(`should find expression "${tester.ast}"`, () => {
-        expect(tester.test(values).isSome()).to.be.true;
+        expect(tester.test(values).matches().isSome()).to.be.true;
       });
     });
 
     notMatchingTesters.forEach(tester => {
       it(`should not find expression "${tester.ast}"`, () => {
-        expect(tester.test(values).isSome()).to.be.false;
+        expect(tester.test(values).matches().isSome()).to.be.false;
       });
     });
 

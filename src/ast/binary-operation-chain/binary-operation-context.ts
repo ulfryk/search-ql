@@ -1,5 +1,5 @@
-import { Ordering, ValueType } from '../../common/model';
-import { BinaryOperationExpression, Expression, InterimExpression } from '../expressions';
+import { Expression, Ordering, ValueType } from '../../common/model';
+import { BinaryOperationExpression, InterimExpression } from '../expressions';
 import { OperatorContext } from './operator-context';
 
 export class BinaryOperationContext extends InterimExpression {

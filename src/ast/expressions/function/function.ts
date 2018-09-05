@@ -2,21 +2,50 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
-import { isSubtype } from '../../../common/model';
+import { Expression, isSubtype, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
-import { Expression } from '../expression';
 import { InvalidExpression } from '../invalid';
+import { DateExpression, NumberExpression, TermExpression, TextExpression } from '../term';
 
-export class FunctionExpression extends Expression {
+export class FunctionExpression<R> extends Expression {
 
-  public static fromParseResult(config: FunctionConfig, args: Expression[]) {
-    return new FunctionExpression(List(args), config);
+  public static fromParseResult<O>(config: FunctionConfig<O>, args: Expression[]) {
+    const argsCount = args.length;
+    const baseArgsCount = config.args.size;
+    const restArgsCount = argsCount - baseArgsCount;
+    const absRestCount = restArgsCount > 0 ? restArgsCount : 0;
+    const argExpressions = List(config.args)
+      .map(({ type }) => Some(type))
+      .concat(Array(absRestCount).fill(config.argsRest.map(({ type }) => type)))
+      .filter((_type, index) => Boolean(args[index]))
+      .map((type, index) => type
+        // tslint:disable-next-line:cyclomatic-complexity
+        .foldLeft(args[index])((arg, someType) => {
+          if (arg.is(TermExpression as any)) {
+            switch (someType) {
+              case ValueType.Date:
+                return DateExpression.fromTerm(arg as TermExpression);
+              case ValueType.Number:
+                return NumberExpression.fromTerm(arg as TermExpression);
+              case ValueType.Text:
+                return TextExpression.fromTerm(arg as TermExpression);
+              case ValueType.Any:
+              case ValueType.Boolean:
+              default:
+                return arg;
+            }
+          }
+          return arg;
+        }))
+      .toList();
+
+    return new FunctionExpression(argExpressions, config);
   }
 
   constructor(
     public readonly value: List<Expression>,
-    public readonly config: FunctionConfig,
+    public readonly config: FunctionConfig<R>,
   ) { super(); }
 
   public get name() {
@@ -100,13 +129,17 @@ export class FunctionExpression extends Expression {
     return zip(
       this.config.args.slice(0, initialArgs.size).toArray(),
       initialArgs.toArray())
-    .map(([config, arg], index) =>
-      ({ arg, config, index, valid: isSubtype(arg.returnType, config.type) }))
+    .map(([config, argOption], index) => {
+      const arg = Maybe.fromNull(argOption);
+      const valid = arg.fold(false)(({ returnType }) => isSubtype(returnType, config.type));
+
+      return ({ arg, config, index, valid });
+    })
     .filter(({ valid }) => !valid)
     .map(( { arg, config, index }) =>
       `Function "${this.name}" has wrong arg passed: "${config.label}" ` +
       `(${toOrdinal(index + 1)} param) should be ${config.type} but ` +
-      `is ${arg.returnType}`);
+      `is ${arg.fold('undefined')(({ returnType }) => returnType )}.`);
   }
 
   private getRestArgsErrors(restArgs: List<Expression>): string[] {

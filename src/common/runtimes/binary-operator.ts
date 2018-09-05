@@ -1,9 +1,10 @@
 import { Map } from 'immutable';
-import { Maybe } from 'monet';
 
-import { Match } from '../model';
+import { Expression, NodeEvaluation } from '../model';
 
-export type BinaryOperatorRuntime = (
-  a: Maybe<Map<string, Match>>,
-  b: () => Maybe<Map<string, Match>>,
-) => Maybe<Map<string, Match>>;
+// IDefaultInput below is not used right now. Yet will be in future :)
+export type BinaryOperatorRuntime<L, R, V> =
+  (values: Map<string, string>, node: Expression) => (
+    a: NodeEvaluation<L>,
+    b: NodeEvaluation<R>,
+  ) => NodeEvaluation<V>;

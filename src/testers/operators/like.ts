@@ -1,10 +1,18 @@
+import { Map } from 'immutable';
+import { Some } from 'monet';
+
+import { NodeEvaluation } from '../../common/model';
 import { BinaryOperatorRuntime } from '../../common/runtimes';
 
-export const like: BinaryOperatorRuntime = (labels, getExpression) =>
-  labels
-    .map(someLabels => someLabels.keySeq().toSet())
-    .flatMap(someLabels => getExpression()
-      .map(matches => matches
-        .filter((_match, key) => someLabels.has(key))
-        .toMap())
-      .filter(matched => !matched.isEmpty()));
+const getLabels = (selector: string, values: Map<string, string>) =>
+  Some(values.keySeq().toSet().filter(key => key === selector))
+    .filter(keys => !keys.isEmpty());
+
+export const like: BinaryOperatorRuntime<string, string, boolean> =
+  (values, node) => (left, right) =>
+    NodeEvaluation.ofTerm(values, node)(getLabels(left.value, values)
+      .flatMap(someLabels => right.matches()
+        .map(matches => matches
+          .filter((_match, key) => someLabels.has(key))
+          .toMap())
+        .filter(matched => !matched.isEmpty())));

@@ -1,7 +1,6 @@
 import { Either, Left, Right } from 'monet';
 
-import { TypeFailure } from '../../common/model';
-import { Expression } from './expression';
+import { Expression, TypeFailure } from '../../common/model';
 import { InvalidExpression } from './invalid';
 
 export const validate = (e: Expression): Either<TypeFailure[], Expression> => {
@@ -13,6 +12,6 @@ export const validate = (e: Expression): Either<TypeFailure[], Expression> => {
 
   return Left(validated.toList()
     .filter(node => node instanceof InvalidExpression)
-    .flatMap(({ errors }: InvalidExpression) => errors.map(error => new TypeFailure(error)))
+    .flatMap(({ errors }: InvalidExpression) => errors.map(TypeFailure.fromError(validated)))
     .toArray());
 };

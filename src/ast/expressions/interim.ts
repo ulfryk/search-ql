@@ -1,6 +1,6 @@
 import { List } from 'immutable';
 
-import { Expression } from './expression';
+import { Expression } from '../../common/model';
 
 export abstract class InterimExpression extends Expression {
 

@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression } from '../expression';
+import { Expression } from '../../../common/model';
 import { TermExpression } from './term';
 import { TextExpression } from './text';
 
@@ -11,11 +11,11 @@ describe('SearchQL expressions', () => {
 
   describe('TextExpression', () => {
 
-    describe('fromMatch() static method', () => {
+    describe('of() static method', () => {
 
       it('should return instance of TextExpression', () => {
-        expect(TextExpression.fromMatch('aaa')).to.be.instanceof(TermExpression);
-        expect(TextExpression.fromMatch('aaa')).to.be.instanceof(TextExpression);
+        expect(TextExpression.of('aaa')).to.be.instanceof(TermExpression);
+        expect(TextExpression.of('aaa')).to.be.instanceof(TextExpression);
       });
 
     });
@@ -23,8 +23,8 @@ describe('SearchQL expressions', () => {
     describe('equals() method', () => {
 
       const lhs = [
-        TextExpression.fromMatch(''),
-        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
+        TextExpression.of(''),
+        TextExpression.of('aaa  asdas as asd asdas dad '),
       ];
 
       const rhs = [
@@ -33,7 +33,7 @@ describe('SearchQL expressions', () => {
       ];
 
       const rhsInvalid = [
-        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
+        TextExpression.of('aaa  asdas as asd asdas dad '),
         new TextExpression(''),
       ];
 
@@ -60,8 +60,8 @@ describe('SearchQL expressions', () => {
     describe('toList() method', () => {
 
       const lhs = [
-        TextExpression.fromMatch(''),
-        TextExpression.fromMatch('aaa  asdas as asd asdas dad '),
+        TextExpression.of(''),
+        TextExpression.of('aaa  asdas as asd asdas dad '),
       ];
 
       const rhs = [

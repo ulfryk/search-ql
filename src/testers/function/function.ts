@@ -1,19 +1,19 @@
 import { List, Map } from 'immutable';
-import { Maybe } from 'monet';
 
-import { Expression, FunctionExpression } from '../../ast';
-import { Match } from '../../common/model';
+import { FunctionExpression } from '../../ast';
+import { Expression, NodeEvaluation } from '../../common/model';
 import { Tester } from '../tester';
 
-export class FunctionExpressionTester
-extends Tester<FunctionExpression, List<Tester<Expression, any>>> {
+export class FunctionExpressionTester<R>
+extends Tester<R, FunctionExpression<R>, List<Tester<any, Expression, any>>> {
 
-  public test(values: Map<string, string>): Maybe<Map<string, Match>> {
+  public test(values: Map<string, string>): NodeEvaluation<R> {
     const { name } = this.ast;
 
-    return this.config.functions.get(name).runtime(
-      values,
-      ...this.children.map(expression => expression.test(values)).toArray());
+    return this.config.functions.get(name).runtime(values, this.ast)(
+      this.children
+        .map(expression => () => expression.test(values))
+        .toList());
   }
 
 }

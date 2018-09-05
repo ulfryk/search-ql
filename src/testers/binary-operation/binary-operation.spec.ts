@@ -2,15 +2,16 @@
 import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
 
-import { BinaryOperationExpression, Expression, Operator, TermExpression } from '../../ast';
+import { BinaryOperationExpression, Operator, TermExpression } from '../../ast';
+import { Expression } from '../../common/model';
 import { And0, config, Like0, Or0 } from '../../testing/utils';
 import { BinaryOperationExpressionTester, Tester } from '../index';
 
 const getTester = (operator: Operator, values: [string, string]) => {
-  const [lhs, rhs] = values.map(TermExpression.fromMatch);
+  const [lhs, rhs] = values.map(TermExpression.of);
   const expr = BinaryOperationExpression.fromPair(operator)(lhs as any, rhs as any);
 
-  return new BinaryOperationExpressionTester(
+  return new BinaryOperationExpressionTester<any, any, any>(
     expr,
     OrderedSet<Expression>(expr.value).map(Tester.fromAst(config)).toOrderedSet(),
     config);
@@ -50,14 +51,14 @@ describe('SearchQL testers', () => {
 
       matchingTesters.forEach(tester => {
         it(`should find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).isSome()).to.be.true;
-          expect(tester.test(values).some().isEmpty()).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.true;
+          expect(tester.test(values).matches().some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingTesters.forEach(tester => {
         it(`should not find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).isSome()).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.false;
         });
       });
 
@@ -110,14 +111,14 @@ describe('SearchQL testers', () => {
 
       matchingTesters.forEach(tester => {
         it(`should find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).isSome()).to.be.true;
-          expect(tester.test(values).some().isEmpty()).to.be.false;
+          expect(tester.test(values).value).to.be.true;
+          expect(tester.test(values).matches().some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingTesters.forEach(tester => {
         it(`should not find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).isSome()).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.false;
         });
       });
 

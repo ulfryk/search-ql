@@ -1,21 +1,20 @@
+import { ValueType } from '../../../common/model';
 import { TermExpression } from './term';
 
 export class TextExpression extends TermExpression<string> {
 
-  public static fromMatch(match: string) {
-    return new TextExpression(match);
+  public static fromTerm({ value }: TermExpression) {
+    return TextExpression.of(value);
   }
 
-  public static fromTerm({ value }: TermExpression) {
-    return TextExpression.fromMatch(value);
+  public static of(value: string) {
+    return new TextExpression(value);
   }
+
+  public readonly returnType: ValueType = ValueType.Text;
 
   constructor(value: string) {
     super(value, value.trim());
-  }
-
-  public toString() {
-    return `"${this.value}"`;
   }
 
 }

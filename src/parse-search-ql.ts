@@ -1,8 +1,8 @@
 import { Either, Left, Right } from 'monet';
 import { Failure as ParsimmonFailure } from 'parsimmon';
 
-import { Expression, validate } from './ast';
-import { Failure, ParseFailure } from './common/model';
+import { validate } from './ast';
+import { Expression, Failure, ParseFailure } from './common/model';
 import { SyntaxConfig } from './config';
 import { ParserName, QueryParserFactory } from './parsers';
 

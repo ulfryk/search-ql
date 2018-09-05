@@ -2,9 +2,9 @@ import { Bind } from '@samwise-tech/core';
 import { List, Set } from 'immutable';
 import { Maybe } from 'monet';
 
-import { ValueType } from '../../common/model';
+import { Expression, ValueType } from '../../common/model';
 import { SyntaxConfig } from '../../config';
-import { Expression, InterimExpression, NotExpression } from '../expressions';
+import { InterimExpression, NotExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
 import { BinaryOperationContext } from './binary-operation-context';
 import { OperatorContext } from './operator-context';

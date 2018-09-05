@@ -2,8 +2,8 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
-import { Expression } from '../ast';
-import { and, And0, andNot, config, fn, like, Like0, not, num, or, Or0, txt } from '../testing/utils';
+import { Expression } from '../common/model';
+import { and, And0, andNot, config, fn, like, Like0, not, or, Or0, term, txt } from '../testing/utils';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
@@ -30,6 +30,7 @@ const test = (
         expect(parsed.status).to.be.true;
       });
 
+      // tslint:disable-next-line:cyclomatic-complexity
       it('should provide proper value', () => {
         expect(parsed.status && parsed.value.reshape().equals(output)).to.be.true;
         expect(parsed.status ? String(parsed.value.reshape()) : null).to.equal(String(output));
@@ -77,26 +78,26 @@ describe('SearchQL parsers', () => {
       ];
 
       const validOutput = [
-        txt('aa'),
-        txt(`a${And0.token}`),
-        txt(`${Or0.token}a`),
-        txt('aa:bb AND cc dd'),
-        like(txt('aa'), txt('AA'), Like0),
-        and(txt('aa'), txt('bb'), And0),
-        and(txt('aa'), txt('bb')),
+        term('aa'),
+        term(`a${And0.token}`),
+        term(`${Or0.token}a`),
+        term('aa:bb AND cc dd'),
+        like(term('aa'), term('AA'), Like0),
+        and(term('aa'), term('bb'), And0),
+        and(term('aa'), term('bb')),
         or(
-          and(txt('aa'), or(like(txt('bb'), txt('BB'), Like0), txt('cc'), Or0), And0),
-          and(txt('dd'), or(like(txt('ee'), txt('EE'), Like0), txt('ff'), Or0), And0)),
-        or(and(txt('aaa'), txt('bbb'), And0), and(txt('ccc'), txt('ddd'), And0), Or0),
-        not(txt('abc')),
-        andNot(txt('aa'), txt('bb')),
-        andNot(txt('aa'), txt('bb')),
-        and(not(txt('aaa')), not(txt('bbb')), And0),
-        and(not(or(txt('aaa'), txt('bbb'), Or0)), txt('ccc'), And0),
-        and(not(txt('aaa')), like(txt('bb'), txt('BB'), Like0), And0),
-        and(and(txt('aaa'), or(txt('bbb'), txt('ccc'), Or0), And0), not(txt('ddd')), And0),
-        and(or(txt('aaa'), txt('bbb'), Or0), not(txt('ccc')), And0),
-        and(and(and(txt('aaa'), txt('bbb'), And0), txt('ccc'), And0), not(txt('ddd')), And0),
+          and(term('aa'), or(like(term('bb'), term('BB'), Like0), term('cc'), Or0), And0),
+          and(term('dd'), or(like(term('ee'), term('EE'), Like0), term('ff'), Or0), And0)),
+        or(and(term('aaa'), term('bbb'), And0), and(term('ccc'), term('ddd'), And0), Or0),
+        not(term('abc')),
+        andNot(term('aa'), term('bb')),
+        andNot(term('aa'), term('bb')),
+        and(not(term('aaa')), not(term('bbb')), And0),
+        and(not(or(term('aaa'), term('bbb'), Or0)), term('ccc'), And0),
+        and(not(term('aaa')), like(term('bb'), term('BB'), Like0), And0),
+        and(and(term('aaa'), or(term('bbb'), term('ccc'), Or0), And0), not(term('ddd')), And0),
+        and(or(term('aaa'), term('bbb'), Or0), not(term('ccc')), And0),
+        and(and(and(term('aaa'), term('bbb'), And0), term('ccc'), And0), not(term('ddd')), And0),
       ];
 
       const invalidInput = [
@@ -133,7 +134,7 @@ describe('SearchQL parsers', () => {
           invalidInput: ['test_function(aaa)', 'desc abc AND', 'NOT aaa', '! aaa'],
           parsers: [ParserName.Basic, ParserName.BinaryOperation],
           validInput: ['aa', 'bb & cc'],
-          validOutput: [txt('aa'), and(txt('bb'), txt('cc'))],
+          validOutput: [txt('aa'), and(term('bb'), term('cc'))],
         },
 
         {
@@ -145,7 +146,7 @@ describe('SearchQL parsers', () => {
           ],
           validOutput: [
             fn('test_function')(txt('aaa')),
-            fn('test_function')(txt('aaa'), fn('test_function')(txt('aaa'), txt('bbb')), num('12')),
+            fn('test_function')(txt('aaa'), fn('test_function')(txt('aaa'), txt('bbb')), txt('12')),
           ],
         },
 
@@ -153,7 +154,7 @@ describe('SearchQL parsers', () => {
           invalidInput: ['asd! !!asd', 'c NOT a', 'c & a'],
           parsers: [ParserName.Basic, ParserName.Not],
           validInput: ['! a', 'NOT a'],
-          validOutput: [not(txt('a')), not(txt('a'))],
+          validOutput: [not(term('a')), not(term('a'))],
         },
 
         {

@@ -1,19 +1,18 @@
 import { List } from 'immutable';
 
-import { ValueType } from '../../../common/model';
-import { Expression } from '../expression';
+import { Expression, ValueType } from '../../../common/model';
 
 export class TermExpression<PV = any> extends Expression {
 
-  public static fromMatch(_match: string): TermExpression {
-    throw Error('unimplemented');
+  public static of(value: string): TermExpression {
+    return new TermExpression(value, value);
   }
 
   public static empty() {
     return new TermExpression('', null);
   }
 
-  public readonly returnType: ValueType = ValueType.Text;
+  public readonly returnType: ValueType = ValueType.Boolean;
 
   constructor(
     public readonly value: string,
@@ -42,7 +41,7 @@ export class TermExpression<PV = any> extends Expression {
   }
 
   public toString() {
-    return this.value;
+    return `"${this.value}"`;
   }
 
   public toList() {

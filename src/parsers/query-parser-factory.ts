@@ -1,7 +1,8 @@
 import { OrderedMap } from 'immutable';
 import * as P from 'parsimmon';
 
-import { Expression, fromPairs, FunctionExpression, initialPair, NotExpression, OOPair, restPair } from '../ast';
+import { fromPairs, FunctionExpression, initialPair, NotExpression, OOPair, restPair } from '../ast';
+import { Expression } from '../common/model';
 import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 import { binaryOperator } from './binary-operator';

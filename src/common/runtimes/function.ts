@@ -1,8 +1,8 @@
-import { Map } from 'immutable';
-import { Maybe } from 'monet';
+import { List, Map } from 'immutable';
 
-import { Match } from '../model';
+import { Expression, NodeEvaluation } from '../model';
 
-export type FunctionRuntime =
-  (values: Map<string, string>, ...matches: Maybe<Map<string, Match>>[]) =>
-    Maybe<Map<string, Match>>;
+export type FunctionRuntime<R> =
+  (values: Map<string, string>, node: Expression) =>
+    (matches: List<() => NodeEvaluation<any>/* FIXME: how to do it better ? */>) =>
+      NodeEvaluation<R>;

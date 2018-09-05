@@ -2,8 +2,7 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { Expression } from '../../ast';
-import { ValueType } from '../../common/model';
+import { Expression, ValueType } from '../../common/model';
 import { config, fn, txt } from '../../testing/utils';
 import { FunctionExpressionTester, Tester } from '../index';
 
@@ -32,7 +31,7 @@ describe('SearchQL testers', () => {
         'hello world',
       ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
 
-      const matchingTesters = [] as FunctionExpressionTester[];
+      const matchingTesters = [] as FunctionExpressionTester<any>[];
 
       const notMatchingTesters = [
         getTester('test_function'),
@@ -41,14 +40,14 @@ describe('SearchQL testers', () => {
 
       matchingTesters.forEach(tester => {
         it(`should find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).isSome()).to.be.true;
-          expect(tester.test(values).some().isEmpty()).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.true;
+          expect(tester.test(values).matches().some().isEmpty()).to.be.false;
         });
       });
 
       notMatchingTesters.forEach(tester => {
         it(`should not find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).isSome()).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.false;
         });
       });
 
