@@ -7,7 +7,7 @@ import { Expression } from '../../common/model';
 import { SyntaxConfig } from '../../config/syntax-config';
 import { AndOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
-import { NumberExpression, TermExpression, TextExpression } from './term';
+import { NumberExpression, PhraseExpression, TextExpression } from './term';
 
 const { AND, LIKE, OR } = new SyntaxConfig();
 const And = new AndOperator(AND[0]);
@@ -26,7 +26,7 @@ describe('SearchQL expressions', () => {
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Like, [
           new TextExpression('aaa'),
-          TermExpression.of('123'),
+          PhraseExpression.of('123'),
         ]));
       });
 
@@ -36,16 +36,16 @@ describe('SearchQL expressions', () => {
           new NumberExpression('123'),
           new TextExpression('aaa'),
         )).to.deep.equal(new BinaryOperationExpression(And, [
-          TermExpression.of('123'),
-          TermExpression.of('aaa'),
+          PhraseExpression.of('123'),
+          PhraseExpression.of('aaa'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(Or)(
           new TextExpression('aaa'),
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Or, [
-          TermExpression.of('aaa'),
-          TermExpression.of('123'),
+          PhraseExpression.of('aaa'),
+          PhraseExpression.of('123'),
         ]));
 
       });

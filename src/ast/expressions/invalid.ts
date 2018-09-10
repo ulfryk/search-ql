@@ -1,7 +1,6 @@
 import { List, Set } from 'immutable';
 
 import { Expression } from '../../common/model';
-import { TermExpression } from './term';
 
 export class InvalidExpression extends Expression {
 
@@ -14,7 +13,7 @@ export class InvalidExpression extends Expression {
   }
 
   public static empty(error: string) {
-    return InvalidExpression.fromError(TermExpression.empty(), error);
+    return InvalidExpression.fromError(null, error);
   }
 
   constructor(

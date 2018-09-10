@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
-import { TermExpression } from '../ast';
+import { PhraseExpression, TermExpression } from '../ast';
 import { SyntaxConfig } from '../config';
 import { basicExpression } from './basic';
 
@@ -29,7 +29,7 @@ describe('SearchQL parsers', () => {
     validInput[4],
     validInput[5],
     validInput[6],
-  ].map(TermExpression.of);
+  ].map(PhraseExpression.of);
 
   const invalidInput = [
     'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
@@ -56,6 +56,7 @@ describe('SearchQL parsers', () => {
 
           it('should be evaluated to proper expression type', () => {
             expect(parsed.status ? parsed.value : null).to.be.instanceOf(TermExpression);
+            expect(parsed.status ? parsed.value : null).to.be.instanceOf(PhraseExpression);
           });
 
           it('should provide proper value', () => {

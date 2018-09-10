@@ -5,7 +5,7 @@ import { zip } from 'lodash';
 
 import { Expression } from '../../common/model';
 import { NotExpression } from './not';
-import { TermExpression } from './term';
+import { PhraseExpression } from './term';
 
 describe('SearchQL expressions', () => {
 
@@ -14,18 +14,18 @@ describe('SearchQL expressions', () => {
     describe('equals() method', () => {
 
       const lhs = [
-        new NotExpression(TermExpression.of('')),
-        new NotExpression(TermExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(PhraseExpression.of('')),
+        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhs = [
-        new NotExpression(TermExpression.of('')),
-        new NotExpression(TermExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(PhraseExpression.of('')),
+        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhsInvalid = [
-        new NotExpression(TermExpression.of('aaa  asdas as asd asdas dad ')),
-        new NotExpression(TermExpression.of('')),
+        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(PhraseExpression.of('')),
       ];
 
       it('should return true for comparison with a reference', () => {
@@ -51,8 +51,8 @@ describe('SearchQL expressions', () => {
     describe('toList() method', () => {
 
       const lhs = [
-        new NotExpression(TermExpression.of('')),
-        new NotExpression(TermExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(PhraseExpression.of('')),
+        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhs = [

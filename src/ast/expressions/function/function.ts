@@ -6,7 +6,7 @@ import { Expression, isSubtype, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { InvalidExpression } from '../invalid';
-import { DateExpression, NumberExpression, TermExpression, TextExpression } from '../term';
+import { DateExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../term';
 
 export class FunctionExpression<R> extends Expression {
 
@@ -30,6 +30,8 @@ export class FunctionExpression<R> extends Expression {
                 return NumberExpression.fromTerm(arg as TermExpression);
               case ValueType.Text:
                 return TextExpression.fromTerm(arg as TermExpression);
+              case ValueType.Phrase:
+                return PhraseExpression.fromTerm(arg as TermExpression);
               case ValueType.Any:
               case ValueType.Boolean:
               default:

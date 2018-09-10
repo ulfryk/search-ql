@@ -2,22 +2,22 @@ import { indexOf } from '@samwise-tech/core';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
-import { TermExpression } from '../../ast';
+import { PhraseExpression } from '../../ast';
 import { Match, NodeEvaluation } from '../../common/model';
 import { SyntaxConfig } from '../../config';
 import { Tester } from '../tester';
 
-export class TermExpressionTester extends Tester<boolean, TermExpression, null> {
+export class PhraseExpressionTester extends Tester<boolean, PhraseExpression, null> {
 
   constructor(
-    public readonly ast: TermExpression,
+    public readonly ast: PhraseExpression,
     public readonly config: SyntaxConfig,
   ) {
     super(ast, null, config);
   }
 
   public test(values: Map<string, string>) {
-    return NodeEvaluation.ofTerm(values, this.ast)(this.getMatches(values));
+    return NodeEvaluation.ofPhrase(values, this.ast)(this.getMatches(values));
   }
 
   private getMatches(values: Map<string, string>) {

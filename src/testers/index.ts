@@ -1,11 +1,10 @@
-import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, TextExpression } from '../ast';
+import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TextExpression } from '../ast';
 import { SyntaxConfig } from '../config';
-import { TermExpression } from './../ast/expressions/term/term';
 
 import { Expression } from '../common/model';
 import { BinaryOperationExpressionTester } from './binary-operation';
 import { FunctionExpressionTester } from './function';
-import { DateExpressionTester, NumberExpressionTester, TermExpressionTester, TextExpressionTester } from './term';
+import { DateExpressionTester, NumberExpressionTester, PhraseExpressionTester, TextExpressionTester } from './term';
 import { Tester } from './tester';
 import { NotExpressionTester } from './unary-operation';
 
@@ -19,8 +18,8 @@ Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
     case NumberExpression:
       return new NumberExpressionTester(ast as NumberExpression, config);
 
-    case TermExpression:
-      return new TermExpressionTester(ast as TermExpression, config);
+    case PhraseExpression:
+      return new PhraseExpressionTester(ast as PhraseExpression, config);
 
     case TextExpression:
       return new TextExpressionTester(ast as TextExpression, config);

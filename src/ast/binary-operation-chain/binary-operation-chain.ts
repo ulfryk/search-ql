@@ -4,7 +4,7 @@ import { Maybe } from 'monet';
 
 import { Expression, ValueType } from '../../common/model';
 import { SyntaxConfig } from '../../config';
-import { InterimExpression, NotExpression } from '../expressions';
+import { InterimExpression, NotExpression, PhraseExpression, TermExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
 import { BinaryOperationContext } from './binary-operation-context';
 import { OperatorContext } from './operator-context';
@@ -55,7 +55,9 @@ export class BinaryOperationChain extends InterimExpression {
   }
 
   public appendAndNot({ AND }: SyntaxConfig, not: Expression): BinaryOperationChain {
-    return this.appendBinary(new AndOperator(AND[0]), new NotExpression(not));
+    return this.appendBinary(new AndOperator(AND[0]), new NotExpression(
+      not.is(TermExpression as any) ? PhraseExpression.fromTerm(not as TermExpression) : not,
+    ));
   }
 
   public equals(other: Expression): boolean {

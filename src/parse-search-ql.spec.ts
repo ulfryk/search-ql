@@ -8,7 +8,7 @@ import { ParseFailure } from './common/model';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
-import { and, fn, like, or, term, txt } from './testing/utils';
+import { and, fn, like, or, phrase, txt } from './testing/utils';
 
 const allParserNames = [
   ParserName.Basic,
@@ -29,9 +29,9 @@ describe('SearchQL', () => {
     ];
 
     const successfulOutputValues = [
-      and(term('aaa'), term('bbb')),
-      like(txt('token_expired'), term('true')),
-      or(like(txt('first_name'), term('Adam')), like(txt('token_expired'), term('true'))),
+      and(phrase('aaa'), phrase('bbb')),
+      like(txt('token_expired'), phrase('true')),
+      or(like(txt('first_name'), phrase('Adam')), like(txt('token_expired'), phrase('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
     ].map(Either.of);
 
@@ -49,15 +49,15 @@ describe('SearchQL', () => {
     ];
 
     const invalidTypesOutput = [
-      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is PHRASE'],
       [
         'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is PHRASE',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
       ],
       [
         'TypeError: LHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
       ],
     ];
 
@@ -134,12 +134,12 @@ describe('SearchQL', () => {
     ];
 
     const successfulOutputValues = [
-      and(term('aaa'), term('bbb'), AndC),
-      or(term('aaa'), term('bbb'), OrC),
-      like(txt('first_name'), term('Adam'), LikeC),
+      and(phrase('aaa'), phrase('bbb'), AndC),
+      or(phrase('aaa'), phrase('bbb'), OrC),
+      like(txt('first_name'), phrase('Adam'), LikeC),
       and(
-        like(txt('first_name'), term('Adam'), LikeC),
-        like(txt('token_expired'), term('true'), LikeC),
+        like(txt('first_name'), phrase('Adam'), LikeC),
+        like(txt('token_expired'), phrase('true'), LikeC),
         AndC),
       fn('test_function')(txt('aaa'), txt('bbb')),
     ].map(Either.of);

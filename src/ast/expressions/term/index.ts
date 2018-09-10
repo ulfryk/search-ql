@@ -3,5 +3,6 @@ export * from './from-match';
 export * from './is-date';
 export * from './is-number';
 export * from './number';
+export * from './phrase';
 export * from './term';
 export * from './text';

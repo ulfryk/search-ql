@@ -3,7 +3,7 @@ import { expect } from 'chai';
 
 import { Expression } from '../../common/model';
 import { and, And, andNot, config, like, Like, Not, Or, or } from '../../testing/utils';
-import { fromMatch, NotExpression, TermExpression, TextExpression } from '../expressions';
+import { fromMatch, NotExpression, PhraseExpression, TextExpression } from '../expressions';
 import { Operator } from '../operators';
 import { BinaryOperationChain } from './binary-operation-chain';
 
@@ -112,7 +112,7 @@ describe('SearchQL ast', () => {
       it('should append conjunction of negated expression', () => {
         expect(andNotGroup.operators.last().operator.equals(And)).to.be.true;
         expect(andNotGroup.value[1]).to.be.instanceOf(NotExpression);
-        expect(andNotGroup.value[1].value).to.equal(second);
+        expect(andNotGroup.value[1].value.equals(PhraseExpression.fromTerm(second))).to.be.true;
       });
 
     });
@@ -149,7 +149,7 @@ describe('SearchQL ast', () => {
       it('should properly handle NOT operator', () => {
         expect(group3.operators.last().operator.equals(And)).to.be.true;
         expect(group3.value[2]).to.be.instanceOf(NotExpression);
-        expect(group4.value[2].value).to.equal(third);
+        expect(group4.value[2].value.equals(PhraseExpression.fromTerm(third))).to.be.true;
       });
 
     });
@@ -214,7 +214,7 @@ describe('SearchQL ast', () => {
 
       describe('for And-only chains', () => {
         const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(TermExpression.of);
+          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
 
         const chain2 = buildChain(a, [And, b]);
         const chain3 = buildChain(a, [And, b], [And, c]);
@@ -238,7 +238,7 @@ describe('SearchQL ast', () => {
 
       describe('for Or-only chains', () => {
         const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(TermExpression.of);
+          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
 
         const chain2 = buildChain(a, [Or, b]);
         const chain3 = buildChain(a, [Or, b], [Or, c]);
@@ -262,7 +262,7 @@ describe('SearchQL ast', () => {
 
       describe('for mixed And/Or chains', () => {
         const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(TermExpression.of);
+          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
 
         const chainA = buildChain(a, [Or, b], [And, c], [Or, d]);
         const chainB = buildChain(a, [Or, b], [And, c], [Or, d], [And, e], [Or, f]);
@@ -285,7 +285,7 @@ describe('SearchQL ast', () => {
 
       describe('for mixed chains', () => {
         const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(TermExpression.of);
+          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
 
         const chainA = buildChain(a, [Like, b], [And, c], [Like, d], [Or, e], [Like, f]);
         const chainB = buildChain(a, [Like, b], [Not, c], [Or, d], [Like, e], [Not, f]);

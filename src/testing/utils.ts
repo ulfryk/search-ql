@@ -1,7 +1,7 @@
 import { List, Map } from 'immutable';
 import { None } from 'monet';
 
-import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, TermExpression, TextExpression } from '../ast/expressions';
+import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { Expression, NodeEvaluation, ValueType } from '../common/model';
 import { FunctionConfig, OptionalFunctionArg, SyntaxConfig } from '../config';
@@ -18,10 +18,10 @@ const Like0 = new LikeOperator(LIKE[0]);
 const Not0 = new NotOperator(NOT[0]);
 const Or0 = new OrOperator(OR[0]);
 
-const date = (v: string) => new DateExpression(v);
-const num = (v: string) => new NumberExpression(v);
-const term = (v: string) => new TermExpression(v, v);
-const txt = (v: string) => new TextExpression(v);
+const date = (v: string) => DateExpression.of(v);
+const num = (v: string) => NumberExpression.of(v);
+const phrase = (v: string) => PhraseExpression.of(v);
+const txt = (v: string) => TextExpression.of(v);
 
 const txtFrom = (e: TermExpression) => TextExpression.fromTerm(e);
 
@@ -30,8 +30,8 @@ const and = (l: Expression, r: Expression, op: AndOperator = And) =>
 
 const like = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) =>
   new BinaryOperationExpression(op, [
-    new TextExpression(l.value),
-    TermExpression.of(r.value),
+    TextExpression.of(l.value),
+    PhraseExpression.of(r.value),
   ]);
 
 const or = (l: Expression, r: Expression, op: OrOperator = Or) =>
@@ -54,7 +54,7 @@ const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expressio
 
 export {
   config,
-  date, num, term, txt, txtFrom,
+  date, num, phrase, txt, txtFrom,
   and, andNot, And, And0,
   like, Like, Like0,
   not, Not, Not0,

@@ -32,12 +32,12 @@ export class NodeEvaluation<V> {
       new NodeEvaluation(ValueType.Text, value, matches, input, node);
   }
 
-  public static ofTerm(
+  public static ofPhrase(
     input: Map<string, string>,
     node: Expression,
   ) {
     return (matches: Maybe<Map<string, Match>>) =>
-      new NodeEvaluation(ValueType.Text, matches.isSome(), () => matches, input, node);
+      new NodeEvaluation(ValueType.Phrase, matches.isSome(), () => matches, input, node);
   }
 
   public static ofDate(

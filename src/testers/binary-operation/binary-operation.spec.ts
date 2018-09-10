@@ -2,13 +2,13 @@
 import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
 
-import { BinaryOperationExpression, Operator, TermExpression } from '../../ast';
+import { BinaryOperationExpression, Operator, PhraseExpression } from '../../ast';
 import { Expression } from '../../common/model';
 import { And0, config, Like0, Or0 } from '../../testing/utils';
 import { BinaryOperationExpressionTester, Tester } from '../index';
 
 const getTester = (operator: Operator, values: [string, string]) => {
-  const [lhs, rhs] = values.map(TermExpression.of);
+  const [lhs, rhs] = values.map(PhraseExpression.of);
   const expr = BinaryOperationExpression.fromPair(operator)(lhs as any, rhs as any);
 
   return new BinaryOperationExpressionTester<any, any, any>(

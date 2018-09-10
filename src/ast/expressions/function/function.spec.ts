@@ -9,7 +9,7 @@ import { FunctionConfig, OptionalFunctionArg, RequiredFunctionArg, testFunction 
 import { AndOperator, LikeOperator } from '../../operators';
 import { BinaryOperationExpression } from '../binary-operation';
 import { NotExpression } from '../not';
-import { DateExpression, fromMatch, TermExpression, TextExpression } from '../term';
+import { DateExpression, fromMatch, PhraseExpression, TextExpression } from '../term';
 import { FunctionExpression } from './function';
 
 const fn = (name: string, ...args: Expression[]) =>
@@ -90,11 +90,11 @@ describe('SearchQL expressions', () => {
         ValueType.Text, testFunction.runtime);
 
       const validFns = [
-        FunctionExpression.fromParseResult(cfgIsDate, [new NotExpression(TermExpression.of('lorem'))]),
+        FunctionExpression.fromParseResult(cfgIsDate, [new NotExpression(PhraseExpression.of('lorem'))]),
         FunctionExpression.fromParseResult(cfgIsDate, [
           new BinaryOperationExpression(new AndOperator('AND'), [
-            TermExpression.of('lorem'),
-            TermExpression.of('123'),
+            PhraseExpression.of('lorem'),
+            PhraseExpression.of('123'),
           ]),
         ]),
         FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch('lorem')]),
@@ -104,7 +104,7 @@ describe('SearchQL expressions', () => {
         FunctionExpression.fromParseResult(cfgIsDate, [
           new BinaryOperationExpression(new LikeOperator('~'), [
             FunctionExpression.fromParseResult(cfgTrim, [TextExpression.of('   first_name  ')]),
-            TermExpression.of('lorem'),
+            PhraseExpression.of('lorem'),
           ]),
         ]),
         FunctionExpression.fromParseResult(cfgCoalesce, [

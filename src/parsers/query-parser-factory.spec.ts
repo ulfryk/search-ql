@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { Expression } from '../common/model';
-import { and, And0, andNot, config, fn, like, Like0, not, or, Or0, term, txt } from '../testing/utils';
+import { and, And0, andNot, config, fn, like, Like0, not, or, Or0, phrase, txt } from '../testing/utils';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
@@ -78,26 +78,26 @@ describe('SearchQL parsers', () => {
       ];
 
       const validOutput = [
-        term('aa'),
-        term(`a${And0.token}`),
-        term(`${Or0.token}a`),
-        term('aa:bb AND cc dd'),
-        like(term('aa'), term('AA'), Like0),
-        and(term('aa'), term('bb'), And0),
-        and(term('aa'), term('bb')),
+        phrase('aa'),
+        phrase(`a${And0.token}`),
+        phrase(`${Or0.token}a`),
+        phrase('aa:bb AND cc dd'),
+        like(phrase('aa'), phrase('AA'), Like0),
+        and(phrase('aa'), phrase('bb'), And0),
+        and(phrase('aa'), phrase('bb')),
         or(
-          and(term('aa'), or(like(term('bb'), term('BB'), Like0), term('cc'), Or0), And0),
-          and(term('dd'), or(like(term('ee'), term('EE'), Like0), term('ff'), Or0), And0)),
-        or(and(term('aaa'), term('bbb'), And0), and(term('ccc'), term('ddd'), And0), Or0),
-        not(term('abc')),
-        andNot(term('aa'), term('bb')),
-        andNot(term('aa'), term('bb')),
-        and(not(term('aaa')), not(term('bbb')), And0),
-        and(not(or(term('aaa'), term('bbb'), Or0)), term('ccc'), And0),
-        and(not(term('aaa')), like(term('bb'), term('BB'), Like0), And0),
-        and(and(term('aaa'), or(term('bbb'), term('ccc'), Or0), And0), not(term('ddd')), And0),
-        and(or(term('aaa'), term('bbb'), Or0), not(term('ccc')), And0),
-        and(and(and(term('aaa'), term('bbb'), And0), term('ccc'), And0), not(term('ddd')), And0),
+          and(phrase('aa'), or(like(phrase('bb'), phrase('BB'), Like0), phrase('cc'), Or0), And0),
+          and(phrase('dd'), or(like(phrase('ee'), phrase('EE'), Like0), phrase('ff'), Or0), And0)),
+        or(and(phrase('aaa'), phrase('bbb'), And0), and(phrase('ccc'), phrase('ddd'), And0), Or0),
+        not(phrase('abc')),
+        andNot(phrase('aa'), phrase('bb')),
+        andNot(phrase('aa'), phrase('bb')),
+        and(not(phrase('aaa')), not(phrase('bbb')), And0),
+        and(not(or(phrase('aaa'), phrase('bbb'), Or0)), phrase('ccc'), And0),
+        and(not(phrase('aaa')), like(phrase('bb'), phrase('BB'), Like0), And0),
+        and(and(phrase('aaa'), or(phrase('bbb'), phrase('ccc'), Or0), And0), not(phrase('ddd')), And0),
+        and(or(phrase('aaa'), phrase('bbb'), Or0), not(phrase('ccc')), And0),
+        and(and(and(phrase('aaa'), phrase('bbb'), And0), phrase('ccc'), And0), not(phrase('ddd')), And0),
       ];
 
       const invalidInput = [
@@ -127,14 +127,14 @@ describe('SearchQL parsers', () => {
           invalidInput: ['test_function(aaa)', 'desc AND a', 'NOT aaa', 'z | aaa', '$#%564 *(&^@%#1 1~`1`'],
           parsers: [ParserName.Basic],
           validInput: ['aa', '"$#%564 *(&^@%#1 1~`1`"'],
-          validOutput: [txt('aa'), txt('$#%564 *(&^@%#1 1~`1`')],
+          validOutput: [phrase('aa'), phrase('$#%564 *(&^@%#1 1~`1`')],
         },
 
         {
           invalidInput: ['test_function(aaa)', 'desc abc AND', 'NOT aaa', '! aaa'],
           parsers: [ParserName.Basic, ParserName.BinaryOperation],
           validInput: ['aa', 'bb & cc'],
-          validOutput: [txt('aa'), and(term('bb'), term('cc'))],
+          validOutput: [phrase('aa'), and(phrase('bb'), phrase('cc'))],
         },
 
         {
@@ -154,7 +154,7 @@ describe('SearchQL parsers', () => {
           invalidInput: ['asd! !!asd', 'c NOT a', 'c & a'],
           parsers: [ParserName.Basic, ParserName.Not],
           validInput: ['! a', 'NOT a'],
-          validOutput: [not(term('a')), not(term('a'))],
+          validOutput: [not(phrase('a')), not(phrase('a'))],
         },
 
         {

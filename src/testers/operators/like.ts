@@ -10,7 +10,7 @@ const getLabels = (selector: string, values: Map<string, string>) =>
 
 export const like: BinaryOperatorRuntime<string, string, boolean> =
   (values, node) => (left, right) =>
-    NodeEvaluation.ofTerm(values, node)(getLabels(left.value, values)
+    NodeEvaluation.ofPhrase(values, node)(getLabels(left.value, values)
       .flatMap(someLabels => right.matches()
         .map(matches => matches
           .filter((_match, key) => someLabels.has(key))

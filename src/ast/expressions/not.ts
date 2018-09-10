@@ -1,9 +1,9 @@
 import { List } from 'immutable';
 import { Some } from 'monet';
 
-import { Expression, isBooleanType, ValueType } from '../../common/model';
+import { Expression, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { InvalidExpression } from './invalid';
-import { TermExpression } from './term';
+import { PhraseExpression } from './term';
 
 export class NotExpression extends Expression {
 
@@ -15,12 +15,14 @@ export class NotExpression extends Expression {
     return NotExpression.of(operand);
   }
 
-  public readonly returnType = ValueType.Boolean;
-
   constructor(
     public readonly value: Expression,
   ) {
     super();
+  }
+
+  public get returnType(): ValueType {
+    return isPhraseType(this.value.returnType) ? ValueType.Phrase : ValueType.Boolean;
   }
 
   public equals(other: Expression): boolean {
@@ -60,7 +62,7 @@ export class NotExpression extends Expression {
 
   private getError() {
     return Some(this.value)
-      .filter(value => !(isBooleanType(value.returnType) || value.is(TermExpression as any)))
+      .filter(value => !(isBooleanType(value.returnType) || value.is(PhraseExpression as any)))
       .map(({ returnType }) =>
         `Operand of NOT operation should be a BOOLEAN, but got ${returnType}`);
   }

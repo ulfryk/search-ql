@@ -4,16 +4,16 @@ import { Map } from 'immutable';
 
 import { fromMatch, TermExpression } from '../../ast';
 import { SyntaxConfig } from '../../config';
-import { TermExpressionTester } from './term-expression';
+import { PhraseExpressionTester } from './phrase-expression';
 
 const config = new SyntaxConfig();
 
 const getTester = (expr: TermExpression) =>
-  new TermExpressionTester(expr, config);
+  new PhraseExpressionTester(expr, config);
 
 describe('SearchQL testers', () => {
 
-  describe('TermExpressionTester', () => {
+  describe('PhraseExpressionTester', () => {
 
     // tslint:disable-next-line:no-unnecessary-type-assertion
     const values = Map([

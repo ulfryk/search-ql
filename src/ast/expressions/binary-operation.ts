@@ -1,10 +1,10 @@
 import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, isBooleanType, isSubtype, ValueType } from '../../common/model';
+import { Expression, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../operators';
 import { InvalidExpression } from './invalid';
-import { TermExpression, TextExpression } from './term';
+import { PhraseExpression, TermExpression, TextExpression } from './term';
 
 const BI = 2;
 
@@ -22,22 +22,20 @@ export class BinaryOperationExpression extends Expression {
       if (operator.is(LikeOperator)) {
         return new BinaryOperationExpression(operator, [
           lhs.is(TermExpression as any) ? TextExpression.fromTerm(lhs as any) : lhs,
-          rhs.is(TermExpression as any) ? TermExpression.of(rhs.value) : rhs,
+          rhs.is(TermExpression as any) ? PhraseExpression.of(rhs.value) : rhs,
         ]);
       }
 
       if (operator.is(AndOperator) || operator.is(OrOperator)) {
         return new BinaryOperationExpression(operator, [
-          lhs.is(TermExpression as any) ? TermExpression.of(lhs.value) : lhs,
-          rhs.is(TermExpression as any) ? TermExpression.of(rhs.value) : rhs,
+          lhs.is(TermExpression as any) ? PhraseExpression.of(lhs.value) : lhs,
+          rhs.is(TermExpression as any) ? PhraseExpression.of(rhs.value) : rhs,
         ]);
       }
 
       return new BinaryOperationExpression(operator, [lhs, rhs]);
     };
   }
-
-  public readonly returnType = ValueType.Boolean;
 
   constructor(
     public readonly operator: BinaryOperator,
@@ -47,6 +45,11 @@ export class BinaryOperationExpression extends Expression {
     if (value.length !== BI) {
       throw Error(`BinaryOperation has to be made of exactly 2 arguments, not ${value.length}.`);
     }
+  }
+
+  public get returnType(): ValueType {
+    return this.value.some(({ returnType }) => isPhraseType(returnType)) ?
+      ValueType.Phrase : ValueType.Boolean;
   }
 
   public equals(other: Expression): boolean {
@@ -109,13 +112,13 @@ export class BinaryOperationExpression extends Expression {
   private checkLikeTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
     return Some([
       ...this.getLikeSideErrors('L', newLeft.returnType, ValueType.Text),
-      ...this.getLikeSideErrors('R', newRight.returnType, ValueType.Boolean),
+      ...this.getLikeSideErrors('R', newRight.returnType, ValueType.Phrase),
     ]).filter(errors => errors.length > 0);
   }
 
   private getLikeSideErrors(side: 'L' | 'R', actual: ValueType, superType: ValueType): string[] {
     return isSubtype(actual, superType) ? [] :
-      this.getError(side, actual, superType).toList().toArray();
+      this.getError(side, actual, [superType]).toList().toArray();
   }
 
   private checkBooleanTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
@@ -126,18 +129,18 @@ export class BinaryOperationExpression extends Expression {
   }
 
   private getLogicalSideErrors(side: 'L' | 'R', e: Expression): string[] {
-    return this.isSideTypeValid(e) ?
-      this.getError(side, e.returnType, ValueType.Boolean).toList().toArray() : [];
+    return this.isSideTypeValid(e) ? [] :
+    this.getError(side, e.returnType, [ValueType.Boolean, ValueType.Phrase]).toList().toArray();
   }
 
-  private isSideTypeValid(side: Expression): boolean {
-    return !side.is(TermExpression as any) && !isBooleanType(side.returnType);
+  private isSideTypeValid({ returnType }: Expression): boolean {
+    return isBooleanType(returnType) || isPhraseType(returnType);
   }
 
-  private getError(side: 'L' | 'R', actual: ValueType, expected: ValueType): Maybe<string> {
+  private getError(side: 'L' | 'R', actual: ValueType, expected: ValueType[]): Maybe<string> {
     return Some(
       `${side}HS of ${this.operator.token} expression has ` +
-      `to be a ${expected} expression, but instead found ${actual}`);
+      `to be a ${expected.join(' or ')} expression, but instead found ${actual}`);
   }
 
 }
