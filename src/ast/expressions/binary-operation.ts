@@ -2,7 +2,7 @@ import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { Expression, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
-import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from '../operators';
+import { AndOperator, BinaryOperator, LikeOperator, LogicalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, TermExpression, TextExpression } from './term';
 
@@ -26,7 +26,7 @@ export class BinaryOperationExpression extends Expression {
         ]);
       }
 
-      if (operator.is(AndOperator) || operator.is(OrOperator)) {
+      if (operator.is(LogicalOperator)) {
         return new BinaryOperationExpression(operator, [
           lhs.is(TermExpression as any) ? PhraseExpression.of(lhs.value) : lhs,
           rhs.is(TermExpression as any) ? PhraseExpression.of(rhs.value) : rhs,
@@ -102,7 +102,7 @@ export class BinaryOperationExpression extends Expression {
       return this.checkLikeTypes(newLeft, newRight);
     }
 
-    if (this.operator.is(AndOperator) || this.operator.is(OrOperator)) {
+    if (this.operator.is(LogicalOperator)) {
       return this.checkBooleanTypes(newLeft, newRight);
     }
 

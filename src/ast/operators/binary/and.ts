@@ -1,6 +1,6 @@
 import { OperatorType } from '../../../common/model';
-import { BinaryOperator } from './binary';
+import { LogicalOperator } from './logical';
 
-export class AndOperator extends BinaryOperator {
+export class AndOperator extends LogicalOperator {
   public readonly type = OperatorType.And;
 }
