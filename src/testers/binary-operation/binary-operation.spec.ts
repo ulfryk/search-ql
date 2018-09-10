@@ -63,18 +63,18 @@ describe('SearchQL testers', () => {
       });
 
       it('should build proper Match output', () => {
-        expect(String(matchingTesters[1].test(values)))
+        expect(String(matchingTesters[1].test(values).matches()))
           .to.equal('Just(Map { "label 1": Match "asdffa sdfas sdf" { Map {' +
           ' "asdffa": OrderedSet { [0, 6] },' +
           ' "sdfas": OrderedSet { [7, 12] }' +
           ' } } })');
 
-        expect(String(matchingTesters[3].test(values)))
+        expect(String(matchingTesters[3].test(values).matches()))
           .to.equal('Just(Map { "label 4": Match "ipsum-dolor_sitamet" { Map {' +
           ' "dolor_sitamet": OrderedSet { [6, 19] }' +
           ' } } })');
 
-        expect(String(matchingTesters[4].test(values)))
+        expect(String(matchingTesters[4].test(values).matches()))
           .to.equal('Just(Map { "label 5": Match "hello world" { Map {' +
           ' "ello wo": OrderedSet { [1, 8] }' +
           ' } } })');
@@ -124,12 +124,12 @@ describe('SearchQL testers', () => {
 
       it('should build proper Match output', () => {
 
-        expect(String(matchingTesters[3].test(values)))
+        expect(String(matchingTesters[3].test(values).matches()))
           .to.equal('Just(Map { "description": Match "hello universe" { Map {' +
             ' "ello uni": OrderedSet { [1, 9] }' +
           ' } } })');
 
-        expect(String(matchingTesters[4].test(values)))
+        expect(String(matchingTesters[4].test(values).matches()))
           .to.equal('Just(Map { "Title": Match "SitAmetus" { Map {' +
             ' "sitametus": OrderedSet { [0, 9] }' +
           ' } } })');

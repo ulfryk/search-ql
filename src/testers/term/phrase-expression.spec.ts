@@ -59,7 +59,7 @@ describe('SearchQL testers', () => {
           one: 'aaa bbb aaa aaa aaasda ddaaa',
           three: 'aaGaa bbb aadaaXaadaa ddddadd',
           two: 'aaa bbb aaaXaaa',
-        })).toString(),
+        })).matches().toString(),
       ).to.equal('Just(Map {' +
         ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" {' +
           ' Map { "aaa": OrderedSet { [0, 3], [8, 11], [12, 15], [16, 19], [25, 28] } } },' +

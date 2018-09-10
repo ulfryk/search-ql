@@ -58,7 +58,7 @@ export class NodeEvaluation<V> {
 
   public toString() {
     // TEMPORARY !!!
-    return String(this.matches());
+    return `NodeEvaluation[${this.type}] { value: ${this.value}, match: ${this.matches()} }`;
   }
 
   public inspect() {

@@ -1,19 +1,17 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
-import { Map } from 'immutable';
+import { List, Map } from 'immutable';
 
-import { Expression, ValueType } from '../../common/model';
-import { config, fn, txt } from '../../testing/utils';
+import { FunctionExpression } from '../../ast';
+import { Expression } from '../../common/model';
+import { config, txt } from '../../testing/utils';
 import { FunctionExpressionTester, Tester } from '../index';
 
-const getTester = (name: string, ...args: Expression[]) => {
-  const expr = fn(name, ValueType.Boolean)(...args);
-
-  return new FunctionExpressionTester(
-    expr,
-    expr.value.map(Tester.fromAst(config)).toList(),
+const getFnTester = (name: string) => (...args: Expression[]) =>
+  new FunctionExpressionTester(
+    FunctionExpression.fromParseResult(config.functions.get(name), args),
+    List(args.map(Tester.fromAst(config))),
     config);
-};
 
 describe('SearchQL testers', () => {
 
@@ -21,33 +19,40 @@ describe('SearchQL testers', () => {
 
     describe('built in test_function', () => {
 
-      // tslint:disable-next-line:no-unnecessary-type-assertion
-      const values = Map([
-        'All good',
-        'test_function(aaa, bbb)',
-        'test_function()',
-        'AND OR OR AND',
-        'IpsUM-dolor_sitAMET',
-        'hello world',
-      ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
+      const values = Map({
+        age: '45',
+        bio: 'Lorem ipsum dolor sit amet',
+        email: 'john.doe@example.com',
+        firstName: 'John',
+        lastName: 'Doe',
+        shortBio: '',
+      });
 
-      const matchingTesters = [] as FunctionExpressionTester<any>[];
+      const matchingTesters = [
+        getFnTester('is_empty')(txt('shortBio')),
+      ];
 
       const notMatchingTesters = [
-        getTester('test_function'),
-        getTester('test_function', txt('aaa'), txt('bbb')),
+        getFnTester('is_empty')(txt('email')),
+        getFnTester('test_function')(),
+        getFnTester('test_function')(txt('aaa'), txt('bbb')),
       ];
 
       matchingTesters.forEach(tester => {
+        const output = tester.test(values);
+        const match = output.matches();
         it(`should find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).matches().isSome()).to.be.true;
-          expect(tester.test(values).matches().some().isEmpty()).to.be.false;
+          expect(output.value, String(output)).to.be.true;
+          expect(match.some().isEmpty(), String(match)).to.be.false;
         });
       });
 
       notMatchingTesters.forEach(tester => {
+        const output = tester.test(values);
+        const match = output.matches();
         it(`should not find expression "${tester.ast}"`, () => {
-          expect(tester.test(values).matches().isSome()).to.be.false;
+          expect(output.value, String(output)).to.be.false;
+          expect(match.isSome(), String(match)).to.be.false;
         });
       });
 

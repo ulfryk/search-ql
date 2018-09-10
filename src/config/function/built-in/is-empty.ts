@@ -1,18 +1,23 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { Maybe, None } from 'monet';
 
-import { NodeEvaluation, ValueType } from '../../../common/model';
+import { Match, NodeEvaluation, ValueType } from '../../../common/model';
 import { FunctionRuntime } from '../../../common/runtimes';
 import { RequiredFunctionArg } from '../function-arg';
 import { FunctionConfig } from '../function-config';
 
-const isEmptyRuntime: FunctionRuntime<boolean> = (values, ast) => args =>
-  NodeEvaluation.ofBoolean(values, ast)(
-    Maybe.fromNull(args.first())
-      .map(getMatch => getMatch().value)
-      .flatMap(fieldName => Maybe.fromNull(values.get(fieldName)))
-      .flatMap(value => Maybe.fromFalsy(value.trim()))
-      .isSome());
+const isEmptyRuntime: FunctionRuntime<boolean> = (values, ast) => args => {
+  const field = Maybe.fromNull(args.first())
+    .map(getMatch => getMatch().value);
+  const isEmpty = field
+    .flatMap(fieldName => Maybe.fromNull(values.get(fieldName)))
+    .flatMap(someValue => Maybe.fromFalsy(someValue.trim()))
+    .isNone();
+
+  return NodeEvaluation.ofBoolean(values, ast)(
+    isEmpty,
+    () => field.filter(() => isEmpty).map(fieldName => Map({ [fieldName]: Match.whole('') })));
+};
 
 export const isEmptyFunction =
   new FunctionConfig(

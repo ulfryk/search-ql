@@ -57,7 +57,7 @@ describe('SearchQL testers', () => {
           one: 'aaa bbb aaa aaa aaasda ddaaa',
           three: 'aaGaa bbb aadaaXaadaa ddddadd',
           two: 'aaa bbb aaaXaaa',
-        })).toString(),
+        })).matches().toString(),
       ).to.equal('Just(Map {' +
         ' "one": Match "aaa bbb aaa aaa aaasda ddaaa" { Map {} },' +
         ' "three": Match "aaGaa bbb aadaaXaadaa ddddadd" { Map {} },' +
