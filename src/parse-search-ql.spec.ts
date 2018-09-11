@@ -8,7 +8,7 @@ import { ParseFailure } from './common/model';
 import { SyntaxConfig } from './config';
 import { parseSearchQL } from './parse-search-ql';
 import { ParserName } from './parsers';
-import { and, fn, like, or, phrase, txt } from './testing/utils';
+import { and, fn, is, isNot, like, or, phrase, txt } from './testing/utils';
 
 const allParserNames = [
   ParserName.Basic,
@@ -26,6 +26,7 @@ describe('SearchQL', () => {
       'token_expired ~ true',
       'first_name ~ Adam | token_expired ~ true',
       'test_function(aaa, "b(b & b)")',
+      'aaa = bbb & cc != dd',
     ];
 
     const successfulOutputValues = [
@@ -33,6 +34,7 @@ describe('SearchQL', () => {
       like(txt('token_expired'), phrase('true')),
       or(like(txt('first_name'), phrase('Adam')), like(txt('token_expired'), phrase('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
+      and(is(txt('aaa'), phrase('bbb')), isNot(txt('cc'), phrase('dd'))),
     ].map(Either.of);
 
     const invalidInput = [
@@ -46,6 +48,7 @@ describe('SearchQL', () => {
       'test_function(aaa, (token_expired ~ true))',
       'test_function(test_function(aaa), (token_expired ~ true), (! ccc))',
       'test_function(aaa, bbb, (! ccc)) ~ (! "John Doe")',
+      'a ISNT is_empty(b)',
     ];
 
     const invalidTypesOutput = [
@@ -58,6 +61,9 @@ describe('SearchQL', () => {
       [
         'TypeError: LHS of ~ expression has to be a TEXT expression, but instead found BOOLEAN',
         'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
+      ],
+      [
+        'TypeError: RHS of ISNT expression has to be a PHRASE expression, but instead found BOOLEAN',
       ],
     ];
 

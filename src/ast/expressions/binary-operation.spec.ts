@@ -5,12 +5,14 @@ import { zip } from 'lodash';
 
 import { Expression } from '../../common/model';
 import { SyntaxConfig } from '../../config/syntax-config';
-import { AndOperator, LikeOperator, OrOperator } from '../operators';
+import { AndOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
 import { NumberExpression, PhraseExpression, TextExpression } from './term';
 
-const { AND, LIKE, OR } = new SyntaxConfig();
+const { AND, IS, IS_NOT, LIKE, OR } = new SyntaxConfig();
 const And = new AndOperator(AND[0]);
+const Is = new IsOperator(IS[0]);
+const IsNot = new IsNotOperator(IS_NOT[0]);
 const Like = new LikeOperator(LIKE[0]);
 const Or = new OrOperator(OR[0]);
 
@@ -28,6 +30,26 @@ describe('SearchQL expressions', () => {
           new TextExpression('aaa'),
           PhraseExpression.of('123'),
         ]));
+      });
+
+      it('should properly create equality expressions (IS, IS_NOT)', () => {
+
+        expect(BinaryOperationExpression.fromPair(Is)(
+          TextExpression.of('age'),
+          NumberExpression.of('123'),
+        )).to.deep.equal(new BinaryOperationExpression(Is, [
+          TextExpression.of('age'),
+          PhraseExpression.of('123'),
+        ]));
+
+        expect(BinaryOperationExpression.fromPair(IsNot)(
+          PhraseExpression.of('age'),
+          NumberExpression.of('123'),
+        )).to.deep.equal(new BinaryOperationExpression(IsNot, [
+          TextExpression.of('age'),
+          PhraseExpression.of('123'),
+        ]));
+
       });
 
       it('should properly create logical expressions (AND, OR)', () => {

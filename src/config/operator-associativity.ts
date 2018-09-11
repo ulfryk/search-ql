@@ -9,7 +9,7 @@ const assignAssociativity = (...types: OperatorType[]) => (associativity: Operat
 
 // Order mostly taken from Java: https://introcs.cs.princeton.edu/java/11precedence/
 export const operatorAssociativity = Map<OperatorType, OperatorAssociativity>([
-  ...assignAssociativity(And, Or)(OperatorAssociativity.Left),
-  ...assignAssociativity(Like, NotLike, Gt, Gte, Lt, Lte, Is, IsNot)(OperatorAssociativity.None),
+  ...assignAssociativity(And, Or, Like, NotLike, Is, IsNot)(OperatorAssociativity.Left),
+  ...assignAssociativity(Gt, Gte, Lt, Lte)(OperatorAssociativity.None),
   ...assignAssociativity(Not)(OperatorAssociativity.Right),
 ]);

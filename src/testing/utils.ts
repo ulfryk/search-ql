@@ -2,18 +2,22 @@ import { List, Map } from 'immutable';
 import { None } from 'monet';
 
 import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../ast/expressions';
-import { AndOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
+import { AndOperator, EqualityOperator, IsNotOperator, IsOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { Expression, NodeEvaluation, ValueType } from '../common/model';
 import { FunctionConfig, OptionalFunctionArg, SyntaxConfig } from '../config';
 
 const config = new SyntaxConfig();
-const { AND, LIKE, NOT, OR } = config;
+const { AND, IS, IS_NOT, LIKE, NOT, OR } = config;
 
 const And = new AndOperator(AND[1]);
+const Is = new IsOperator(IS[1]);
+const IsNot = new IsNotOperator(IS_NOT[1]);
 const Like = new LikeOperator(LIKE[1]);
 const Not = new NotOperator(NOT[1]);
 const Or = new OrOperator(OR[1]);
 const And0 = new AndOperator(AND[0]);
+const Is0 = new IsOperator(IS[1]);
+const IsNot0 = new IsNotOperator(IS_NOT[1]);
 const Like0 = new LikeOperator(LIKE[0]);
 const Not0 = new NotOperator(NOT[0]);
 const Or0 = new OrOperator(OR[0]);
@@ -28,11 +32,17 @@ const txtFrom = (e: TermExpression) => TextExpression.fromTerm(e);
 const and = (l: Expression, r: Expression, op: AndOperator = And) =>
   new BinaryOperationExpression(op, [l, r]);
 
-const like = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) =>
+const eq = (l: TermExpression, r: TermExpression, op: EqualityOperator) =>
   new BinaryOperationExpression(op, [
     TextExpression.of(l.value),
     PhraseExpression.of(r.value),
   ]);
+
+// tslint:disable:no-unnecessary-callback-wrapper
+const like = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) => eq(l, r, op);
+const is = (l: TermExpression, r: TermExpression, op: IsOperator = Is) => eq(l, r, op);
+const isNot = (l: TermExpression, r: TermExpression, op: IsNotOperator = IsNot) => eq(l, r, op);
+// tslint:enable:no-unnecessary-callback-wrapper
 
 const or = (l: Expression, r: Expression, op: OrOperator = Or) =>
   new BinaryOperationExpression(op, [l, r]);
@@ -57,6 +67,8 @@ export {
   date, num, phrase, txt, txtFrom,
   and, andNot, And, And0,
   like, Like, Like0,
+  is, Is, Is0,
+  isNot, IsNot, IsNot0,
   not, Not, Not0,
   or, Or, Or0,
   fn,

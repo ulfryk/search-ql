@@ -4,7 +4,7 @@ import { Map, OrderedSet } from 'immutable';
 
 import { BinaryOperationExpression, Operator, PhraseExpression } from '../../ast';
 import { Expression } from '../../common/model';
-import { And0, config, Like0, Or0 } from '../../testing/utils';
+import { And0, config, Is0, IsNot0, Like0, Or0 } from '../../testing/utils';
 import { BinaryOperationExpressionTester, Tester } from '../index';
 
 const getTester = (operator: Operator, values: [string, string]) => {
@@ -135,6 +135,76 @@ describe('SearchQL testers', () => {
           ' } } })');
 
       });
+    });
+
+    describe('equality operations (IS, IS_NOT)', () => {
+
+      const values = Map<string, string>({
+        Title: 'SitAmetus',
+        age: '234',
+        description: 'hello universe',
+        first_name: 'Loremus',
+        last_name: 'IpsuMus',
+      });
+
+      const matchingTesters = [
+        getTester(Is0, ['age', '234']),
+        getTester(Is0, ['first_name', 'Loremus']),
+        getTester(Is0, ['last_name', 'IpsuMus']),
+        getTester(Is0, ['description', 'hello universe']),
+        getTester(Is0, ['Title', 'SitAmetus']),
+        getTester(IsNot0, ['age', '5']),
+        getTester(IsNot0, ['first_name', 'umus']),
+        getTester(IsNot0, ['last_name', 'emus']),
+        getTester(IsNot0, ['description', 'elo unix']),
+        getTester(IsNot0, ['title', 'sitametus']),
+      ];
+
+      const notMatchingTesters = [
+        getTester(IsNot0, ['age', '234']),
+        getTester(IsNot0, ['first_name', 'Loremus']),
+        getTester(IsNot0, ['last_name', 'IpsuMus']),
+        getTester(IsNot0, ['description', 'hello universe']),
+        getTester(IsNot0, ['Title', 'SitAmetus']),
+        getTester(Is0, ['age', '5']),
+        getTester(Is0, ['first_name', 'umus']),
+        getTester(Is0, ['last_name', 'emus']),
+        getTester(Is0, ['description', 'elo unix']),
+        getTester(Is0, ['title', 'sitametus']),
+        getTester(Is0, ['first_name', 'Mus']),
+        getTester(Is0, ['last_name', 'mus']),
+        getTester(Is0, ['description', 'ello uni']),
+        getTester(Is0, ['Title', 'SitAmet']),
+      ];
+
+      matchingTesters.forEach(tester => {
+
+        it(`should find expression "${tester.ast}"`, () => {
+          expect(tester.test(values).value).to.be.true;
+          expect(tester.test(values).matches().isSome()).to.be.true;
+        });
+      });
+
+      notMatchingTesters.forEach(tester => {
+        it(`should not find expression "${tester.ast}"`, () => {
+          expect(tester.test(values).value).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.false;
+        });
+      });
+
+      // it('should build proper Match output', () => {
+
+      //   expect(String(matchingTesters[3].test(values).matches()))
+      //     .to.equal('Just(Map { "description": Match "hello universe" { Map {' +
+      //       ' "ello uni": OrderedSet { [1, 9] }' +
+      //     ' } } })');
+
+      //   expect(String(matchingTesters[4].test(values).matches()))
+      //     .to.equal('Just(Map { "Title": Match "SitAmetus" { Map {' +
+      //       ' "sitametus": OrderedSet { [0, 9] }' +
+      //     ' } } })');
+
+      // });
     });
 
   });

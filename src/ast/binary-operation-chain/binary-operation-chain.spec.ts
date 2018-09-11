@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { Expression } from '../../common/model';
-import { and, And, andNot, config, like, Like, Not, Or, or } from '../../testing/utils';
+import { and, And, andNot, config, is, Is, isNot, IsNot, Like, like, Not, or, Or } from '../../testing/utils';
 import { fromMatch, NotExpression, PhraseExpression, TextExpression } from '../expressions';
 import { Operator } from '../operators';
 import { BinaryOperationChain } from './binary-operation-chain';
@@ -203,7 +203,7 @@ describe('SearchQL ast', () => {
 
     });
 
-    describe('rebuild() method', () => {
+    describe('reshape() method', () => {
 
       describe('for single expression', () => {
         const a = fromMatch('aaaa');
@@ -289,12 +289,23 @@ describe('SearchQL ast', () => {
 
         const chainA = buildChain(a, [Like, b], [And, c], [Like, d], [Or, e], [Like, f]);
         const chainB = buildChain(a, [Like, b], [Not, c], [Or, d], [Like, e], [Not, f]);
+        const chainC = buildChain(a, [Is, b], [And, c], [IsNot, d]);
+        const chainD = buildChain(a, [Is, b], [And, c], [IsNot, d], [Or, a], [IsNot, b]);
+        const chainE = buildChain(
+          a, [Is, b], [And, c], [IsNot, d],
+          [Or, a], [IsNot, b], [And, c], [Is, d]);
 
         const expressionA = or(and(like(a, b), like(c, d)), like(e, f));
         const expressionB = or(andNot(like(a, b), c), andNot(like(d, e), f));
+        const expressionC = and(is(a, b), isNot(c, d));
+        const expressionD = or(and(is(a, b), isNot(c, d)), isNot(a, b));
+        const expressionE = or(and(is(a, b), isNot(c, d)), and(isNot(a, b), is(c, d)));
 
         testRebuildMethod(chainA, expressionA);
         testRebuildMethod(chainB, expressionB);
+        testRebuildMethod(chainC, expressionC);
+        testRebuildMethod(chainD, expressionD);
+        testRebuildMethod(chainE, expressionE);
       });
 
     });

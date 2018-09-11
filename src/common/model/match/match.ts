@@ -38,6 +38,13 @@ export class Match implements ISetoid {
     return this === other || (this.input === other.input && this.matched.equals(other.matched));
   }
 
+  public isFullMatch(): boolean {
+    return this.matched.size === 1 &&
+      Maybe.fromNull(this.matched.get(this.input))
+        .flatMap(coords => Maybe.fromNull(coords.first()))
+        .fold(false)(({ phrase }) => phrase === this.input);
+  }
+
   public and(other: Match): Match {
     if (process.env.NODE_ENV !== 'production') {
       if (this.input !== other.input) {

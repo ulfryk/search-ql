@@ -6,13 +6,13 @@ import { SyntaxConfig } from '../config';
 import { binaryOperator } from './binary-operator';
 
 const config = new SyntaxConfig();
-const { AND, OR } = config;
+const { AND, IS, IS_NOT, LIKE, OR } = config;
 
 describe('SearchQL parsers', () => {
 
   describe('binaryOperator', () => {
 
-    const validInput = [...AND, ...OR];
+    const validInput = [...AND, ...IS, ...IS_NOT, ...LIKE, ...OR];
 
     validInput.forEach(input => {
       describe(`for '${input}'`, () => {

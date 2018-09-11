@@ -4,12 +4,14 @@ import { Maybe } from 'monet';
 import { OperatorType } from '../../common/model';
 import { SyntaxConfig } from '../../config';
 
-import { AndOperator, BinaryOperator, LikeOperator, OrOperator } from './binary';
+import { AndOperator, BinaryOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from './binary';
 import { Operator } from './operator';
 import { NotOperator } from './unary';
 
 const operatorMapping = Map<OperatorType, (token: string) => BinaryOperator>([
   [OperatorType.And, (token: string) => new AndOperator(token)],
+  [OperatorType.Is, (token: string) => new IsOperator(token)],
+  [OperatorType.IsNot, (token: string) => new IsNotOperator(token)],
   [OperatorType.Like, (token: string) => new LikeOperator(token)],
   [OperatorType.Not, (token: string) => new NotOperator(token)],
   [OperatorType.Or, (token: string) => new OrOperator(token)],

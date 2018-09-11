@@ -34,7 +34,7 @@ export class BinaryOperationContext extends InterimExpression {
       this.right.reshape());
   }
 
-  public append(operator: OperatorContext, rhs: Expression) {
+  public append(operator: OperatorContext, rhs: Expression): BinaryOperationContext {
     switch (this.value.compare(operator)) {
       case (Ordering.Eq):
       case (Ordering.Gt):
@@ -44,7 +44,9 @@ export class BinaryOperationContext extends InterimExpression {
         return new BinaryOperationContext(
           this.value,
           this.left,
-          new BinaryOperationContext(operator, this.right, rhs));
+          this.right instanceof BinaryOperationContext ?
+            this.right.append(operator, rhs) :
+            new BinaryOperationContext(operator, this.right, rhs));
 
       default:
         throw Error(`There's no such Ordering value: "${this.value.compare(operator)}"`);

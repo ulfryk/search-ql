@@ -2,7 +2,7 @@ import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { Expression, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
-import { AndOperator, BinaryOperator, LikeOperator, LogicalOperator } from '../operators';
+import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, TermExpression, TextExpression } from './term';
 
@@ -19,7 +19,7 @@ export class BinaryOperationExpression extends Expression {
     // tslint:disable-next-line:cyclomatic-complexity
     return (lhs: Expression, rhs: Expression) => {
 
-      if (operator.is(LikeOperator)) {
+      if (operator.is(EqualityOperator)) {
         return new BinaryOperationExpression(operator, [
           lhs.is(TermExpression as any) ? TextExpression.fromTerm(lhs as any) : lhs,
           rhs.is(TermExpression as any) ? PhraseExpression.of(rhs.value) : rhs,
@@ -98,8 +98,8 @@ export class BinaryOperationExpression extends Expression {
   }
 
   private check(newLeft: Expression, newRight: Expression): Maybe<string[]> {
-    if (this.operator.is(LikeOperator)) {
-      return this.checkLikeTypes(newLeft, newRight);
+    if (this.operator.is(EqualityOperator)) {
+      return this.checkEqualityTypes(newLeft, newRight);
     }
 
     if (this.operator.is(LogicalOperator)) {
@@ -109,14 +109,14 @@ export class BinaryOperationExpression extends Expression {
     return None();
   }
 
-  private checkLikeTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+  private checkEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
     return Some([
-      ...this.getLikeSideErrors('L', newLeft.returnType, ValueType.Text),
-      ...this.getLikeSideErrors('R', newRight.returnType, ValueType.Phrase),
+      ...this.getEqualitySideErrors('L', newLeft.returnType, ValueType.Text),
+      ...this.getEqualitySideErrors('R', newRight.returnType, ValueType.Phrase),
     ]).filter(errors => errors.length > 0);
   }
 
-  private getLikeSideErrors(side: 'L' | 'R', actual: ValueType, superType: ValueType): string[] {
+  private getEqualitySideErrors(side: 'L' | 'R', actual: ValueType, superType: ValueType): string[] {
     return isSubtype(actual, superType) ? [] :
       this.getError(side, actual, [superType]).toList().toArray();
   }

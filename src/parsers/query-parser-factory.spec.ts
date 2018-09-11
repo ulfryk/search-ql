@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { Expression } from '../common/model';
-import { and, And0, andNot, config, fn, like, Like0, not, or, Or0, phrase, txt } from '../testing/utils';
+import { and, And0, andNot, config, fn, is, isNot, like, Like0, not, or, Or0, phrase, txt } from '../testing/utils';
 import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
@@ -75,6 +75,9 @@ describe('SearchQL parsers', () => {
         'aaa AND (bbb OR ccc) NOT ddd',
         '(aaa OR bbb) NOT ccc',
         'aaa AND bbb AND ccc NOT ddd',
+        'age != 16 & name = John',
+        'age = 24 & name != Doe',
+        'age != 16 & name = John | age = 24 & name != Doe',
       ];
 
       const validOutput = [
@@ -98,6 +101,11 @@ describe('SearchQL parsers', () => {
         and(and(phrase('aaa'), or(phrase('bbb'), phrase('ccc'), Or0), And0), not(phrase('ddd')), And0),
         and(or(phrase('aaa'), phrase('bbb'), Or0), not(phrase('ccc')), And0),
         and(and(and(phrase('aaa'), phrase('bbb'), And0), phrase('ccc'), And0), not(phrase('ddd')), And0),
+        and(isNot(txt('age'), phrase('16')), is(txt('name'), phrase('John'))),
+        and(is(txt('age'), phrase('24')), isNot(txt('name'), phrase('Doe'))),
+        or(
+          and(isNot(txt('age'), phrase('16')), is(txt('name'), phrase('John'))),
+          and(is(txt('age'), phrase('24')), isNot(txt('name'), phrase('Doe')))),
       ];
 
       const invalidInput = [

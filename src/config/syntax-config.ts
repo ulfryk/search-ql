@@ -56,7 +56,7 @@ export class SyntaxConfig {
     public readonly IS = ['IS', '='],
     public readonly GTE = ['GTE', '>='],
     public readonly LTE = ['LTE', '<='],
-    public readonly IS_NOT = ['IS NOT', '!='],
+    public readonly IS_NOT = ['IS NOT', '!=', 'ISNT'],
     // unary operators
     public readonly NOT = ['NOT', '!'],
     // grouping (only one sign allowed at once)
@@ -88,7 +88,7 @@ export class SyntaxConfig {
   public get binaryOperators() {
     const { AND, LIKE, NOT_LIKE, OR, GT, LT, IS, GTE, LTE, IS_NOT } = this;
 
-    return [...AND, ...OR, ...LIKE, ...NOT_LIKE, ...GT, ...LT, ...IS, ...GTE, ...LTE, ...IS_NOT];
+    return [...AND, ...OR, ...LIKE, ...NOT_LIKE, ...GT, ...LT, ...IS_NOT, ...IS, ...GTE, ...LTE];
   }
 
   public get unaryOperators() {
