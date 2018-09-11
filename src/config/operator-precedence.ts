@@ -6,6 +6,8 @@ import { OperatorType } from '../common/model';
 export const operatorPrecedence = Map<OperatorType, number>(List([
   [OperatorType.Or],
   [OperatorType.And],
-  [OperatorType.Like],
+  [OperatorType.Like, OperatorType.NotLike],
+  [OperatorType.Is, OperatorType.IsNot],
+  [OperatorType.Gt, OperatorType.Gte, OperatorType.Lt, OperatorType.Lte],
   [OperatorType.Not],
 ]).flatMap((types, index) => types.map(type => [type, index + 1])));
