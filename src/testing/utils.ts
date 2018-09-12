@@ -1,7 +1,7 @@
 import { List, Map } from 'immutable';
 import { None } from 'monet';
 
-import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../ast/expressions';
+import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, EqualityOperator, IsNotOperator, IsOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { Expression, NodeEvaluation, ValueType } from '../common/model';
 import { FunctionConfig, OptionalFunctionArg, ParserConfig } from '../config';
@@ -25,6 +25,7 @@ const Or0 = new OrOperator(OR[0]);
 const date = (v: string) => DateExpression.of(v);
 const num = (v: string) => NumberExpression.of(v);
 const phrase = (v: string) => PhraseExpression.of(v);
+const sel = (v: string, t: ValueType) => new SelectorExpression(t, v);
 const txt = (v: string) => TextExpression.of(v);
 
 const txtFrom = (e: TermExpression) => TextExpression.fromTerm(e);
@@ -64,7 +65,7 @@ const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expressio
 
 export {
   config,
-  date, num, phrase, txt, txtFrom,
+  date, num, phrase, sel, txt, txtFrom,
   and, andNot, And, And0,
   like, Like, Like0,
   is, Is, Is0,

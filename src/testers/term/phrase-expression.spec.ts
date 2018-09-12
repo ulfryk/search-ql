@@ -2,13 +2,13 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { fromMatch, TermExpression } from '../../ast';
+import { PhraseExpression } from '../../ast';
 import { ParserConfig } from '../../config';
 import { PhraseExpressionTester } from './phrase-expression';
 
 const config = new ParserConfig();
 
-const getTester = (expr: TermExpression) =>
+const getTester = (expr: PhraseExpression<any>) =>
   new PhraseExpressionTester(expr, config);
 
 describe('SearchQL testers', () => {
@@ -34,11 +34,11 @@ describe('SearchQL testers', () => {
             val)
       .map(val => val.substr(-6, 5))
       .concat(values.toArray())
-      .map(fromMatch);
+      .map(PhraseExpression.of);
 
     const notMatchingExpressions = values.toArray()
       .map((val, i) => `${i} ${val}`)
-      .map(fromMatch);
+      .map(PhraseExpression.of);
 
     expressions.forEach(expression => {
       it(`should find expression "${expression}"`, () => {
@@ -55,7 +55,7 @@ describe('SearchQL testers', () => {
 
     it('should find expression "aaa" in few fields', () => {
       expect(
-        getTester(fromMatch('aaa')).test(Map({
+        getTester(PhraseExpression.of('aaa')).test(Map({
           one: 'aaa bbb aaa aaa aaasda ddaaa',
           three: 'aaGaa bbb aadaaXaadaa ddddadd',
           two: 'aaa bbb aaaXaaa',

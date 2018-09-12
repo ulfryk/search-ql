@@ -19,7 +19,7 @@ Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
       return new NumberExpressionTester(ast as NumberExpression, config);
 
     case PhraseExpression:
-      return new PhraseExpressionTester(ast as PhraseExpression, config);
+      return new PhraseExpressionTester(ast as PhraseExpression<any>, config);
 
     case TextExpression:
       return new TextExpressionTester(ast as TextExpression, config);

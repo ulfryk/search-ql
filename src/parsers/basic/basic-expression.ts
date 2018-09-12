@@ -2,8 +2,8 @@ import * as P from 'parsimmon';
 
 import { TextExpression } from '../../ast';
 import { ParserConfig } from '../../config';
-import { exactMatch } from '../exact-match';
 import { basicWord } from './basic-word';
+import { exactMatch } from './exact-match';
 
 export { TextExpression }; // So TSC does not complain
 

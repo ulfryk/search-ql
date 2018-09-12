@@ -2,8 +2,8 @@
 import { expect } from 'chai';
 import * as P from 'parsimmon';
 
-import { PhraseExpression } from '../ast';
-import { ParserConfig } from '../config';
+import { PhraseExpression } from '../../ast';
+import { ParserConfig } from '../../config';
 import { exactMatch } from './exact-match';
 
 const config = new ParserConfig();

@@ -4,5 +4,6 @@ export * from './is-date';
 export * from './is-number';
 export * from './number';
 export * from './phrase';
+export * from './selector';
 export * from './term';
 export * from './text';

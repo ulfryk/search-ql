@@ -7,10 +7,10 @@ import { Match, NodeEvaluation } from '../../common/model';
 import { ParserConfig } from '../../config';
 import { Tester } from '../tester';
 
-export class PhraseExpressionTester extends Tester<boolean, PhraseExpression, null> {
+export class PhraseExpressionTester extends Tester<boolean, PhraseExpression<any>, null> {
 
   constructor(
-    public readonly ast: PhraseExpression,
+    public readonly ast: PhraseExpression<any>,
     public readonly config: ParserConfig,
   ) {
     super(ast, null, config);

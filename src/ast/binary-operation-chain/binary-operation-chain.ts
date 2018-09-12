@@ -56,7 +56,7 @@ export class BinaryOperationChain extends InterimExpression {
 
   public appendAndNot({ AND }: ParserConfig, not: Expression): BinaryOperationChain {
     return this.appendBinary(new AndOperator(AND[0]), new NotExpression(
-      not.is(TermExpression as any) ? PhraseExpression.fromTerm(not as TermExpression) : not,
+      not.is(TermExpression as any) ? PhraseExpression.of(not.value) : not,
     ));
   }
 

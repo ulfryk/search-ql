@@ -1,7 +1,7 @@
 import { Map, Set } from 'immutable';
 import { Maybe } from 'monet';
 
-import { OperatorType } from '../common/model';
+import { OperatorType, ValueType } from '../common/model';
 import { builtInFunctions as allBuiltInFunctions, FunctionConfig } from './function';
 import { allParsers, ParserName } from './parser-names';
 
@@ -9,16 +9,15 @@ export class ParserConfig {
 
   public static create(
     {
-      caseSensitive, builtInFunctions, customFunctions, parserNames,
-      AND, OR, GT, LT, GTE, LTE, IS, IS_NOT, LIKE, NOT_LIKE,
-      NOT,
+      caseSensitive, parserNames, model, builtInFunctions, customFunctions,
+      AND, OR, GT, LT, GTE, LTE, IS, IS_NOT, LIKE, NOT_LIKE, NOT,
       GROUP_START, GROUP_END, EXACT_MATCHER,
       FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR,
     }: Partial<ParserConfig>,
   ) {
-    return new ParserConfig(caseSensitive, builtInFunctions, customFunctions, parserNames, AND, OR,
-      LIKE, NOT_LIKE, GT, LT, IS, GTE, LTE, IS_NOT, NOT, GROUP_START, GROUP_END, EXACT_MATCHER,
-      FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
+    return new ParserConfig(caseSensitive, parserNames, model, builtInFunctions, customFunctions,
+      AND, OR, LIKE, NOT_LIKE, GT, LT, IS, GTE, LTE, IS_NOT, NOT, GROUP_START, GROUP_END,
+      EXACT_MATCHER, FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
   }
 
   public readonly operatorMapping = Map<string, OperatorType>([
@@ -43,11 +42,13 @@ export class ParserConfig {
     ...this.customFunctions,
   ].map(fnConfig => [fnConfig.name, fnConfig]));
 
-  constructor( // add `parserNames` configuration option here
+  constructor(
     public readonly caseSensitive: boolean = false,
+    public readonly parserNames: ParserName[] = allParsers,
+    public readonly model: Map<string, ValueType> = Map(),
+    // functions
     public readonly builtInFunctions: FunctionConfig<any>[] = allBuiltInFunctions,
     public readonly customFunctions: FunctionConfig<any>[] = [],
-    public readonly parserNames: ParserName[] = allParsers,
     // binary operators
     public readonly AND = ['AND', '&'],
     public readonly OR = ['OR', '|'],
