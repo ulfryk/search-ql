@@ -40,9 +40,9 @@ export class Match implements ISetoid {
 
   public isFullMatch(): boolean {
     return this.matched.size === 1 &&
-      Maybe.fromNull(this.matched.get(this.input))
+      Maybe.fromNull(this.matched.get(this.input.toLowerCase()))
         .flatMap(coords => Maybe.fromNull(coords.first()))
-        .fold(false)(({ phrase }) => phrase === this.input);
+        .fold(false)(({ phrase }) => phrase === this.input.toLowerCase());
   }
 
   public and(other: Match): Match {

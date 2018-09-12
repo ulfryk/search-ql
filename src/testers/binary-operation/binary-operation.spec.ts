@@ -149,8 +149,8 @@ describe('SearchQL testers', () => {
 
       const matchingTesters = [
         getTester(Is0, ['age', '234']),
-        getTester(Is0, ['first_name', 'Loremus']),
-        getTester(Is0, ['last_name', 'IpsuMus']),
+        getTester(Is0, ['first_name', 'loremus']),
+        getTester(Is0, ['last_name', 'ipsumus']),
         getTester(Is0, ['description', 'hello universe']),
         getTester(Is0, ['Title', 'SitAmetus']),
         getTester(IsNot0, ['age', '5']),
@@ -192,19 +192,22 @@ describe('SearchQL testers', () => {
         });
       });
 
-      // it('should build proper Match output', () => {
+      it('should build proper Match output', () => {
 
-      //   expect(String(matchingTesters[3].test(values).matches()))
-      //     .to.equal('Just(Map { "description": Match "hello universe" { Map {' +
-      //       ' "ello uni": OrderedSet { [1, 9] }' +
-      //     ' } } })');
+        expect(String(matchingTesters[3].test(values).matches()))
+          .to.equal('Just(Map { "description": Match "hello universe" { Map {' +
+            ' "hello universe": OrderedSet { [0, 14] }' +
+          ' } } })');
 
-      //   expect(String(matchingTesters[4].test(values).matches()))
-      //     .to.equal('Just(Map { "Title": Match "SitAmetus" { Map {' +
-      //       ' "sitametus": OrderedSet { [0, 9] }' +
-      //     ' } } })');
+        expect(String(matchingTesters[4].test(values).matches()))
+          .to.equal('Just(Map { "Title": Match "SitAmetus" { Map {' +
+            ' "sitametus": OrderedSet { [0, 9] }' +
+          ' } } })');
 
-      // });
+        expect(String(matchingTesters[8].test(values).matches()))
+          .to.equal('Just(Map {})');
+
+      });
     });
 
   });
