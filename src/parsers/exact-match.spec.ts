@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import * as P from 'parsimmon';
 
 import { PhraseExpression } from '../ast';
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 import { exactMatch } from './exact-match';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 
 describe('SearchQL parsers', () => {
 

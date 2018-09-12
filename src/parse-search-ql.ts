@@ -3,14 +3,14 @@ import { Failure as ParsimmonFailure } from 'parsimmon';
 
 import { validate } from './ast';
 import { Expression, Failure, ParseFailure } from './common/model';
-import { SyntaxConfig } from './config';
-import { ParserName, QueryParserFactory } from './parsers';
+import { ParserConfig } from './config';
+import { QueryParserFactory } from './parsers';
 
-export const parseSearchQL = (parserNames: ParserName[], config?: SyntaxConfig) => {
-  const queryParserConfigured = new QueryParserFactory(parserNames, config).getParser();
+export const parseSearchQL = (config?: Partial<ParserConfig>) => {
+  const factory = new QueryParserFactory(ParserConfig.create(config));
 
   return (query: string): Either<Failure[], Expression> => {
-    const parsed = queryParserConfigured.parse(query);
+    const parsed = factory.getParser().parse(query);
 
     return parsed.status ?
       Right<Failure[], Expression>(parsed.value.reshape()).flatMap(validate) :

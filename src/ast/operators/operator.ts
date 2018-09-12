@@ -1,11 +1,11 @@
 import { ISetoid } from '@samwise-tech/core';
 
 import { OperatorAssociativity, OperatorType } from '../../common/model';
-import { operatorAssociativity, operatorPrecedence, SyntaxConfig } from '../../config';
+import { operatorAssociativity, operatorPrecedence, ParserConfig } from '../../config';
 
 export abstract class Operator implements ISetoid {
 
-  public static fromToken(_config: SyntaxConfig): (token: string) => Operator {
+  public static fromToken(_config: ParserConfig): (token: string) => Operator {
     throw Error('unimplemented');
   }
 

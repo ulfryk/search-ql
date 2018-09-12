@@ -3,19 +3,20 @@ import { Maybe } from 'monet';
 
 import { OperatorType } from '../common/model';
 import { builtInFunctions as allBuiltInFunctions, FunctionConfig } from './function';
+import { allParsers, ParserName } from './parser-names';
 
-export class SyntaxConfig {
+export class ParserConfig {
 
   public static create(
     {
-      caseSensitive, builtInFunctions, customFunctions,
+      caseSensitive, builtInFunctions, customFunctions, parserNames,
       AND, OR, GT, LT, GTE, LTE, IS, IS_NOT, LIKE, NOT_LIKE,
       NOT,
       GROUP_START, GROUP_END, EXACT_MATCHER,
       FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR,
-    }: Partial<SyntaxConfig>,
+    }: Partial<ParserConfig>,
   ) {
-    return new SyntaxConfig(caseSensitive, builtInFunctions, customFunctions, AND, OR,
+    return new ParserConfig(caseSensitive, builtInFunctions, customFunctions, parserNames, AND, OR,
       LIKE, NOT_LIKE, GT, LT, IS, GTE, LTE, IS_NOT, NOT, GROUP_START, GROUP_END, EXACT_MATCHER,
       FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
   }
@@ -46,6 +47,7 @@ export class SyntaxConfig {
     public readonly caseSensitive: boolean = false,
     public readonly builtInFunctions: FunctionConfig<any>[] = allBuiltInFunctions,
     public readonly customFunctions: FunctionConfig<any>[] = [],
+    public readonly parserNames: ParserName[] = allParsers,
     // binary operators
     public readonly AND = ['AND', '&'],
     public readonly OR = ['OR', '|'],
@@ -112,7 +114,7 @@ export class SyntaxConfig {
   }
 
   private get restricted() {
-    return Map<keyof SyntaxConfig, string>({
+    return Map<keyof ParserConfig, string>({
       ['EXACT_MATCHER']: this.EXACT_MATCHER,
       ['GROUP_END']: this.GROUP_END,
       ['GROUP_START']: this.GROUP_START,

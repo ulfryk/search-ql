@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { Map } from 'immutable';
 
 import { fromMatch, TermExpression } from '../../ast';
-import { SyntaxConfig } from '../../config';
+import { ParserConfig } from '../../config';
 import { PhraseExpressionTester } from './phrase-expression';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 
 const getTester = (expr: TermExpression) =>
   new PhraseExpressionTester(expr, config);

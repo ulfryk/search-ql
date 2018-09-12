@@ -3,10 +3,10 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { PhraseExpression, TermExpression } from '../ast';
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 import { basicExpression } from './basic';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
 
 describe('SearchQL parsers', () => {

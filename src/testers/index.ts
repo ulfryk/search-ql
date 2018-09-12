@@ -1,5 +1,5 @@
 import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TextExpression } from '../ast';
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 
 import { Expression } from '../common/model';
 import { BinaryOperationExpressionTester } from './binary-operation';
@@ -9,7 +9,7 @@ import { Tester } from './tester';
 import { NotExpressionTester } from './unary-operation';
 
 // tslint:disable-next-line:cyclomatic-complexity
-Tester.fromAst = (config: SyntaxConfig) => (ast: Expression) => {
+Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
   switch (ast.constructor) {
 
     case DateExpression:

@@ -3,10 +3,9 @@ import * as P from 'parsimmon';
 
 import { fromPairs, FunctionExpression, initialPair, NotExpression, OOPair, restPair } from '../ast';
 import { Expression } from '../common/model';
-import { SyntaxConfig } from '../config';
+import { ParserConfig, ParserName } from '../config';
 import { basicExpression } from './basic';
 import { binaryOperator } from './binary-operator';
-import { ParserName } from './names';
 import { unaryOperator } from './unary-operator';
 
 export class QueryParserFactory {
@@ -23,19 +22,18 @@ export class QueryParserFactory {
     .skip(P.whitespace);
 
   constructor(
-    public readonly parserNames: ParserName[],
-    public readonly config: SyntaxConfig = new SyntaxConfig(),
+    public readonly config: ParserConfig = new ParserConfig(),
   ) {}
 
   public getParser(): P.Parser<Expression> {
-    return this.parserNames.includes(ParserName.BinaryOperation) ?
+    return this.config.parserNames.includes(ParserName.BinaryOperation) ?
       P.alt(this.binaryOperation, this.query) :
       this.query;
   }
 
   private getParsers(): P.Parser<any>[] {
     return this.parserMappings
-      .filter((__, name) => this.parserNames.includes(name))
+      .filter((__, name) => this.config.parserNames.includes(name))
       .map(getParser => getParser())
       .toArray();
   }

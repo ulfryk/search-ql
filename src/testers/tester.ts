@@ -1,18 +1,18 @@
 import { Map } from 'immutable';
 
 import { Expression, NodeEvaluation } from '../common/model';
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 
 export abstract class Tester<R, A extends Expression, C> {
 
-  public static fromAst(_config: SyntaxConfig): (ast: Expression) => Tester<any, Expression, any> {
+  public static fromAst(_config: ParserConfig): (ast: Expression) => Tester<any, Expression, any> {
     throw Error('unimplemented');
   }
 
   constructor(
     public readonly ast: A,
     public readonly children: C,
-    public readonly config: SyntaxConfig,
+    public readonly config: ParserConfig,
   ) {}
 
   public abstract test(values: Map<string, string>): NodeEvaluation<R>;

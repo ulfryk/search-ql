@@ -3,7 +3,7 @@ import { List, Set } from 'immutable';
 import { Maybe } from 'monet';
 
 import { Expression, ValueType } from '../../common/model';
-import { SyntaxConfig } from '../../config';
+import { ParserConfig } from '../../config';
 import { InterimExpression, NotExpression, PhraseExpression, TermExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
 import { BinaryOperationContext } from './binary-operation-context';
@@ -33,7 +33,7 @@ export class BinaryOperationChain extends InterimExpression {
     }
   }
 
-  public append(nextRhs: Expression, config: SyntaxConfig) {
+  public append(nextRhs: Expression, config: ParserConfig) {
     return (operator: Operator) => {
       if (operator.is(BinaryOperator)) {
         return this.appendBinary(operator, nextRhs);
@@ -54,7 +54,7 @@ export class BinaryOperationChain extends InterimExpression {
       this.operators.concat(new OperatorContext(this.operators.size, operator)).toList());
   }
 
-  public appendAndNot({ AND }: SyntaxConfig, not: Expression): BinaryOperationChain {
+  public appendAndNot({ AND }: ParserConfig, not: Expression): BinaryOperationChain {
     return this.appendBinary(new AndOperator(AND[0]), new NotExpression(
       not.is(TermExpression as any) ? PhraseExpression.fromTerm(not as TermExpression) : not,
     ));

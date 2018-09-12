@@ -2,10 +2,10 @@
 import { expect } from 'chai';
 import * as P from 'parsimmon';
 
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 import { unaryOperator } from './unary-operator';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 const { NOT } = config;
 
 describe('SearchQL parsers', () => {

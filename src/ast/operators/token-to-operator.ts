@@ -2,7 +2,7 @@ import { Map } from 'immutable';
 import { Maybe } from 'monet';
 
 import { OperatorType } from '../../common/model';
-import { SyntaxConfig } from '../../config';
+import { ParserConfig } from '../../config';
 
 import { AndOperator, BinaryOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from './binary';
 import { Operator } from './operator';
@@ -17,7 +17,7 @@ const operatorMapping = Map<OperatorType, (token: string) => BinaryOperator>([
   [OperatorType.Or, (token: string) => new OrOperator(token)],
 ]);
 
-export const tokenToOperator = (config: SyntaxConfig) => (token: string): Operator =>
+export const tokenToOperator = (config: ParserConfig) => (token: string): Operator =>
   Maybe.fromNull(operatorMapping.get(config.getOperatorType(token))).cata(() => {
     throw Error(`Unknown OperatorType for token: "${token}"`);
   }, getOperator => getOperator(token));

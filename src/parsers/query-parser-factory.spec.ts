@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 
 import { Expression } from '../common/model';
+import { ParserConfig, ParserName } from '../config';
 import { and, And0, andNot, config, fn, is, isNot, like, Like0, not, or, Or0, phrase, txt } from '../testing/utils';
-import { ParserName } from './names';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
@@ -24,7 +24,8 @@ const test = (
 ) => {
   zip<any>(validInput, validOutput).forEach(([input, output]) => {
     describe(`for valid input: '${input}'`, () => {
-      const parsed = new QueryParserFactory(parserNames).getParser().parse(input);
+      const parsed = new QueryParserFactory(ParserConfig.create({ parserNames }))
+        .getParser().parse(input);
 
       it('should succeed', () => {
         expect(parsed.status).to.be.true;
@@ -43,7 +44,8 @@ const test = (
     describe(`for invalid input: '${input}'`, () => {
 
       it('should fail', () => {
-        expect(new QueryParserFactory(parserNames).getParser().parse(input).status).to.be.false;
+        expect(new QueryParserFactory(ParserConfig.create({ parserNames }))
+          .getParser().parse(input).status).to.be.false;
       });
 
     });

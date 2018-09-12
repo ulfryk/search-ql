@@ -4,12 +4,12 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 
 import { Expression } from '../../common/model';
-import { SyntaxConfig } from '../../config/syntax-config';
+import { ParserConfig } from '../../config';
 import { AndOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
 import { NumberExpression, PhraseExpression, TextExpression } from './term';
 
-const { AND, IS, IS_NOT, LIKE, OR } = new SyntaxConfig();
+const { AND, IS, IS_NOT, LIKE, OR } = new ParserConfig();
 const And = new AndOperator(AND[0]);
 const Is = new IsOperator(IS[0]);
 const IsNot = new IsNotOperator(IS_NOT[0]);

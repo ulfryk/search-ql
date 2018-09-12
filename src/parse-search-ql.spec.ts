@@ -5,9 +5,8 @@ import { Either } from 'monet';
 
 import { AndOperator, LikeOperator, OrOperator } from './ast';
 import { ParseFailure } from './common/model';
-import { SyntaxConfig } from './config';
+import { ParserName } from './config';
 import { parseSearchQL } from './parse-search-ql';
-import { ParserName } from './parsers';
 import { and, fn, is, isNot, like, or, phrase, txt } from './testing/utils';
 
 const allParserNames = [
@@ -69,7 +68,7 @@ describe('SearchQL', () => {
 
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
-        const parsed = parseSearchQL(allParserNames)(input);
+        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
 
         it('should return Right', () => {
           expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
@@ -84,7 +83,7 @@ describe('SearchQL', () => {
 
     invalidInput.forEach(input => {
       describe(`for invalid input: ${input}`, () => {
-        const parsed = parseSearchQL(allParserNames)(input);
+        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft()).to.be.true;
@@ -101,7 +100,7 @@ describe('SearchQL', () => {
 
     invalidTypesInput.forEach((input, i) => {
       describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
-        const parsed = parseSearchQL(allParserNames)(input);
+        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
@@ -118,14 +117,15 @@ describe('SearchQL', () => {
 
   describe('parseSearchQL with custom config', () => {
 
-    const configC = SyntaxConfig.create({
+    const configC = {
       AND: ['&&'],
       FN_ARG_SEPARATOR: '|',
       FN_LEFT_PAREN: '/',
       FN_RIGHT_PAREN: '/',
       LIKE: ['~='],
       OR: ['||'],
-    });
+      parserNames: allParserNames,
+    };
 
     const AndC = new AndOperator('&&');
     const LikeC = new LikeOperator('||');
@@ -165,7 +165,7 @@ describe('SearchQL', () => {
 
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
-        const parsed = parseSearchQL(allParserNames, configC)(input);
+        const parsed = parseSearchQL(configC)(input);
 
         it('should return Right', () => {
           expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
@@ -180,7 +180,7 @@ describe('SearchQL', () => {
 
     invalidInput.forEach(input => {
       describe(`for invalid input: ${input}`, () => {
-        const parsed = parseSearchQL(allParserNames, configC)(input);
+        const parsed = parseSearchQL(configC)(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft()).to.be.true;

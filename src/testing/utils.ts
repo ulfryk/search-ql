@@ -4,9 +4,9 @@ import { None } from 'monet';
 import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, EqualityOperator, IsNotOperator, IsOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { Expression, NodeEvaluation, ValueType } from '../common/model';
-import { FunctionConfig, OptionalFunctionArg, SyntaxConfig } from '../config';
+import { FunctionConfig, OptionalFunctionArg, ParserConfig } from '../config';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 const { AND, IS, IS_NOT, LIKE, NOT, OR } = config;
 
 const And = new AndOperator(AND[1]);

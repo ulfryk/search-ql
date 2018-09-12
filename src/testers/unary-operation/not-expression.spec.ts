@@ -3,11 +3,11 @@ import { expect } from 'chai';
 import { Map } from 'immutable';
 
 import { NotExpression, TextExpression } from '../../ast';
-import { SyntaxConfig } from '../../config';
+import { ParserConfig } from '../../config';
 import { PhraseExpressionTester } from '../term';
 import { NotExpressionTester } from './not-expression';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 
 const getTester = (value: string): NotExpressionTester => {
   const text = new TextExpression(value);

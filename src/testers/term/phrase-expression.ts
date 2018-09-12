@@ -4,14 +4,14 @@ import { Maybe, Some } from 'monet';
 
 import { PhraseExpression } from '../../ast';
 import { Match, NodeEvaluation } from '../../common/model';
-import { SyntaxConfig } from '../../config';
+import { ParserConfig } from '../../config';
 import { Tester } from '../tester';
 
 export class PhraseExpressionTester extends Tester<boolean, PhraseExpression, null> {
 
   constructor(
     public readonly ast: PhraseExpression,
-    public readonly config: SyntaxConfig,
+    public readonly config: ParserConfig,
   ) {
     super(ast, null, config);
   }

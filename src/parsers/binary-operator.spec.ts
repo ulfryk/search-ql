@@ -2,10 +2,10 @@
 import { expect } from 'chai';
 import * as P from 'parsimmon';
 
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 import { binaryOperator } from './binary-operator';
 
-const config = new SyntaxConfig();
+const config = new ParserConfig();
 const { AND, IS, IS_NOT, LIKE, OR } = config;
 
 describe('SearchQL parsers', () => {

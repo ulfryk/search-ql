@@ -1,7 +1,7 @@
 import * as P from 'parsimmon';
 
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 
 // FIXME: NOT should move out maybe ?
-export const unaryOperator = ({ unaryOperators }: SyntaxConfig) =>
+export const unaryOperator = ({ unaryOperators }: ParserConfig) =>
   P.alt(...unaryOperators.map(operator => P.string(operator)));

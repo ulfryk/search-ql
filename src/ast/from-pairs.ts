@@ -1,14 +1,14 @@
 import { None, Some } from 'monet';
 
 import { Expression } from '../common/model';
-import { SyntaxConfig } from '../config';
+import { ParserConfig } from '../config';
 import { BinaryOperationChain } from './binary-operation-chain';
 import { InvalidExpression } from './expressions';
 import { OOPair } from './oopair';
 import { Operator } from './operators';
 
 export const fromPairs =
-  (pairs: OOPair[], config: SyntaxConfig): Expression =>
+  (pairs: OOPair[], config: ParserConfig): Expression =>
     pairs
       .reduce(
         (acc, [token, rhs]) => acc
