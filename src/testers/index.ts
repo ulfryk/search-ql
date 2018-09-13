@@ -1,4 +1,4 @@
-import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, TextExpression } from '../ast';
+import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TextExpression } from '../ast';
 import { ParserConfig } from '../config';
 
 import { Expression } from '../common/model';
@@ -21,6 +21,7 @@ Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
     case PhraseExpression:
       return new PhraseExpressionTester(ast as PhraseExpression<any>, config);
 
+    case SelectorExpression:
     case TextExpression:
       return new TextExpressionTester(ast as TextExpression, config);
 
@@ -43,7 +44,7 @@ Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
         Tester.fromAst(config)(ast.value),
         config);
 
-    default: throw Error('wrong expression type');
+    default: throw Error(`Tester.fromAst: Wrong expression type: ${ast.constructor.name}`);
   }
 };
 

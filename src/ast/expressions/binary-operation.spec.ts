@@ -3,18 +3,20 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression } from '../../common/model';
+import { Expression, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
 import { AndOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
-import { NumberExpression, PhraseExpression, TextExpression } from './term';
+import { fromMatch, NumberExpression, PhraseExpression, SelectorExpression, TextExpression } from './term';
 
-const { AND, IS, IS_NOT, LIKE, OR } = new ParserConfig();
+const config = new ParserConfig();
+const { AND, IS, IS_NOT, LIKE, OR } = config;
 const And = new AndOperator(AND[0]);
 const Is = new IsOperator(IS[0]);
 const IsNot = new IsNotOperator(IS_NOT[0]);
 const Like = new LikeOperator(LIKE[0]);
 const Or = new OrOperator(OR[0]);
+const phrase = (val: string) => PhraseExpression.fromTerm(fromMatch(config)(val));
 
 describe('SearchQL expressions', () => {
 
@@ -23,31 +25,41 @@ describe('SearchQL expressions', () => {
     describe('fromPair() method', () => {
 
       it('should properly create similarity expressions (LIKE)', () => {
+
         expect(BinaryOperationExpression.fromPair(Like)(
-          new TextExpression('aaa'),
+          SelectorExpression.of('aaa')(ValueType.Number),
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Like, [
-          new TextExpression('aaa'),
-          PhraseExpression.of('123'),
+          SelectorExpression.of('aaa')(ValueType.Number),
+          phrase('123'),
         ]));
+
+        expect(BinaryOperationExpression.fromPair(Like)(
+          new NumberExpression('321'),
+          new NumberExpression('123'),
+        )).to.deep.equal(new BinaryOperationExpression(Like, [
+          new NumberExpression('321'),
+          new NumberExpression('123'),
+        ]));
+
       });
 
       it('should properly create equality expressions (IS, IS_NOT)', () => {
 
         expect(BinaryOperationExpression.fromPair(Is)(
-          TextExpression.of('age'),
+          SelectorExpression.of('age')(ValueType.Number),
           NumberExpression.of('123'),
         )).to.deep.equal(new BinaryOperationExpression(Is, [
-          TextExpression.of('age'),
-          PhraseExpression.of('123'),
+          SelectorExpression.of('age')(ValueType.Number),
+          phrase('123'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(IsNot)(
-          PhraseExpression.of('age'),
+          TextExpression.of('age'),
           NumberExpression.of('123'),
         )).to.deep.equal(new BinaryOperationExpression(IsNot, [
           TextExpression.of('age'),
-          PhraseExpression.of('123'),
+          NumberExpression.of('123'),
         ]));
 
       });
@@ -58,16 +70,16 @@ describe('SearchQL expressions', () => {
           new NumberExpression('123'),
           new TextExpression('aaa'),
         )).to.deep.equal(new BinaryOperationExpression(And, [
-          PhraseExpression.of('123'),
-          PhraseExpression.of('aaa'),
+          phrase('123'),
+          phrase('aaa'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(Or)(
           new TextExpression('aaa'),
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Or, [
-          PhraseExpression.of('aaa'),
-          PhraseExpression.of('123'),
+          phrase('aaa'),
+          phrase('123'),
         ]));
 
       });

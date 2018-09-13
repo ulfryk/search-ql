@@ -5,4 +5,5 @@ export * from './node-evaluation';
 export * from './operator-associativity';
 export * from './operator-type';
 export * from './ord';
+export * from './reshape-context';
 export * from './value-type';

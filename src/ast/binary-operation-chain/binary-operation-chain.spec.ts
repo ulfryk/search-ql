@@ -1,8 +1,8 @@
 /* tslint:disable:no-unused-expression no-magic-numbers */
 import { expect } from 'chai';
 
-import { Expression } from '../../common/model';
-import { and, And, andNot, config, is, Is, isNot, IsNot, Like, like, Not, or, Or } from '../../testing/utils';
+import { Expression, ValueType } from '../../common/model';
+import { and, And, andNot, config, is, Is, isNot, IsNot, Like, like, Not, or, Or, sel } from '../../testing/utils';
 import { fromMatch, NotExpression, PhraseExpression, TextExpression } from '../expressions';
 import { Operator } from '../operators';
 import { BinaryOperationChain } from './binary-operation-chain';
@@ -39,7 +39,7 @@ describe('SearchQL ast', () => {
     });
 
     describe('init() static method', () => {
-      const initial = fromMatch('1234');
+      const initial = fromMatch(config)('1234');
       const group = BinaryOperationChain.init(initial);
 
       it('should create BinaryOperationChain instance', () => {
@@ -59,9 +59,9 @@ describe('SearchQL ast', () => {
     });
 
     describe('appendBinary() method', () => {
-      const initial = fromMatch('lorem');
-      const second = fromMatch('ipsum');
-      const third = fromMatch('dolor');
+      const initial = fromMatch(config)('lorem');
+      const second = fromMatch(config)('ipsum');
+      const third = fromMatch(config)('dolor');
       const group = BinaryOperationChain.init(initial);
       const group2 = group.appendBinary(And, second);
       const group3 = group2.appendBinary(Or, third);
@@ -100,8 +100,8 @@ describe('SearchQL ast', () => {
     });
 
     describe('appendAndNot() method', () => {
-      const initial = fromMatch('lorem');
-      const second = fromMatch('ipsum');
+      const initial = fromMatch(config)('lorem');
+      const second = fromMatch(config)('ipsum');
       const group = BinaryOperationChain.init(initial);
       const andNotGroup = group.appendAndNot(config, second);
 
@@ -118,10 +118,10 @@ describe('SearchQL ast', () => {
     });
 
     describe('append() method', () => {
-      const initial = fromMatch('lorem');
-      const second = fromMatch('ipsum');
-      const third = fromMatch('dolor');
-      const fourth = fromMatch('amet');
+      const initial = fromMatch(config)('lorem');
+      const second = fromMatch(config)('ipsum');
+      const third = fromMatch(config)('dolor');
+      const fourth = fromMatch(config)('amet');
 
       const group = BinaryOperationChain.init(initial);
       const group2 = group.append(second, config)(And);
@@ -156,16 +156,16 @@ describe('SearchQL ast', () => {
 
     describe('equals() method', () => {
 
-      const group1 = BinaryOperationChain.init(fromMatch('lorem'));
-      const group2 = group1.append(fromMatch('ipsum'), config)(And);
-      const group3 = group2.append(fromMatch('dolor'), config)(Not);
+      const group1 = BinaryOperationChain.init(fromMatch(config)('lorem'));
+      const group2 = group1.append(fromMatch(config)('ipsum'), config)(And);
+      const group3 = group2.append(fromMatch(config)('dolor'), config)(Not);
       const group3a = BinaryOperationChain.init(TextExpression.of('lorem'))
         .append(TextExpression.of('ipsum'), config)(And)
         .append(TextExpression.of('dolor'), config)(Not);
-      const group4 = group3.append(fromMatch('sit amet'), config)(Or);
-      const group4a = BinaryOperationChain.init(fromMatch('lorem'))
+      const group4 = group3.append(fromMatch(config)('sit amet'), config)(Or);
+      const group4a = BinaryOperationChain.init(fromMatch(config)('lorem'))
         .append(TextExpression.of('ipsum'), config)(And)
-        .append(fromMatch('dolor'), config)(Not)
+        .append(fromMatch(config)('dolor'), config)(Not)
         .append(TextExpression.of('sit amet'), config)(Or);
 
       it('should return false when comparing different shape instances', () => {
@@ -192,9 +192,9 @@ describe('SearchQL ast', () => {
     });
 
     describe('toString() method', () => {
-      const group = BinaryOperationChain.init(fromMatch('lorem'))
+      const group = BinaryOperationChain.init(fromMatch(config)('lorem'))
         .append(TextExpression.of('ipsum'), config)(And)
-        .append(fromMatch('dolor'), config)(Not)
+        .append(fromMatch(config)('dolor'), config)(Not)
         .append(TextExpression.of('sit amet'), config)(Or);
 
       it('should properly stringify group', () => {
@@ -206,15 +206,16 @@ describe('SearchQL ast', () => {
     describe('reshape() method', () => {
 
       describe('for single expression', () => {
-        const a = fromMatch('aaaa');
+        const a = fromMatch(config)('aaaa');
 
         testRebuildMethod(buildChain(a), a);
 
       });
 
       describe('for And-only chains', () => {
-        const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
+        const [a, b, c, d, e, f] = ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff']
+          .map(fromMatch(config))
+          .map(PhraseExpression.fromTerm);
 
         const chain2 = buildChain(a, [And, b]);
         const chain3 = buildChain(a, [And, b], [And, c]);
@@ -237,8 +238,9 @@ describe('SearchQL ast', () => {
       });
 
       describe('for Or-only chains', () => {
-        const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
+        const [a, b, c, d, e, f] = ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff']
+          .map(fromMatch(config))
+          .map(PhraseExpression.fromTerm);
 
         const chain2 = buildChain(a, [Or, b]);
         const chain3 = buildChain(a, [Or, b], [Or, c]);
@@ -261,8 +263,9 @@ describe('SearchQL ast', () => {
       });
 
       describe('for mixed And/Or chains', () => {
-        const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
+        const [a, b, c, d, e, f] = ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff']
+          .map(fromMatch(config))
+          .map(PhraseExpression.fromTerm);
 
         const chainA = buildChain(a, [Or, b], [And, c], [Or, d]);
         const chainB = buildChain(a, [Or, b], [And, c], [Or, d], [And, e], [Or, f]);
@@ -284,23 +287,30 @@ describe('SearchQL ast', () => {
       });
 
       describe('for mixed chains', () => {
-        const [a, b, c, d, e, f] =
-          ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff'].map(PhraseExpression.of);
+        const [a, b, c, d, e, f] = ['Aaaa', 'Bbbb', 'Cccc', 'Dddd', 'Eeee', 'Ffff']
+          .map(fromMatch(config))
+          .map(PhraseExpression.fromTerm);
 
-        const chainA = buildChain(a, [Like, b], [And, c], [Like, d], [Or, e], [Like, f]);
-        const chainB = buildChain(a, [Like, b], [Not, c], [Or, d], [Like, e], [Not, f]);
-        const chainC = buildChain(a, [Is, b], [And, c], [IsNot, d]);
-        const chainD = buildChain(a, [Is, b], [And, c], [IsNot, d], [Or, a], [IsNot, b]);
+        const [sa, sc, sd, se] = [a, c, d, e]
+          .map(({ value }) => sel(value, ValueType.Text));
+
+        const chain0 = buildChain(sa, [Is, b]);
+        const chainA = buildChain(sa, [Like, b], [And, sc], [Like, d], [Or, se], [Like, f]);
+        const chainB = buildChain(sa, [Like, b], [Not, c], [Or, sd], [Like, e], [Not, f]);
+        const chainC = buildChain(sa, [Is, b], [And, sc], [IsNot, d]);
+        const chainD = buildChain(sa, [Is, b], [And, sc], [IsNot, d], [Or, sa], [IsNot, b]);
         const chainE = buildChain(
-          a, [Is, b], [And, c], [IsNot, d],
-          [Or, a], [IsNot, b], [And, c], [Is, d]);
+          sa, [Is, b], [And, sc], [IsNot, d],
+          [Or, sa], [IsNot, b], [And, sc], [Is, d]);
 
-        const expressionA = or(and(like(a, b), like(c, d)), like(e, f));
-        const expressionB = or(andNot(like(a, b), c), andNot(like(d, e), f));
-        const expressionC = and(is(a, b), isNot(c, d));
-        const expressionD = or(and(is(a, b), isNot(c, d)), isNot(a, b));
-        const expressionE = or(and(is(a, b), isNot(c, d)), and(isNot(a, b), is(c, d)));
+        const expression0 = is(sa, b);
+        const expressionA = or(and(like(sa, b), like(sc, d)), like(se, f));
+        const expressionB = or(andNot(like(sa, b), c), andNot(like(sd, e), f));
+        const expressionC = and(is(sa, b), isNot(sc, d));
+        const expressionD = or(and(is(sa, b), isNot(sc, d)), isNot(sa, b));
+        const expressionE = or(and(is(sa, b), isNot(sc, d)), and(isNot(sa, b), is(sc, d)));
 
+        testRebuildMethod(chain0, expression0);
         testRebuildMethod(chainA, expressionA);
         testRebuildMethod(chainB, expressionB);
         testRebuildMethod(chainC, expressionC);

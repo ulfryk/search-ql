@@ -13,7 +13,7 @@ export const parseSearchQL = (config?: Partial<ParserConfig>) => {
     const parsed = factory.getParser().parse(query);
 
     return parsed.status ?
-      Right<Failure[], Expression>(parsed.value.reshape()).flatMap(validate) :
+      Right<Failure[], Expression>(parsed.value).flatMap(validate) :
       Left<Failure[], Expression>([ParseFailure.fromFailure(parsed as ParsimmonFailure, query)]);
   };
 };

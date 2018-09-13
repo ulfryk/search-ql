@@ -1,15 +1,13 @@
 import { Expression, ValueType } from '../../../common/model';
-import { fromMatch } from './from-match';
 import { TermExpression } from './term';
 
 export class PhraseExpression<T> extends TermExpression<string> {
 
   public static fromTerm<G, C extends TermExpression<G>>(term: C): PhraseExpression<G> {
+    if (term.is(PhraseExpression as any)) {
+      return term as any as PhraseExpression<G>;
+    }
     return new PhraseExpression(term);
-  }
-
-  public static of<G>(value: string) {
-    return new PhraseExpression<G>(fromMatch(value));
   }
 
   public readonly returnType: ValueType = ValueType.Phrase;
@@ -24,6 +22,10 @@ export class PhraseExpression<T> extends TermExpression<string> {
       this.preparedValue === other.preparedValue &&
       this.term.equals(other.term)
     );
+  }
+
+  protected toPhrase() {
+    return this;
   }
 
 }

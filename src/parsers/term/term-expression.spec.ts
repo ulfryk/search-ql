@@ -2,8 +2,9 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
-import { PhraseExpression, TermExpression } from '../../ast';
+import { NumberExpression, TermExpression, TextExpression } from '../../ast';
 import { ParserConfig } from '../../config';
+import { num, txt } from '../../testing/utils';
 import { termExpression } from './term-expression';
 
 const config = new ParserConfig();
@@ -22,14 +23,14 @@ describe('SearchQL parsers', () => {
   ];
 
   const validOutput = [
-    'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
-    'OR AND NOT (OR AND NOT) asd: asd not ASD:ASd',
-    '  ',
-    validInput[3],
-    validInput[4],
-    validInput[5],
-    validInput[6],
-  ].map(PhraseExpression.of);
+    txt('ASDfas 32%@$%4512 u954anna as d][;];.{P} AND'),
+    txt('OR AND NOT (OR AND NOT) asd: asd not ASD:ASd'),
+    txt('  '),
+    txt(validInput[3]),
+    txt(validInput[4]),
+    num(validInput[5]),
+    txt(validInput[6]),
+  ];
 
   const invalidInput = [
     'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
@@ -46,7 +47,7 @@ describe('SearchQL parsers', () => {
   describe('termExpression', () => {
 
     zip<any>(validInput, validOutput)
-      .forEach(([input, output]) => {
+      .forEach(([input, output], index) => {
         describe(`for valid input: '${input}'`, () => {
           const parsed = termExpression(config).parse(input);
 
@@ -56,7 +57,8 @@ describe('SearchQL parsers', () => {
 
           it('should be evaluated to proper expression type', () => {
             expect(parsed.status ? parsed.value : null).to.be.instanceOf(TermExpression);
-            expect(parsed.status ? parsed.value : null).to.be.instanceOf(PhraseExpression);
+            expect(parsed.status ? parsed.value : null)
+              .to.be.instanceOf(index === 5 ? NumberExpression : TextExpression);
           });
 
           it('should provide proper value', () => {

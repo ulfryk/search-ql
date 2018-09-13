@@ -1,5 +1,6 @@
 import { ValueType } from '../../../common/model';
 import { isDate } from './is-date';
+import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
 export class DateExpression extends TermExpression<number> {
@@ -21,6 +22,10 @@ export class DateExpression extends TermExpression<number> {
 
   constructor(value: string) {
     super(value, DateExpression.prepareValue(value));
+  }
+
+  protected toPhrase(): TermExpression {
+    return PhraseExpression.fromTerm(this);
   }
 
 }

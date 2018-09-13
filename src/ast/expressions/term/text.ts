@@ -1,3 +1,4 @@
+import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
 export class TextExpression extends TermExpression<string> {
@@ -12,6 +13,10 @@ export class TextExpression extends TermExpression<string> {
 
   constructor(value: string) {
     super(value, value.trim());
+  }
+
+  protected toPhrase(): TermExpression {
+    return PhraseExpression.fromTerm(this);
   }
 
 }

@@ -1,10 +1,12 @@
 import { List } from 'immutable';
+import { Maybe } from 'monet';
 
-import { Expression, ValueType } from '../../../common/model';
+import { Expression, ReshapeContext, ValueType } from '../../../common/model';
 
 export abstract class TermExpression<PV = any> extends Expression {
 
   public readonly returnType: ValueType = ValueType.Text;
+  public readonly name = this.constructor.name;
 
   constructor(
     public readonly value: string,
@@ -28,8 +30,10 @@ export abstract class TermExpression<PV = any> extends Expression {
     return this;
   }
 
-  public reshape() {
-    return this;
+  public reshape(ctx?: ReshapeContext) {
+    return Maybe.fromNull(ctx)
+      .filter(someCtx => someCtx === ReshapeContext.Top)
+      .fold(this as TermExpression)(() => this.toPhrase());
   }
 
   public toString() {
@@ -39,5 +43,7 @@ export abstract class TermExpression<PV = any> extends Expression {
   public toList() {
     return List([this]);
   }
+
+  protected abstract toPhrase(): TermExpression;
 
 }

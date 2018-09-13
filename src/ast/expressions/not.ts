@@ -3,7 +3,7 @@ import { Some } from 'monet';
 
 import { Expression, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { InvalidExpression } from './invalid';
-import { PhraseExpression } from './term';
+import { PhraseExpression, TermExpression } from './term';
 
 export class NotExpression extends Expression {
 
@@ -41,7 +41,10 @@ export class NotExpression extends Expression {
   }
 
   public reshape() {
-    return this.clone(this.value.reshape());
+    const value = this.value.is(TermExpression as any) ?
+      PhraseExpression.fromTerm(this.value as TermExpression) : this.value;
+
+    return this.clone(value.reshape());
   }
 
   public toString() {

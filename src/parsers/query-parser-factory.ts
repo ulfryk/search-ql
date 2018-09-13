@@ -2,7 +2,7 @@ import { OrderedMap } from 'immutable';
 import * as P from 'parsimmon';
 
 import { fromPairs, FunctionExpression, initialPair, NotExpression, OOPair, restPair } from '../ast';
-import { Expression } from '../common/model';
+import { Expression, ReshapeContext } from '../common/model';
 import { ParserConfig, ParserName } from '../config';
 import { binaryOperator } from './binary-operator';
 import { termExpression } from './term';
@@ -26,9 +26,10 @@ export class QueryParserFactory {
   ) {}
 
   public getParser(): P.Parser<Expression> {
-    return this.config.parserNames.includes(ParserName.BinaryOperation) ?
-      P.alt(this.binaryOperation, this.query) :
-      this.query;
+    return (this.config.parserNames.includes(ParserName.BinaryOperation) ?
+        P.alt(this.binaryOperation, this.query) :
+        this.query)
+      .map(ast => ast.reshape(ReshapeContext.Top));
   }
 
   private getParsers(): P.Parser<any>[] {

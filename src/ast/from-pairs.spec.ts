@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import { zip } from 'lodash';
 import { None, Some } from 'monet';
 
-import { Expression } from '../common/model';
-import { and, And, And0, andNot, config, like, Like0, Not, Not0, Or, or, Or0, phrase, txt } from '../testing/utils';
+import { Expression, ValueType } from '../common/model';
+import { and, And, And0, andNot, config, like, Like0, likeR, Not, Not0, Or, or, Or0, phrase, sel, txt } from '../testing/utils';
 import { fromPairs } from './from-pairs';
 import { OOPair } from './oopair';
 
@@ -21,6 +21,7 @@ describe('SearchQL ast', () => {
       pairs(txt('aaa AND ) a:aaaa OR OR OR')),
       pairs(txt('aaa'), [And0.token, txt('bbb')]),
       pairs(txt('first_name'), [Like0.token, txt('John')]),
+      pairs(sel('first_name', ValueType.Text), [Like0.token, txt('John')]),
       pairs(txt('aaa'), [Not0.token, txt('bbb')]),
       pairs(txt('aaa'), [Or0.token, txt('bbb')], [And.token, txt('ccc')]),
       pairs(txt('aaa'),
@@ -33,7 +34,8 @@ describe('SearchQL ast', () => {
     const validOutput = [
       txt('aaa AND ) a:aaaa OR OR OR'),
       and(phrase('aaa'), phrase('bbb')),
-      like(txt('first_name'), phrase('John')),
+      likeR(txt('first_name'), txt('John')),
+      like(txt('first_name'), txt('John')),
       andNot(phrase('aaa'), phrase('bbb')),
       or(phrase('aaa'), and(phrase('bbb'), phrase('ccc'))),
       or(phrase('aaa'), and(or(phrase('aaa'), and(phrase('bbb'), phrase('ccc'))), phrase('ccc'))),

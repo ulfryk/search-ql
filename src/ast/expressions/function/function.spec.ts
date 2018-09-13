@@ -5,12 +5,14 @@ import { zip } from 'lodash';
 import { None, Some } from 'monet';
 
 import { Expression, ValueType } from '../../../common/model';
-import { FunctionConfig, OptionalFunctionArg, RequiredFunctionArg, testFunction } from '../../../config';
+import { FunctionConfig, OptionalFunctionArg, ParserConfig, RequiredFunctionArg, testFunction } from '../../../config';
 import { AndOperator, LikeOperator } from '../../operators';
 import { BinaryOperationExpression } from '../binary-operation';
 import { NotExpression } from '../not';
 import { DateExpression, fromMatch, PhraseExpression, TextExpression } from '../term';
 import { FunctionExpression } from './function';
+
+const config = new ParserConfig();
 
 const fn = (name: string, ...args: Expression[]) =>
   new FunctionExpression(List(args), new FunctionConfig(
@@ -20,6 +22,9 @@ const fn = (name: string, ...args: Expression[]) =>
       ValueType.Boolean,
       testFunction.runtime));
 
+const phrase = (val: string): PhraseExpression<any> =>
+  PhraseExpression.fromTerm(fromMatch(config)(val));
+
 describe('SearchQL expressions', () => {
 
   describe('FunctionExpression', () => {
@@ -28,20 +33,20 @@ describe('SearchQL expressions', () => {
 
       const lhs = [
         fn('return_null'),
-        fn('id', fromMatch('lorem')),
-        fn('is_date', fromMatch('2018-01-01')),
+        fn('id', fromMatch(config)('lorem')),
+        fn('is_date', fromMatch(config)('2018-01-01')),
       ];
 
       const rhs = [
         fn('return_null'),
-        fn('id', fromMatch('lorem')),
-        fn('is_date', fromMatch('2018-01-01')),
+        fn('id', fromMatch(config)('lorem')),
+        fn('is_date', fromMatch(config)('2018-01-01')),
       ];
 
       const rhsInvalid = [
-        fn('return_null', fromMatch('lorem')),
-        fn('idx', fromMatch('lorem')),
-        fn('is_date', fromMatch('2018-01-02')),
+        fn('return_null', fromMatch(config)('lorem')),
+        fn('idx', fromMatch(config)('lorem')),
+        fn('is_date', fromMatch(config)('2018-01-02')),
       ];
 
       it('should return true for comparison with a reference', () => {
@@ -90,21 +95,21 @@ describe('SearchQL expressions', () => {
         ValueType.Text, testFunction.runtime);
 
       const validFns = [
-        FunctionExpression.fromParseResult(cfgIsDate, [new NotExpression(PhraseExpression.of('lorem'))]),
+        FunctionExpression.fromParseResult(cfgIsDate, [new NotExpression(phrase('lorem'))]),
         FunctionExpression.fromParseResult(cfgIsDate, [
           new BinaryOperationExpression(new AndOperator('AND'), [
-            PhraseExpression.of('lorem'),
-            PhraseExpression.of('123'),
+            phrase('lorem'),
+            phrase('123'),
           ]),
         ]),
-        FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch('lorem')]),
-        FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch('2011-11-11')]),
-        FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch('123')]),
+        FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch(config)('lorem')]),
+        FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch(config)('2011-11-11')]),
+        FunctionExpression.fromParseResult(cfgTextIsDate, [fromMatch(config)('123')]),
         FunctionExpression.fromParseResult(cfgTrim, [TextExpression.of('lorem')]),
         FunctionExpression.fromParseResult(cfgIsDate, [
           new BinaryOperationExpression(new LikeOperator('~'), [
-            FunctionExpression.fromParseResult(cfgTrim, [TextExpression.of('   first_name  ')]),
-            PhraseExpression.of('lorem'),
+            FunctionExpression.fromParseResult(cfgTrim, [TextExpression.of('   lorem  ')]),
+            TextExpression.of('lorem'),
           ]),
         ]),
         FunctionExpression.fromParseResult(cfgCoalesce, [
@@ -137,17 +142,17 @@ describe('SearchQL expressions', () => {
       });
 
       const invalidFns = [
-        FunctionExpression.fromParseResult(cfgTextIsDate, [new NotExpression(fromMatch('lorem'))]),
-        new NotExpression(FunctionExpression.fromParseResult(cfgTrim, [fromMatch('   lo re m  ')])),
+        FunctionExpression.fromParseResult(cfgTextIsDate, [new NotExpression(fromMatch(config)('lorem'))]),
+        new NotExpression(FunctionExpression.fromParseResult(cfgTrim, [fromMatch(config)('   lo re m  ')])),
         FunctionExpression.fromParseResult(cfgCoalesce, [
-          fromMatch('lorem'),
+          fromMatch(config)('lorem'),
         ]),
         FunctionExpression.fromParseResult(cfgCoalesce, [
-          fromMatch('lorem'),
-          fromMatch('ipsum'),
-          fromMatch('lorem_x'),
-          new NotExpression(fromMatch('ipsum_x')),
-          fromMatch('dolor'),
+          fromMatch(config)('lorem'),
+          fromMatch(config)('ipsum'),
+          fromMatch(config)('lorem_x'),
+          new NotExpression(fromMatch(config)('ipsum_x')),
+          fromMatch(config)('dolor'),
         ]),
       ];
 
@@ -165,8 +170,8 @@ describe('SearchQL expressions', () => {
 
       const lhs = [
         fn('return_null'),
-        fn('id', fromMatch('lorem')),
-        fn('is_date', fromMatch('2018-01-01')),
+        fn('id', fromMatch(config)('lorem')),
+        fn('is_date', fromMatch(config)('2018-01-01')),
       ];
 
       const rhs = [

@@ -41,17 +41,25 @@ const paramTypes = Map<ValueType, (t: ValueType) => boolean>({
 const isSubtype = (t: ValueType, ofT: ValueType): boolean =>
   paramTypes.get(ofT)(t);
 
+const isSupertype = (t: ValueType, ofT: ValueType): boolean =>
+  paramTypes.get(t)(ofT);
+
+const boolCompatible = [ValueType.Boolean, ValueType.Phrase];
+
+const checkBoolCompatibility = (...types: ValueType[]) =>
+  types.every(side => boolCompatible.includes(side));
+
 export {
+  checkBoolCompatibility,
   isAnyType,
   isBooleanType,
   isDateType,
   isNumberType,
   isPhraseType,
   isSubtype,
+  isSupertype,
   isTextType,
   paramTypes,
   TEXT_TYPES,
   ValueType,
 };
-
-// No lambdas :(

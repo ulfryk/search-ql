@@ -2,7 +2,7 @@ import { Bind } from '@samwise-tech/core';
 import { List, Set } from 'immutable';
 import { Maybe } from 'monet';
 
-import { Expression, ValueType } from '../../common/model';
+import { Expression, ReshapeContext, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
 import { InterimExpression, NotExpression, PhraseExpression, TermExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
@@ -56,7 +56,7 @@ export class BinaryOperationChain extends InterimExpression {
 
   public appendAndNot({ AND }: ParserConfig, not: Expression): BinaryOperationChain {
     return this.appendBinary(new AndOperator(AND[0]), new NotExpression(
-      not.is(TermExpression as any) ? PhraseExpression.of(not.value) : not,
+      not.is(TermExpression as any) ? PhraseExpression.fromTerm(not as TermExpression) : not,
     ));
   }
 
@@ -73,8 +73,8 @@ export class BinaryOperationChain extends InterimExpression {
       String(this.value[0]));
   }
 
-  public reshape(): Expression {
-    return this.toContext().reshape();
+  public reshape(ctx?: ReshapeContext): Expression {
+    return this.toContext().reshape(ctx);
   }
 
   private toContext(): Expression {

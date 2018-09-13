@@ -1,10 +1,11 @@
 /* tslint:disable:no-unused-expression */
 import { expect } from 'chai';
+import { Map } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression } from '../common/model';
+import { Expression, ValueType } from '../common/model';
 import { ParserConfig, ParserName } from '../config';
-import { and, And0, andNot, config, fn, is, isNot, like, Like0, not, or, Or0, phrase, txt } from '../testing/utils';
+import { and, And0, andNot, config, fn, is, isNot, Like0, likeR, not, or, Or0, phrase, sel, txt } from '../testing/utils';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
@@ -21,10 +22,11 @@ const test = (
   validOutput: Expression[],
   invalidInput: string[],
   parserNames: ParserName[],
+  model = Map<string, ValueType>(),
 ) => {
   zip<any>(validInput, validOutput).forEach(([input, output]) => {
     describe(`for valid input: '${input}'`, () => {
-      const parsed = new QueryParserFactory(ParserConfig.create({ parserNames }))
+      const parsed = new QueryParserFactory(ParserConfig.create({ model, parserNames }))
         .getParser().parse(input);
 
       it('should succeed', () => {
@@ -33,8 +35,8 @@ const test = (
 
       // tslint:disable-next-line:cyclomatic-complexity
       it('should provide proper value', () => {
-        expect(parsed.status && parsed.value.reshape().equals(output)).to.be.true;
-        expect(parsed.status ? String(parsed.value.reshape()) : null).to.equal(String(output));
+        expect(parsed.status && parsed.value.equals(output)).to.be.true;
+        expect(parsed.status ? String(parsed.value) : null).to.equal(String(output));
       });
 
     });
@@ -87,27 +89,27 @@ describe('SearchQL parsers', () => {
         phrase(`a${And0.token}`),
         phrase(`${Or0.token}a`),
         phrase('aa:bb AND cc dd'),
-        like(phrase('aa'), phrase('AA'), Like0),
+        likeR(txt('aa'), txt('AA'), Like0),
         and(phrase('aa'), phrase('bb'), And0),
         and(phrase('aa'), phrase('bb')),
         or(
-          and(phrase('aa'), or(like(phrase('bb'), phrase('BB'), Like0), phrase('cc'), Or0), And0),
-          and(phrase('dd'), or(like(phrase('ee'), phrase('EE'), Like0), phrase('ff'), Or0), And0)),
+          and(phrase('aa'), or(likeR(txt('bb'), txt('BB'), Like0), phrase('cc'), Or0), And0),
+          and(phrase('dd'), or(likeR(txt('ee'), txt('EE'), Like0), phrase('ff'), Or0), And0)),
         or(and(phrase('aaa'), phrase('bbb'), And0), and(phrase('ccc'), phrase('ddd'), And0), Or0),
         not(phrase('abc')),
         andNot(phrase('aa'), phrase('bb')),
         andNot(phrase('aa'), phrase('bb')),
         and(not(phrase('aaa')), not(phrase('bbb')), And0),
         and(not(or(phrase('aaa'), phrase('bbb'), Or0)), phrase('ccc'), And0),
-        and(not(phrase('aaa')), like(phrase('bb'), phrase('BB'), Like0), And0),
+        and(not(phrase('aaa')), likeR(txt('bb'), txt('BB'), Like0), And0),
         and(and(phrase('aaa'), or(phrase('bbb'), phrase('ccc'), Or0), And0), not(phrase('ddd')), And0),
         and(or(phrase('aaa'), phrase('bbb'), Or0), not(phrase('ccc')), And0),
         and(and(and(phrase('aaa'), phrase('bbb'), And0), phrase('ccc'), And0), not(phrase('ddd')), And0),
-        and(isNot(txt('age'), phrase('16')), is(txt('name'), phrase('John'))),
-        and(is(txt('age'), phrase('24')), isNot(txt('name'), phrase('Doe'))),
+        and(isNot(sel('age', ValueType.Number), phrase('16')), is(sel('name', ValueType.Text), phrase('John'))),
+        and(is(sel('age', ValueType.Number), phrase('24')), isNot(sel('name', ValueType.Text), phrase('Doe'))),
         or(
-          and(isNot(txt('age'), phrase('16')), is(txt('name'), phrase('John'))),
-          and(is(txt('age'), phrase('24')), isNot(txt('name'), phrase('Doe')))),
+          and(isNot(sel('age', ValueType.Number), phrase('16')), is(sel('name', ValueType.Text), phrase('John'))),
+          and(is(sel('age', ValueType.Number), phrase('24')), isNot(sel('name', ValueType.Text), phrase('Doe')))),
       ];
 
       const invalidInput = [
@@ -123,7 +125,10 @@ describe('SearchQL parsers', () => {
         `dasd${EXACT_MATCHER}a`,
       ];
 
-      test(validInput, validOutput, invalidInput, allParserNames);
+      test(validInput, validOutput, invalidInput, allParserNames, Map<string, ValueType>({
+        age: ValueType.Number,
+        name: ValueType.Text,
+      }));
 
     });
 

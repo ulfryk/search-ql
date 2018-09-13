@@ -4,8 +4,12 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 
 import { Expression } from '../../common/model';
+import { ParserConfig } from '../../config';
 import { NotExpression } from './not';
-import { PhraseExpression } from './term';
+import { fromMatch, PhraseExpression } from './term';
+
+const config = new ParserConfig();
+const phrase = (val: string) => PhraseExpression.fromTerm(fromMatch(config)(val));
 
 describe('SearchQL expressions', () => {
 
@@ -14,18 +18,18 @@ describe('SearchQL expressions', () => {
     describe('equals() method', () => {
 
       const lhs = [
-        new NotExpression(PhraseExpression.of('')),
-        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(phrase('')),
+        new NotExpression(phrase('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhs = [
-        new NotExpression(PhraseExpression.of('')),
-        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(phrase('')),
+        new NotExpression(phrase('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhsInvalid = [
-        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
-        new NotExpression(PhraseExpression.of('')),
+        new NotExpression(phrase('aaa  asdas as asd asdas dad ')),
+        new NotExpression(phrase('')),
       ];
 
       it('should return true for comparison with a reference', () => {
@@ -51,8 +55,8 @@ describe('SearchQL expressions', () => {
     describe('toList() method', () => {
 
       const lhs = [
-        new NotExpression(PhraseExpression.of('')),
-        new NotExpression(PhraseExpression.of('aaa  asdas as asd asdas dad ')),
+        new NotExpression(phrase('')),
+        new NotExpression(phrase('aaa  asdas as asd asdas dad ')),
       ];
 
       const rhs = [

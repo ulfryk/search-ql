@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
-import { Expression, isSubtype, ValueType } from '../../../common/model';
+import { checkBoolCompatibility, Expression, isSubtype, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { InvalidExpression } from '../invalid';
@@ -133,7 +133,8 @@ export class FunctionExpression<R> extends Expression {
       initialArgs.toArray())
     .map(([config, argOption], index) => {
       const arg = Maybe.fromNull(argOption);
-      const valid = arg.fold(false)(({ returnType }) => isSubtype(returnType, config.type));
+      const valid = arg.fold(false)(({ returnType }) =>
+        isSubtype(returnType, config.type) || checkBoolCompatibility(returnType, config.type));
 
       return ({ arg, config, index, valid });
     })
@@ -147,7 +148,12 @@ export class FunctionExpression<R> extends Expression {
   private getRestArgsErrors(restArgs: List<Expression>): string[] {
     return this.config.argsRest
       .map(({ type }) => restArgs
-        .map((arg, index) => ({ arg, index, valid: isSubtype(arg.returnType, type) }))
+        .map((arg, index) => ({
+          arg,
+          index,
+          valid: isSubtype(arg.returnType, type) ||
+            checkBoolCompatibility(arg.returnType, type),
+        }))
         .filter(({ valid }) => !valid)
         .map(({ arg, index }) =>
           `Function "${this.name}" has wrong ${toOrdinal(index + 1)} rest arg passed, ` +

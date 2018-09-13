@@ -1,10 +1,10 @@
 import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
+import { checkBoolCompatibility, Expression, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
-import { PhraseExpression, TermExpression, TextExpression } from './term';
+import { PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './term';
 
 const BI = 2;
 
@@ -20,16 +20,23 @@ export class BinaryOperationExpression extends Expression {
     return (lhs: Expression, rhs: Expression) => {
 
       if (operator.is(EqualityOperator)) {
+        if (lhs.is(SelectorExpression as any)) {
+          return new BinaryOperationExpression(operator, [
+            lhs,
+            rhs.is(TermExpression as any) ? PhraseExpression.fromTerm(rhs as TermExpression) : rhs,
+          ]);
+        }
         return new BinaryOperationExpression(operator, [
-          lhs.is(TermExpression as any) ? TextExpression.fromTerm(lhs as any) : lhs,
-          rhs.is(TermExpression as any) ? PhraseExpression.of(rhs.value) : rhs,
+          lhs,
+          rhs.is(SelectorExpression as any) ?
+            TextExpression.fromTerm(rhs as SelectorExpression) : rhs,
         ]);
       }
 
       if (operator.is(LogicalOperator)) {
         return new BinaryOperationExpression(operator, [
-          lhs.is(TermExpression as any) ? PhraseExpression.of(lhs.value) : lhs,
-          rhs.is(TermExpression as any) ? PhraseExpression.of(rhs.value) : rhs,
+          lhs.is(TermExpression as any) ? PhraseExpression.fromTerm(lhs as TermExpression) : lhs,
+          rhs.is(TermExpression as any) ? PhraseExpression.fromTerm(rhs as TermExpression) : rhs,
         ]);
       }
 
@@ -109,7 +116,28 @@ export class BinaryOperationExpression extends Expression {
     return None();
   }
 
+  // Eq operators type checking
+
   private checkEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    if (newLeft.is(SelectorExpression as any)) {
+      return this.checkSelectorEqualityTypes(newLeft, newRight);
+    }
+    return this.checkRegularEqualityTypes(newLeft, newRight);
+  }
+
+  private checkRegularEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    return this.areCompatible(newLeft, newRight) ? None() : Some([
+      `Both sides of ${this.operator.token} expression should be of same type, but got ` +
+      `LHS: ${newLeft.returnType} and RHS: ${newRight.returnType}.`,
+    ]);
+  }
+
+  private areCompatible(newLeft: Expression, newRight: Expression) {
+    return newLeft.returnType === newRight.returnType ||
+      checkBoolCompatibility(newLeft.returnType, newRight.returnType);
+  }
+
+  private checkSelectorEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
     return Some([
       ...this.getEqualitySideErrors('L', newLeft.returnType, ValueType.Text),
       ...this.getEqualitySideErrors('R', newRight.returnType, ValueType.Phrase),
@@ -120,6 +148,8 @@ export class BinaryOperationExpression extends Expression {
     return isSubtype(actual, superType) ? [] :
       this.getError(side, actual, [superType]).toList().toArray();
   }
+
+  // Logical operators type checking
 
   private checkBooleanTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
     return Some([
