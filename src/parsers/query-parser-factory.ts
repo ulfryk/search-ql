@@ -4,8 +4,8 @@ import * as P from 'parsimmon';
 import { fromPairs, FunctionExpression, initialPair, NotExpression, OOPair, restPair } from '../ast';
 import { Expression } from '../common/model';
 import { ParserConfig, ParserName } from '../config';
-import { basicExpression } from './basic';
 import { binaryOperator } from './binary-operator';
+import { termExpression } from './term';
 import { unaryOperator } from './unary-operator';
 
 export class QueryParserFactory {
@@ -14,7 +14,7 @@ export class QueryParserFactory {
     [ParserName.Function, () => this.function],
     [ParserName.BinaryOperation, () => this.groupedBinaryOperation],
     [ParserName.Not, () => this.notExpression],
-    [ParserName.Basic, () => basicExpression(this.config)],
+    [ParserName.Basic, () => termExpression(this.config)],
   ]);
 
   private readonly binaryOperator = P.whitespace

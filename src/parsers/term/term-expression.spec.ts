@@ -2,9 +2,9 @@
 import { expect } from 'chai';
 import { zip } from 'lodash';
 
-import { PhraseExpression, TermExpression } from '../ast';
-import { ParserConfig } from '../config';
-import { basicExpression } from './basic';
+import { PhraseExpression, TermExpression } from '../../ast';
+import { ParserConfig } from '../../config';
+import { termExpression } from './term-expression';
 
 const config = new ParserConfig();
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
@@ -43,12 +43,12 @@ describe('SearchQL parsers', () => {
     `dasd${EXACT_MATCHER}a`,
   ];
 
-  describe('basicExpression', () => {
+  describe('termExpression', () => {
 
     zip<any>(validInput, validOutput)
       .forEach(([input, output]) => {
         describe(`for valid input: '${input}'`, () => {
-          const parsed = basicExpression(config).parse(input);
+          const parsed = termExpression(config).parse(input);
 
           it('should succeed', () => {
             expect(parsed.status).to.be.true;
@@ -70,7 +70,7 @@ describe('SearchQL parsers', () => {
       describe(`for invalid input: '${input}'`, () => {
 
         it('should fail', () => {
-          expect(basicExpression(config).parse(input).status).to.be.false;
+          expect(termExpression(config).parse(input).status).to.be.false;
         });
 
       });
