@@ -8,6 +8,25 @@ import { ValueType } from './value-type';
 // IDefaultInput below is not used right now. Yet will be in future :)
 export class NodeEvaluation<V> {
 
+  public static fromLogic(l: ValueType, r: ValueType) {
+    return (input: Map<string, string>, node: Expression) =>
+      (value: boolean, matches: () => Maybe<Map<string, Match>>) =>
+        new NodeEvaluation(
+          [l, r].includes(ValueType.Phrase) ? ValueType.Phrase : ValueType.Boolean,
+          value, matches, input, node);
+  }
+
+  public static fromEquality(l: ValueType, r: ValueType) {
+    return (input: Map<string, string>, node: Expression) =>
+      (value: () => boolean, matches: () => Maybe<Map<string, Match>> = None) =>
+        new NodeEvaluation(
+          l === ValueType.Text && r === ValueType.Phrase ? ValueType.Phrase : ValueType.Boolean,
+          value,
+          matches,
+          input,
+          node);
+  }
+
   public static ofBoolean(
     input: Map<string, string>,
     node: Expression,
@@ -38,6 +57,14 @@ export class NodeEvaluation<V> {
   ) {
     return (matches: Maybe<Map<string, Match>>) =>
       new NodeEvaluation(ValueType.Phrase, matches.isSome(), () => matches, input, node);
+  }
+
+  public static ofPhraseLazy(
+    input: Map<string, string>,
+    node: Expression,
+  ) {
+    return (value: boolean, matches: () => Maybe<Map<string, Match>>) =>
+      new NodeEvaluation(ValueType.Phrase, value, matches, input, node);
   }
 
   public static ofDate(

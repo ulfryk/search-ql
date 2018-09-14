@@ -33,6 +33,7 @@ describe('SearchQL testers', () => {
         'AND OR OR AND',
         'IpsUM-dolor_sitAMET',
         'hello world',
+        '',
       ].map((val, j) => [`label ${j}`, val.toLowerCase()])) as Map<string, string>;
 
       const model = values.map(() => ValueType.Text).toMap();
@@ -113,6 +114,16 @@ describe('SearchQL testers', () => {
         getTester(Like0, ['Title', 'SitAmetus'], model),
       ];
 
+      const trueTesters = [
+        getTester(Like0, ['234', '234'], model),
+        getTester(Like0, ['sitametus', 'tamet'], model),
+      ];
+
+      const falseTesters = [
+        getTester(Like0, ['231', '234'], model),
+        getTester(Like0, ['title', 'total'], model),
+      ];
+
       const notMatchingTesters = [
         getTester(Like0, ['age', '5'], model),
         getTester(Like0, ['first_name', 'umus'], model),
@@ -125,6 +136,20 @@ describe('SearchQL testers', () => {
         it(`should find expression "${tester.ast}"`, () => {
           expect(tester.test(values).value).to.be.true;
           expect(tester.test(values).matches().some().isEmpty()).to.be.false;
+        });
+      });
+
+      trueTesters.forEach(tester => {
+        it(`should evaluate expression "${tester.ast}" to True`, () => {
+          expect(tester.test(values).value).to.be.true;
+          expect(tester.test(values).matches().isNone()).to.be.true;
+        });
+      });
+
+      falseTesters.forEach(tester => {
+        it(`should evaluate expression "${tester.ast}" to False`, () => {
+          expect(tester.test(values).value).to.be.false;
+          expect(tester.test(values).matches().isNone()).to.be.true;
         });
       });
 
@@ -177,7 +202,7 @@ describe('SearchQL testers', () => {
         getTester(IsNot0, ['first_name', 'umus'], model),
         getTester(IsNot0, ['last_name', 'emus'], model),
         getTester(IsNot0, ['description', 'elo unix'], model),
-        getTester(IsNot0, ['title', 'sitametus'], model),
+        getTester(IsNot0, ['Title', 'sitametuss'], model),
       ];
 
       const notMatchingTesters = [
@@ -197,11 +222,34 @@ describe('SearchQL testers', () => {
         getTester(Is0, ['Title', 'SitAmet'], model),
       ];
 
-      matchingTesters.forEach(tester => {
+      const trueTesters = [
+        getTester(Is0, ['234', '234'], model),
+        getTester(IsNot0, ['title', 'sitametus'], model),
+      ];
 
+      const falseTesters = [
+        getTester(Is0, ['231', '234'], model),
+        getTester(IsNot0, ['title', 'title'], model),
+      ];
+
+      matchingTesters.forEach(tester => {
         it(`should find expression "${tester.ast}"`, () => {
           expect(tester.test(values).value).to.be.true;
           expect(tester.test(values).matches().isSome()).to.be.true;
+        });
+      });
+
+      trueTesters.forEach(tester => {
+        it(`should evaluate expression "${tester.ast}" to True`, () => {
+          expect(tester.test(values).value).to.be.true;
+          expect(tester.test(values).matches().isNone()).to.be.true;
+        });
+      });
+
+      falseTesters.forEach(tester => {
+        it(`should evaluate expression "${tester.ast}" to False`, () => {
+          expect(tester.test(values).value).to.be.false;
+          expect(tester.test(values).matches().isNone()).to.be.true;
         });
       });
 

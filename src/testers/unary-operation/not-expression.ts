@@ -10,12 +10,14 @@ export class NotExpressionTester
 
   public test(values: Map<string, string>): NodeEvaluation<boolean> {
     const operandEvaluation = this.children.test(values);
+    const value = !operandEvaluation.value;
+    const matches = () => operandEvaluation.matches().cata(
+      () => Some(values.map(text => Match.empty(text)).toMap()),
+      () => None()); // tslint:disable-line:no-unnecessary-callback-wrapper
 
     return operandEvaluation.type === ValueType.Phrase ?
-      NodeEvaluation.ofPhrase(values, this.ast)(operandEvaluation.matches().cata(
-        () => Some(values.map(text => Match.empty(text)).toMap()),
-        () => None())) : // tslint:disable-line:no-unnecessary-callback-wrapper
-      NodeEvaluation.ofBoolean(values, this.ast)(!operandEvaluation.value);
+      NodeEvaluation.ofPhraseLazy(values, this.ast)(value, matches) :
+      NodeEvaluation.ofBoolean(values, this.ast)(value, matches);
   }
 
 }
