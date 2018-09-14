@@ -9,7 +9,7 @@ import { NotExpressionTester } from './not-expression';
 
 const config = new ParserConfig();
 
-const getTester = (value: string): NotExpressionTester => {
+const getNotPhraseTester = (value: string): NotExpressionTester => {
   const text = PhraseExpression.fromTerm(fromMatch(config)(value));
   const expr = new NotExpression(text);
 
@@ -33,11 +33,11 @@ describe('SearchQL testers', () => {
     const notMatchingTesters = values.toArray()
       .map((val: string) => val.substr(-6, 5))
       .concat(values.toArray())
-      .map(getTester);
+      .map(getNotPhraseTester);
 
     const matchingTesters = values.toArray()
       .map((val, i) => `${i} ${val}`)
-      .map(getTester);
+      .map(getNotPhraseTester);
 
     matchingTesters.forEach(tester => {
       it(`should find expression "${tester.ast}"`, () => {
@@ -53,7 +53,7 @@ describe('SearchQL testers', () => {
 
     it('should not find expression "zzz" in few fields', () => {
       expect(
-        getTester('zzz').test(Map({
+        getNotPhraseTester('zzz').test(Map({
           one: 'aaa bbb aaa aaa aaasda ddaaa',
           three: 'aaGaa bbb aadaaXaadaa ddddadd',
           two: 'aaa bbb aaaXaaa',

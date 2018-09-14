@@ -4,11 +4,12 @@ import { Map } from 'immutable';
 import { zip } from 'lodash';
 import { Either } from 'monet';
 
-import { AndOperator, LikeOperator, OrOperator } from './ast';
+import { AndOperator, FunctionExpression, LikeOperator, OrOperator } from './ast';
 import { ParseFailure, ValueType } from './common/model';
-import { ParserName } from './config';
+import { ParserConfig, ParserName } from './config';
 import { parseSearchQL } from './parse-search-ql';
-import { and, fn, isNotR, isR, like, likeR, or, phrase, txt } from './testing/utils';
+import { Tester } from './testers';
+import { and, config, fn, isNotR, isR, like, likeR, not, or, phrase, txt } from './testing/utils';
 
 const allParserNames = [
   ParserName.Basic,
@@ -128,6 +129,8 @@ describe('SearchQL', () => {
       'first_name ~ Adam | token_expired ~ true',
       'test_function(aaa, "b(b & b)")',
       'aaa = bbb & cc != dd',
+      'is_empty(first_name)',
+      '! is_empty(first_name)',
     ];
 
     const successfulOutputValues = [
@@ -136,7 +139,19 @@ describe('SearchQL', () => {
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
+      FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')]),
+      not(FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')])),
     ].map(Either.of);
+
+    const successfulOutputEvaluations = [
+      true,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+    ];
 
     const invalidInput = [
       'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
@@ -150,6 +165,7 @@ describe('SearchQL', () => {
       'test_function(test_function(aaa), (token_expired ~ true), (! is_empty(ccc)))',
       'test_function(aaa, bbb, (! ccc)) ~ (! (first_name IS "John Doe"))',
       'a ISNT is_empty(b)',
+      '! length(first_name)',
     ];
 
     const invalidTypesOutput = [
@@ -165,22 +181,39 @@ describe('SearchQL', () => {
       [
         'TypeError: Both sides of ISNT expression should be of same type, but got LHS: TEXT and RHS: BOOLEAN.',
       ],
+      [
+        'TypeError: Operand of NOT operation should be a BOOLEAN, but got NUMBER',
+      ],
     ];
 
-    zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
-      describe(`for valid input: ${input}`, () => {
-        const parsed = parseSearchQL({ model, parserNames: allParserNames })(input);
+    zip<any>(validInput, successfulOutputValues, successfulOutputEvaluations)
+      .forEach(([input, output, evaluation]) => {
+        describe(`for valid input: ${input}`, () => {
+          const parsed = parseSearchQL({ model, parserNames: allParserNames })(input);
 
-        it('should return Right', () => {
-          expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
+          const tested = parsed
+            .map(Tester.fromAst(ParserConfig.create({ model, parserNames: allParserNames })))
+            .map(tester => tester.test(Map<string, string>({
+              age: '55',
+              first_name: 'Adam',
+              last_name: 'aaa bbb',
+              token_expired: 'false',
+            })));
+
+          it('should return Right', () => {
+            expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
+          });
+
+          it('should return parsed expression', () => {
+            expect(parsed.equals(output)).to.be.true;
+          });
+
+          it('should properly evaluate expression against input object', () => {
+            expect(tested.right().value).to.equal(evaluation);
+          });
+
         });
-
-        it('should return parsed expression', () => {
-          expect(parsed.equals(output)).to.be.true;
-        });
-
       });
-    });
 
     invalidInput.forEach(input => {
       describe(`for invalid input: ${input}`, () => {

@@ -1,3 +1,5 @@
+import { List } from 'immutable';
+
 import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TextExpression } from '../ast';
 import { ParserConfig } from '../config';
 
@@ -28,7 +30,7 @@ Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
     case BinaryOperationExpression:
       return new BinaryOperationExpressionTester<any, any, any>(
         ast as BinaryOperationExpression,
-        ast.value.map(Tester.fromAst(config)),
+        List(ast.value).map(Tester.fromAst(config)).toOrderedSet(),
         config);
 
     case FunctionExpression:
