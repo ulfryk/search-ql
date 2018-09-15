@@ -10,6 +10,10 @@ export abstract class Operator implements ISetoid {
     throw Error('unimplemented');
   }
 
+  public static fromJS(_pojo: IOperator): Operator {
+    throw Error('unimplemented');
+  }
+
   public abstract readonly type: OperatorType;
 
   public get associativity(): OperatorAssociativity {

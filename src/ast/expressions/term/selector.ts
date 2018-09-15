@@ -15,8 +15,9 @@ export class SelectorExpression extends TermExpression<string> {
   constructor(
     public readonly matchingType: ValueType,
     value: string,
+    preparedValue = value.trim(),
   ) {
-    super(value, value.trim());
+    super(value, preparedValue);
   }
 
   public toJS(): ISelectorExpression {

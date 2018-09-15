@@ -21,8 +21,8 @@ export class DateExpression extends TermExpression<number> {
   public readonly returnType = ValueType.Date;
   public readonly type = ExpressionType.Date;
 
-  constructor(value: string) {
-    super(value, DateExpression.prepareValue(value));
+  constructor(value: string, preparedValue = DateExpression.prepareValue(value)) {
+    super(value, preparedValue);
   }
 
   protected toPhrase(): TermExpression {

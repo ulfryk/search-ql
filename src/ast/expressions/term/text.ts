@@ -14,8 +14,8 @@ export class TextExpression extends TermExpression<string> {
 
   public readonly type = ExpressionType.Text;
 
-  constructor(value: string) {
-    super(value, value.trim());
+  constructor(value: string, preparedValue = value.trim()) {
+    super(value, preparedValue);
   }
 
   protected toPhrase(): TermExpression {

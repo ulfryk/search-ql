@@ -21,8 +21,8 @@ export class NumberExpression extends TermExpression<number> {
   public readonly returnType = ValueType.Number;
   public readonly type = ExpressionType.Number;
 
-  constructor(value: string) {
-    super(value, NumberExpression.prepareValue(value));
+  constructor(value: string, preparedValue = NumberExpression.prepareValue(value)) {
+    super(value, preparedValue);
   }
 
   protected toPhrase(): TermExpression {
