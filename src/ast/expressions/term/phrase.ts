@@ -1,4 +1,4 @@
-import { Expression, ValueType } from '../../../common/model';
+import { Expression, ExpressionType, ValueType } from '../../../common/model';
 import { TermExpression } from './term';
 
 export class PhraseExpression<T> extends TermExpression<string> {
@@ -11,6 +11,7 @@ export class PhraseExpression<T> extends TermExpression<string> {
   }
 
   public readonly returnType: ValueType = ValueType.Phrase;
+  public readonly type = ExpressionType.Phrase;
 
   constructor(public readonly term: TermExpression<T>) {
     super(term.value, term.value.trim());

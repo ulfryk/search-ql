@@ -1,12 +1,12 @@
-import { Expression, Ordering, ValueType } from '../../common/model';
+import { Expression, ExpressionType, Ordering, ValueType } from '../../common/model';
 import { BinaryOperationExpression, InterimExpression } from '../expressions';
 import { OperatorContext } from './operator-context';
 
 export class BinaryOperationContext extends InterimExpression {
 
   public readonly name: 'BinaryOperationContext';
-
   public readonly returnType: ValueType.Boolean;
+  public readonly type: ExpressionType.Binary;
 
   constructor(
     public readonly value: OperatorContext,

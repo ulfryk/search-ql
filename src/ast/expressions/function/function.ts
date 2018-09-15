@@ -2,7 +2,7 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
-import { checkBoolCompatibility, Expression, isSubtype, ValueType } from '../../../common/model';
+import { checkBoolCompatibility, Expression, ExpressionType, isSubtype, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { InvalidExpression } from '../invalid';
@@ -44,6 +44,8 @@ export class FunctionExpression<R> extends Expression {
 
     return new FunctionExpression(argExpressions, config);
   }
+
+  public readonly type = ExpressionType.Function;
 
   constructor(
     public readonly value: List<Expression>,

@@ -1,7 +1,7 @@
 import { List } from 'immutable';
 import { Some } from 'monet';
 
-import { Expression, isBooleanType, isPhraseType, ValueType } from '../../common/model';
+import { Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, TermExpression } from './term';
 
@@ -14,6 +14,8 @@ export class NotExpression extends Expression {
   public static fromParseResult(__: string, operand: Expression) {
     return NotExpression.of(operand);
   }
+
+  public readonly type = ExpressionType.Not;
 
   constructor(
     public readonly value: Expression,

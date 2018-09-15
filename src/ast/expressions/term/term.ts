@@ -6,7 +6,6 @@ import { Expression, ReshapeContext, ValueType } from '../../../common/model';
 export abstract class TermExpression<PV = any> extends Expression {
 
   public readonly returnType: ValueType = ValueType.Text;
-  public readonly name = this.constructor.name;
 
   constructor(
     public readonly value: string,

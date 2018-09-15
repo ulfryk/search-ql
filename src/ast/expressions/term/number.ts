@@ -1,4 +1,4 @@
-import { ValueType } from '../../../common/model';
+import { ExpressionType, ValueType } from '../../../common/model';
 import { isNumber } from './is-number';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
@@ -19,6 +19,7 @@ export class NumberExpression extends TermExpression<number> {
   }
 
   public readonly returnType = ValueType.Number;
+  public readonly type = ExpressionType.Number;
 
   constructor(value: string) {
     super(value, NumberExpression.prepareValue(value));

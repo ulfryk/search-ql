@@ -1,6 +1,6 @@
 import { List, Set } from 'immutable';
 
-import { Expression } from '../../common/model';
+import { Expression, ExpressionType } from '../../common/model';
 
 export class InvalidExpression extends Expression {
 
@@ -15,6 +15,8 @@ export class InvalidExpression extends Expression {
   public static empty(error: string) {
     return InvalidExpression.fromError(null, error);
   }
+
+  public readonly type = ExpressionType.Invalid;
 
   constructor(
     public readonly value: Expression,

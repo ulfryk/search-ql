@@ -1,4 +1,5 @@
 export * from './expression';
+export * from './expression-type';
 export * from './failure';
 export * from './match';
 export * from './node-evaluation';

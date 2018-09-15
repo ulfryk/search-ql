@@ -1,8 +1,8 @@
 export enum OperatorType {
-  And = 'And',
-  Like = 'Like',
-  Not = 'Not',
-  Or = 'Or',
+  And = 'AND',
+  Like = 'LIKE',
+  Not = 'NOT',
+  Or = 'OR',
   Gt = 'GT',
   Gte = 'GTE',
   Lt = 'LT',

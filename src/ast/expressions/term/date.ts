@@ -1,4 +1,4 @@
-import { ValueType } from '../../../common/model';
+import { ExpressionType, ValueType } from '../../../common/model';
 import { isDate } from './is-date';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
@@ -19,6 +19,7 @@ export class DateExpression extends TermExpression<number> {
   }
 
   public readonly returnType = ValueType.Date;
+  public readonly type = ExpressionType.Date;
 
   constructor(value: string) {
     super(value, DateExpression.prepareValue(value));

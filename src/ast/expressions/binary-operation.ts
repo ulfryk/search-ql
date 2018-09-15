@@ -1,7 +1,7 @@
 import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { checkBoolCompatibility, Expression, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
+import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './term';
@@ -43,6 +43,8 @@ export class BinaryOperationExpression extends Expression {
       return new BinaryOperationExpression(operator, [lhs, rhs]);
     };
   }
+
+  public readonly type = ExpressionType.Binary;
 
   constructor(
     public readonly operator: BinaryOperator,

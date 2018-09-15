@@ -2,7 +2,7 @@ import { Bind } from '@samwise-tech/core';
 import { List, Set } from 'immutable';
 import { Maybe } from 'monet';
 
-import { Expression, ReshapeContext, ValueType } from '../../common/model';
+import { Expression, ExpressionType, ReshapeContext, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
 import { InterimExpression, NotExpression, PhraseExpression, TermExpression } from '../expressions';
 import { AndOperator, BinaryOperator, NotOperator, Operator } from '../operators';
@@ -16,8 +16,8 @@ export class BinaryOperationChain extends InterimExpression {
   }
 
   public readonly name: 'BinaryOperationChain';
-
   public readonly returnType: ValueType.Boolean;
+  public readonly type: ExpressionType.Binary;
 
   constructor(
     public readonly value: ReadonlyArray<Expression>,

@@ -1,4 +1,4 @@
-import { ValueType } from '../../../common/model';
+import { ExpressionType, ValueType } from '../../../common/model';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
@@ -8,6 +8,8 @@ export class SelectorExpression extends TermExpression<string> {
     return (matchingType: ValueType) =>
       new SelectorExpression(matchingType, value);
   }
+
+  public readonly type = ExpressionType.Selector;
 
   constructor(
     public readonly matchingType: ValueType,
