@@ -1,6 +1,7 @@
 import { List, Set } from 'immutable';
 
 import { Expression, ExpressionType } from '../../common/model';
+import { IExpression } from '../../dto';
 
 export class InvalidExpression extends Expression {
 
@@ -54,6 +55,10 @@ export class InvalidExpression extends Expression {
 
   public toList() {
     return List([this]).concat(this.value.toList()).toList();
+  }
+
+  public toJS(): IExpression {
+    throw Error(`InvalidExpression can not be converted to a POJO.`);
   }
 
 }

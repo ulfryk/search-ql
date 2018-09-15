@@ -2,6 +2,7 @@ import { List } from 'immutable';
 import { Some } from 'monet';
 
 import { Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
+import { INotExpression } from '../../dto';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, TermExpression } from './term';
 
@@ -55,6 +56,14 @@ export class NotExpression extends Expression {
 
   public toList() {
     return List([this]).concat(this.value.toList()).toList();
+  }
+
+  public toJS(): INotExpression {
+    return {
+      returnType: this.returnType,
+      type: this.type,
+      value: this.value.toJS(),
+    };
   }
 
   private clone(newValue: Expression): Expression {

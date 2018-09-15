@@ -1,6 +1,7 @@
 import { List } from 'immutable';
 
 import { Expression } from '../../common/model';
+import { IExpression } from '../../dto';
 
 export abstract class InterimExpression extends Expression {
 
@@ -16,6 +17,10 @@ export abstract class InterimExpression extends Expression {
 
   public toList(): List<Expression> {
     throw Error(`${this.errorPrefix} Can not be converted to a List.`);
+  }
+
+  public toJS(): IExpression {
+    throw Error(`${this.errorPrefix} Can not be converted to a POJO.`);
   }
 
   private get errorPrefix() {

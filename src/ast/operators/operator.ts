@@ -2,6 +2,7 @@ import { ISetoid } from '@samwise-tech/core';
 
 import { OperatorAssociativity, OperatorType } from '../../common/model';
 import { operatorAssociativity, operatorPrecedence, ParserConfig } from '../../config';
+import { IOperator } from '../../dto';
 
 export abstract class Operator implements ISetoid {
 
@@ -35,6 +36,13 @@ export abstract class Operator implements ISetoid {
 
   public inspect(): string {
     return this.toString();
+  }
+
+  public toJS(): IOperator {
+    return {
+      token: this.token,
+      type: this.type,
+    };
   }
 
 }

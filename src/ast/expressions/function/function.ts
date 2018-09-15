@@ -5,6 +5,7 @@ import { Maybe, Some } from 'monet';
 import { checkBoolCompatibility, Expression, ExpressionType, isSubtype, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
+import { IFunctionExpression } from '../../../dto';
 import { InvalidExpression } from '../invalid';
 import { DateExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../term';
 
@@ -92,6 +93,15 @@ export class FunctionExpression<R> extends Expression {
     return List([this])
       .concat(this.value.flatMap(operand => operand.toList()))
       .toList();
+  }
+
+  public toJS(): IFunctionExpression {
+    return {
+      name: this.name,
+      returnType: this.returnType,
+      type: this.type,
+      value: this.value.map(arg => arg.toJS()).toArray(),
+    };
   }
 
   private clone(args: List<Expression>): Expression {

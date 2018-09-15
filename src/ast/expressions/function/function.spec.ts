@@ -4,7 +4,7 @@ import { List } from 'immutable';
 import { zip } from 'lodash';
 import { None, Some } from 'monet';
 
-import { Expression, ValueType } from '../../../common/model';
+import { Expression, ExpressionType, ValueType } from '../../../common/model';
 import { FunctionConfig, OptionalFunctionArg, ParserConfig, RequiredFunctionArg, testFunction } from '../../../config';
 import { AndOperator, LikeOperator } from '../../operators';
 import { BinaryOperationExpression } from '../binary-operation';
@@ -183,6 +183,53 @@ describe('SearchQL expressions', () => {
       it('should properly build up list of expressions', () => {
         zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
           expect(left.toList().equals(right)).to.be.true;
+        });
+      });
+
+    });
+
+    describe('toJS() method', () => {
+
+      const lhs = [
+        fn('return_null'),
+        fn('id', fromMatch(config)('lorem')),
+        fn('is_date', fromMatch(config)('2018-01-01')),
+      ];
+
+      const rhs = [
+        {
+          name: 'return_null',
+          returnType: ValueType.Boolean,
+          type: ExpressionType.Function,
+          value: [] as any[],
+        },
+        {
+          name: 'id',
+          returnType: ValueType.Boolean,
+          type: ExpressionType.Function,
+          value: [{
+            preparedValue: 'lorem',
+            returnType: ValueType.Text,
+            type: ExpressionType.Text,
+            value: 'lorem',
+          }],
+        },
+        {
+          name: 'is_date',
+          returnType: ValueType.Boolean,
+          type: ExpressionType.Function,
+          value: [{
+            preparedValue: 1514764800000,
+            returnType: ValueType.Date,
+            type: ExpressionType.Date,
+            value: '2018-01-01',
+          }],
+        },
+      ];
+
+      it('should properly build up JSON', () => {
+        zip(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toJS()).to.deep.equal(right);
         });
       });
 

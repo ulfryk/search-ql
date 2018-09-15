@@ -1,4 +1,5 @@
 import { Expression, ExpressionType, ValueType } from '../../../common/model';
+import { IPhraseExpression } from '../../../dto/expressions';
 import { TermExpression } from './term';
 
 export class PhraseExpression<T> extends TermExpression<string> {
@@ -23,6 +24,16 @@ export class PhraseExpression<T> extends TermExpression<string> {
       this.preparedValue === other.preparedValue &&
       this.term.equals(other.term)
     );
+  }
+
+  public toJS(): IPhraseExpression<T> {
+    return {
+      preparedValue: this.preparedValue,
+      returnType: this.returnType,
+      term: this.term.toJS(),
+      type: this.type,
+      value: this.value,
+    };
   }
 
   protected toPhrase() {

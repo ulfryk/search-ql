@@ -2,6 +2,7 @@ import { ISetoid } from '@samwise-tech/core';
 import { List } from 'immutable';
 
 import { ReshapeContext, ValueType } from '../../common/model';
+import { IExpression } from '../../dto';
 import { ExpressionType } from './expression-type';
 
 export abstract class Expression implements ISetoid {
@@ -14,6 +15,7 @@ export abstract class Expression implements ISetoid {
   public abstract isValid(): boolean;
   public abstract toString(): string;
   public abstract toList(): List<Expression>;
+  public abstract toJS(): IExpression;
 
   public inspect(): string {
     return this.toString();

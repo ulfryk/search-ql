@@ -2,6 +2,7 @@ import { List } from 'immutable';
 import { Maybe } from 'monet';
 
 import { Expression, ReshapeContext, ValueType } from '../../../common/model';
+import { ITermExpression } from '../../../dto';
 
 export abstract class TermExpression<PV = any> extends Expression {
 
@@ -41,6 +42,15 @@ export abstract class TermExpression<PV = any> extends Expression {
 
   public toList() {
     return List([this]);
+  }
+
+  public toJS(): ITermExpression<PV> {
+    return {
+      preparedValue: this.preparedValue,
+      returnType: this.returnType,
+      type: this.type,
+      value: this.value,
+    };
   }
 
   protected abstract toPhrase(): TermExpression;

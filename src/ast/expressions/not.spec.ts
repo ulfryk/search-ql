@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression } from '../../common/model';
+import { Expression, ExpressionType, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
 import { NotExpression } from './not';
 import { fromMatch, PhraseExpression } from './term';
@@ -67,6 +67,56 @@ describe('SearchQL expressions', () => {
       it('should properly build up list of expressions', () => {
         zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
           expect(left.toList().equals(right)).to.be.true;
+        });
+      });
+
+    });
+
+    describe('toJS() method', () => {
+
+      const lhs = [
+        new NotExpression(phrase('')),
+        new NotExpression(phrase('aaa  asdas as asd asdas dad ')),
+      ];
+
+      const rhs = [
+        {
+          returnType: 'PHRASE',
+          type: ExpressionType.Not,
+          value: {
+            preparedValue: '',
+            returnType: ValueType.Phrase,
+            term: {
+              preparedValue: '',
+              returnType: ValueType.Text,
+              type: ExpressionType.Text,
+              value: '',
+            },
+            type: ExpressionType.Phrase,
+            value: '',
+          },
+        },
+        {
+          returnType: 'PHRASE',
+          type: ExpressionType.Not,
+          value: {
+            preparedValue: 'aaa  asdas as asd asdas dad',
+            returnType: ValueType.Phrase,
+            term: {
+              preparedValue: 'aaa  asdas as asd asdas dad',
+              returnType: ValueType.Text,
+              type: ExpressionType.Text,
+              value: 'aaa  asdas as asd asdas dad ',
+            },
+            type: ExpressionType.Phrase,
+            value: 'aaa  asdas as asd asdas dad ',
+          },
+        },
+      ];
+
+      it('should properly build up JSON', () => {
+        zip(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toJS()).to.deep.equal(right);
         });
       });
 

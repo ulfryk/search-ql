@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
 
-import { Expression, ValueType } from '../../common/model';
+import { Expression, ExpressionType, OperatorType, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
 import { AndOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
@@ -22,7 +22,7 @@ describe('SearchQL expressions', () => {
 
   describe('BinaryOperationExpression', () => {
 
-    describe('fromPair() method', () => {
+    describe('fromPair() static method', () => {
 
       it('should properly create similarity expressions (LIKE)', () => {
 
@@ -166,6 +166,83 @@ describe('SearchQL expressions', () => {
       it('should properly build up list of expressions', () => {
         zip<Expression, List<Expression>>(lhs, rhs).forEach(([left, right]) => {
           expect(left.toList().equals(right)).to.be.true;
+        });
+      });
+
+    });
+
+    describe('toJS() method', () => {
+
+      const lhs = [
+        new BinaryOperationExpression(Like, [
+          new TextExpression('aaa'),
+          new NumberExpression('123'),
+        ]),
+        new BinaryOperationExpression(And, [
+          new PhraseExpression(new TextExpression('123')),
+          new PhraseExpression(new TextExpression('aaa')),
+        ]),
+        new BinaryOperationExpression(Is, [
+          new TextExpression('aaa'),
+          new TextExpression('123'),
+        ]),
+      ];
+
+      const rhs = [
+        {
+          operator: { type: OperatorType.Like, token: LIKE[0] },
+          returnType: ValueType.Boolean,
+          type: ExpressionType.Binary,
+          value: [
+            { preparedValue: 'aaa', returnType: ValueType.Text, type: ExpressionType.Text, value: 'aaa' },
+            { preparedValue: 123, returnType: ValueType.Number, type: ExpressionType.Number, value: '123' },
+          ],
+        },
+        {
+          operator: { type: OperatorType.And, token: AND[0] },
+          returnType: ValueType.Phrase,
+          type: ExpressionType.Binary,
+          value: [
+            {
+              preparedValue: '123',
+              returnType: ValueType.Phrase,
+              term: {
+                preparedValue: '123',
+                returnType: ValueType.Text,
+                type: ExpressionType.Text,
+                value: '123',
+              },
+              type: ExpressionType.Phrase,
+              value: '123',
+            },
+            {
+              preparedValue: 'aaa',
+              returnType: ValueType.Phrase,
+              term: {
+                preparedValue: 'aaa',
+                returnType: ValueType.Text,
+                type: ExpressionType.Text,
+                value: 'aaa',
+              },
+              type: ExpressionType.Phrase,
+              value: 'aaa',
+            },
+          ],
+        },
+        {
+          operator: { type: OperatorType.Is, token: IS[0] },
+          returnType: ValueType.Boolean,
+          type: ExpressionType.Binary,
+          value: [
+            { preparedValue: 'aaa', returnType: ValueType.Text, type: ExpressionType.Text, value: 'aaa' },
+            { preparedValue: '123', returnType: ValueType.Text, type: ExpressionType.Text, value: '123' },
+          ],
+        },
+      ];
+
+      it('should properly build up JSON', () => {
+        zip(lhs, rhs).forEach(([left, right]) => {
+          expect(left.toJS()).to.deep.equal(right);
         });
       });
 

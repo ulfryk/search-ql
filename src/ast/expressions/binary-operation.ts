@@ -2,6 +2,7 @@ import { List, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
+import { IBinaryOperationExpression, IExpression } from '../../dto';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './term';
@@ -94,6 +95,16 @@ export class BinaryOperationExpression extends Expression {
       .concat(List(this.value)
         .flatMap(operand => operand.toList()))
       .toList();
+  }
+
+  public toJS(): IBinaryOperationExpression<IExpression, IExpression> {
+    const [rhs, lhs] = this.value;
+    return {
+      operator: this.operator.toJS(),
+      returnType: this.returnType,
+      type: this.type,
+      value: [rhs.toJS(), lhs.toJS()],
+    };
   }
 
   private clone(newLeft: Expression, newRight: Expression): Expression {
