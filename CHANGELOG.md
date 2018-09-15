@@ -11,13 +11,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - allow custom configuration
 - operators and binary operation expressions
   - `AND`, `OR` logical operators (used with `BinaryOperationExpression`)
-  - `LIKE` operator (replacement for `LabelledExpression`)
+  - `LIKE` equality operator (replacement for `LabelledExpression`)
+  - `IS`, `IS NOT` equality operators (used with `BinaryOperationExpression`)
   - `NOT` - (used with `NotExpression`, `UnaryOperationExpression` will be implemented soon)
-- `TermExpression` with sub expressions:
+- abstract `TermExpression` with sub expressions:
   - `DateExpression`
   - `NumberExpression`
   - `SelectorExpression` (used with binary operator `LIKE` to replace `LabelledExpression`)
-  - `TextExpression` (replaces `BasicExpression`)
+  - `TextExpression`
+  - `PhraseExpression` (replaces `BasicExpression`)
 - operators precedence and associativity
 - **breaking** type checking
 
