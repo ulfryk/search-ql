@@ -2,6 +2,8 @@
 
 QL used for advanced searches in Samwise applications. It's a slightly updated subset of [GitHub search syntax][1]. Implemented using [parsimmon][2] - a monadic parser combinator library for javascript.
 
+See [documentation][5].
+
 ## Syntax
 
 There are few special words and characters used in SearchQL (configurable):
@@ -112,3 +114,4 @@ tester
 [2]: https://github.com/jneen/parsimmon
 [3]: https://cwmyers.github.io/monet.js/
 [4]: https://facebook.github.io/immutable-js/
+[5]: docs/README.md
