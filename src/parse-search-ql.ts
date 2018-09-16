@@ -1,18 +1,19 @@
 import { Either, Left, Right } from 'monet';
-import { Failure } from 'parsimmon';
+import { Failure as ParsimmonFailure } from 'parsimmon';
 
-import { Expression } from './expressions';
-import { ParseFailure } from './parse-failure';
-import { ParserName, query as queryParser } from './parsers';
+import { validate } from './ast';
+import { Expression, Failure, ParseFailure } from './common/model';
+import { ParserConfig } from './config';
+import { QueryParserFactory } from './parsers';
 
-export const parseSearchQL = (parserNames: ParserName[]) => {
-  const queryParserConfigured = queryParser(parserNames);
+export const parseSearchQL = (config?: Partial<ParserConfig>) => {
+  const factory = new QueryParserFactory(ParserConfig.create(config));
 
-  return (query: string): Either<ParseFailure, Expression> => {
-    const parsed = queryParserConfigured.parse(query);
+  return (query: string): Either<Failure[], Expression> => {
+    const parsed = factory.getParser().parse(query);
 
     return parsed.status ?
-      Right<ParseFailure, Expression>(parsed.value) :
-      Left<ParseFailure, Expression>(ParseFailure.fromFailure(parsed as Failure, query));
+      Right<Failure[], Expression>(parsed.value).flatMap(validate) :
+      Left<Failure[], Expression>([ParseFailure.fromFailure(parsed as ParsimmonFailure, query)]);
   };
 };
