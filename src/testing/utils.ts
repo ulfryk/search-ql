@@ -3,24 +3,26 @@ import { List, Map } from 'immutable';
 import { None } from 'monet';
 
 import { BinaryOperationExpression, DateExpression, fromMatch, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
-import { AndOperator, EqualityOperator, IsNotOperator, IsOperator, LikeOperator, NotOperator, OrOperator } from '../ast/operators';
+import { AndOperator, EqualityOperator, IsNotOperator, IsOperator, LikeOperator, NotLikeOperator, NotOperator, OrOperator } from '../ast/operators';
 import { Expression, NodeEvaluation, ValueType } from '../common/model';
 import { FunctionConfig, OptionalFunctionArg, ParserConfig } from '../config';
 
 const config = new ParserConfig();
-const { AND, IS, IS_NOT, LIKE, NOT, OR } = config;
+const { AND, IS, IS_NOT, LIKE, NOT, NOT_LIKE, OR } = config;
 
 const And = new AndOperator(AND[1]);
 const Is = new IsOperator(IS[1]);
 const IsNot = new IsNotOperator(IS_NOT[1]);
 const Like = new LikeOperator(LIKE[1]);
 const Not = new NotOperator(NOT[1]);
+const NotLike = new NotLikeOperator(NOT_LIKE[1]);
 const Or = new OrOperator(OR[1]);
 const And0 = new AndOperator(AND[0]);
 const Is0 = new IsOperator(IS[1]);
 const IsNot0 = new IsNotOperator(IS_NOT[1]);
 const Like0 = new LikeOperator(LIKE[0]);
 const Not0 = new NotOperator(NOT[0]);
+const NotLike0 = new NotLikeOperator(NOT_LIKE[0]);
 const Or0 = new OrOperator(OR[0]);
 
 const date = (v: string) => DateExpression.of(v);
@@ -48,9 +50,13 @@ const eqR = (l: TermExpression, r: TermExpression, op: EqualityOperator) =>
 
 // tslint:disable:no-unnecessary-callback-wrapper
 const like = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) => eq(l, r, op);
+const notLike = (l: TermExpression, r: TermExpression, op: NotLikeOperator = NotLike) =>
+  eq(l, r, op);
 const is = (l: TermExpression, r: TermExpression, op: IsOperator = Is) => eq(l, r, op);
 const isNot = (l: TermExpression, r: TermExpression, op: IsNotOperator = IsNot) => eq(l, r, op);
 const likeR = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) => eqR(l, r, op);
+const notLikeR = (l: TermExpression, r: TermExpression, op: NotLikeOperator = NotLike) =>
+  eqR(l, r, op);
 const isR = (l: TermExpression, r: TermExpression, op: IsOperator = Is) => eqR(l, r, op);
 const isNotR = (l: TermExpression, r: TermExpression, op: IsNotOperator = IsNot) => eqR(l, r, op);
 // tslint:enable:no-unnecessary-callback-wrapper
@@ -78,6 +84,7 @@ export {
   date, num, phrase, phraseFrom, sel, txt, txtFrom,
   and, andNot, And, And0,
   like, Like, Like0, likeR,
+  notLike, NotLike, NotLike0, notLikeR,
   is, Is, Is0, isR,
   isNot, IsNot, IsNot0, isNotR,
   not, Not, Not0,
