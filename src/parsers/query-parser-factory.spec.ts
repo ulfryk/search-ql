@@ -56,7 +56,7 @@ const test = (
 
 describe('SearchQL parsers', () => {
 
-  describe('QueryParserFactory', () => {
+  describe('QueryParser', () => {
 
     describe('with all parsers', () => {
 
