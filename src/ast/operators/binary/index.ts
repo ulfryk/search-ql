@@ -5,5 +5,6 @@ export * from './is';
 export * from './is-not';
 export * from './like';
 export * from './logical';
+export * from './not-like';
 export * from './or';
 export * from './relational';
