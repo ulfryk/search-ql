@@ -48,8 +48,8 @@ class SelectorExpression extends TermExpression<string> {
   matchingType: ValueType; // type of value selected from model
   value: string;
   preparedValue: string; // here it just duplicates `value`
-  // returnType = ValueType.Text;
-  // type = ExpressionType.Selector;
+  returnType = ValueType.Text;
+  type = ExpressionType.Selector;
 }
 ```
 
@@ -62,8 +62,8 @@ class PhraseExpression<T> extends TermExpression<string>
   term: TermExpression<T> // term expression used to test model fields
   value: string; // proxy to `this.term.value`
   preparedValue: T; // proxy to `this.term.preparedValue`
-  // returnType = ValueType.Phrase;
-  // type = ExpressionType.Phrase;
+  returnType = ValueType.Phrase;
+  type = ExpressionType.Phrase;
 ```
 
 ### Examples
@@ -86,7 +86,7 @@ class BinaryOperationExpression extends Expression {
   operator: BinaryOperator;
   value: [Expression, Expression];
   get returnType(): ValueType; // dynamically computed based on operator, lhs and rhs
-  // type = ExpressionType.Binary;
+  type = ExpressionType.Binary;
 }
 ```
 
@@ -138,7 +138,7 @@ See [BinaryOperationExpression], [Operator], [OperatorType], [OperatorAssociativ
 class NotExpression extends Expression {
   value: Expression;
   get returnType(): ValueType; // dynamically computed based on wrapped expression
-  // type = ExpressionType.Not
+  type = ExpressionType.Not
 }
 ```
 
@@ -171,7 +171,7 @@ See [NotExpression].
 
 ## Function
 
-`FunctionExpression` represents any predefined function, it's value is list of passed params (represented by `Expressions`):
+`FunctionExpression` represents any predefined function, its value is list of passed params (represented by `Expressions`):
 
 ```typescript
 class FunctionExpression<R> extends Expression {

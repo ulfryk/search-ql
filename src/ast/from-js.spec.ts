@@ -21,7 +21,7 @@ describe('SearchQL ast', () => {
     ];
 
     ast.forEach(expression => {
-      it(`should properly convert JSON created ba 'toJS' method back to data (for ${expression})`,
+      it(`should properly convert JSON created by 'toJS' method back to data (for ${expression})`,
         () => {
           expect(fromJS(config)(expression.toJS()).toJS()).to.deep.equal(expression.toJS());
           expect(fromJS(config)(expression.toJS()).equals(expression)).to.be.true;
@@ -89,7 +89,7 @@ describe('SearchQL ast', () => {
       ],
     };
 
-    it('should properly work for manually input', () => {
+    it('should properly work for manual input', () => {
       expect(pojo).to.deep.equal(ast.slice().pop().toJS());
       expect(fromJS(config)(pojo).equals(ast.slice().pop())).to.be.true;
     });
