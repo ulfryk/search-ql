@@ -3,4 +3,5 @@ export * from './get-binary-operator';
 export * from './is';
 export * from './is-not';
 export * from './like';
+export * from './not-like';
 export * from './or';

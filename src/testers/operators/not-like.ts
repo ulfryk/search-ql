@@ -8,19 +8,24 @@ const getLabel = (selector: string, values: Map<string, string>): Maybe<string> 
   values.has(selector) ? Some(selector) : None();
 
 const getMatched = (matches: () => Maybe<Map<string, Match>>) =>
-  (label: string): Maybe<Map<string, Match>> => matches()
+  (label: string) => matches()
     .map(someMatches => someMatches
-      .filter((match, key) => key === label && match.isFullMatch())
+      .filter((__, key) => key === label)
       .toMap());
 
-export const is: BinaryOperatorRuntime<string, string, boolean> =
+export const notLike: BinaryOperatorRuntime<string, string, boolean> =
   (values, node) => (left, right) => {
     if (left.type === ValueType.Text && right.type === ValueType.Phrase) {
       return NodeEvaluation.ofPhrase(values, node)(
         getLabel(left.value, values)
           .flatMap(getMatched(right.matches))
-          .filter(matched => !matched.isEmpty()));
+          .orElse(Some(Map<string, Match>()))
+          .filter(matched => matched.isEmpty()));
     }
 
-    return NodeEvaluation.ofBoolean(values, node)(left.value === right.value);
+    const value = ValueType.Text === left.type ?
+      !left.value.includes(right.value) :
+      left.value !== right.value;
+
+    return NodeEvaluation.ofBoolean(values, node)(value);
   };

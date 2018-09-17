@@ -9,7 +9,7 @@ import { ParseFailure, ValueType } from './common/model';
 import { ParserConfig } from './config';
 import { SearchQLParser } from './search-ql-parser';
 import { Tester } from './testers';
-import { and, config, fn, isNotR, isR, like, likeR, not, or, phrase, txt } from './testing/utils';
+import { and, config, fn, isNotR, isR, like, likeR, not, notLike, or, phrase, txt } from './testing/utils';
 
 describe('SearchQL', () => {
 
@@ -124,6 +124,7 @@ describe('SearchQL', () => {
       'aaa = bbb & cc != dd',
       'is_empty(first_name)',
       '! is_empty(first_name)',
+      'first_name !~ noone',
     ];
 
     const successfulOutputValues = [
@@ -134,6 +135,7 @@ describe('SearchQL', () => {
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
       FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')]),
       not(FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')])),
+      notLike(txt('first_name'), txt('noone')),
     ].map(Either.of);
 
     const successfulOutputEvaluations = [
@@ -143,6 +145,7 @@ describe('SearchQL', () => {
       false,
       false,
       false,
+      true,
       true,
     ];
 

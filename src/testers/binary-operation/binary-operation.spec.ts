@@ -5,7 +5,7 @@ import { Map, OrderedSet } from 'immutable';
 import { BinaryOperationExpression, fromMatch, Operator } from '../../ast';
 import { Expression, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
-import { And0, Is0, IsNot0, Like0, Or0 } from '../../testing/utils';
+import { And0, Is0, IsNot0, Like0, NotLike0, Or0 } from '../../testing/utils';
 import { BinaryOperationExpressionTester, Tester } from '../index';
 
 const getTester = (operator: Operator, values: [string, string], model: Map<string, ValueType>) => {
@@ -88,7 +88,7 @@ describe('SearchQL testers', () => {
 
     });
 
-    describe('similarity operations (LIKE)', () => {
+    describe('similarity operations (LIKE, NOT_LIKE)', () => {
 
       const values = Map<string, string>({
         Title: 'SitAmetus',
@@ -112,16 +112,25 @@ describe('SearchQL testers', () => {
         getTester(Like0, ['last_name', 'mus'], model),
         getTester(Like0, ['description', 'ello uni'], model),
         getTester(Like0, ['Title', 'SitAmetus'], model),
+        getTester(NotLike0, ['age', '233'], model),
+        getTester(NotLike0, ['first_name', 'Muus'], model),
+        getTester(NotLike0, ['last_name', 'muus'], model),
+        getTester(NotLike0, ['description', 'ello unix'], model),
+        getTester(NotLike0, ['Title', 'SiAmetus'], model),
       ];
 
       const trueTesters = [
-        getTester(Like0, ['234', '234'], model),
+        getTester(Like0, ['00234', '234.00'], model),
         getTester(Like0, ['sitametus', 'tamet'], model),
+        getTester(NotLike0, ['234.01', '234.011'], model),
+        getTester(NotLike0, ['sitametus', 'tametuss'], model),
       ];
 
       const falseTesters = [
         getTester(Like0, ['231', '234'], model),
         getTester(Like0, ['title', 'total'], model),
+        getTester(NotLike0, ['00234', '234.00'], model),
+        getTester(NotLike0, ['sitametus', 'tamet'], model),
       ];
 
       const notMatchingTesters = [
@@ -129,18 +138,25 @@ describe('SearchQL testers', () => {
         getTester(Like0, ['first_name', 'umus'], model),
         getTester(Like0, ['last_name', 'emus'], model),
         getTester(Like0, ['description', 'elo unix'], model),
-        getTester(Like0, ['title', 'sitametus'], model),
+        getTester(Like0, ['Title', 'sitametuss'], model),
+        getTester(NotLike0, ['age', '234'], model),
+        getTester(NotLike0, ['first_name', 'Mus'], model),
+        getTester(NotLike0, ['last_name', 'mus'], model),
+        getTester(NotLike0, ['description', 'ello uni'], model),
+        getTester(NotLike0, ['Title', 'SitAmetus'], model),
       ];
 
       matchingTesters.forEach(tester => {
         it(`should find expression "${tester.ast}"`, () => {
+          expect(tester.test(values).type).to.equal(ValueType.Phrase);
           expect(tester.test(values).value).to.be.true;
-          expect(tester.test(values).matches().some().isEmpty()).to.be.false;
+          expect(tester.test(values).matches().isSome()).to.be.true;
         });
       });
 
       trueTesters.forEach(tester => {
         it(`should evaluate expression "${tester.ast}" to True`, () => {
+          expect(tester.test(values).type).to.equal(ValueType.Boolean);
           expect(tester.test(values).value).to.be.true;
           expect(tester.test(values).matches().isNone()).to.be.true;
         });
@@ -148,6 +164,7 @@ describe('SearchQL testers', () => {
 
       falseTesters.forEach(tester => {
         it(`should evaluate expression "${tester.ast}" to False`, () => {
+          expect(tester.test(values).type).to.equal(ValueType.Boolean);
           expect(tester.test(values).value).to.be.false;
           expect(tester.test(values).matches().isNone()).to.be.true;
         });
@@ -155,6 +172,7 @@ describe('SearchQL testers', () => {
 
       notMatchingTesters.forEach(tester => {
         it(`should not find expression "${tester.ast}"`, () => {
+          expect(tester.test(values).type).to.equal(ValueType.Phrase);
           expect(tester.test(values).matches().isSome()).to.be.false;
         });
       });
