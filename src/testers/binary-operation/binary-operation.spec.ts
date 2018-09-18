@@ -5,7 +5,7 @@ import { Map, OrderedSet } from 'immutable';
 import { BinaryOperationExpression, fromMatch, Operator } from '../../ast';
 import { Expression, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
-import { And0, Is0, IsNot0, Like0, NotLike0, Or0 } from '../../testing/utils';
+import { And0, Gt0, Gte0, Is0, IsNot0, Like0, Lt0, Lte0, NotLike0, Or0 } from '../../testing/utils';
 import { BinaryOperationExpressionTester, Tester } from '../index';
 
 const getTester = (operator: Operator, values: [string, string], model: Map<string, ValueType>) => {
@@ -293,6 +293,65 @@ describe('SearchQL testers', () => {
         expect(String(matchingTesters[8].test(values).matches()))
           .to.equal('Just(Map {})');
 
+      });
+    });
+
+    describe('relation operations (GT, GTE, LT, LTE)', () => {
+
+      const values = Map<string, string>({
+        date: '2018-01-01',
+        gross: '123',
+        name: 'an item',
+        net: '100',
+        tax: '23',
+      });
+
+      const model = Map<string, ValueType>({
+        date: ValueType.Date,
+        gross: ValueType.Number,
+        name: ValueType.Text,
+        net: ValueType.Number,
+        tax: ValueType.Number,
+      });
+
+      const trueTesters = [
+        getTester(Gt0, ['gross', '100'], model),
+        getTester(Gt0, ['name', 'aa item'], model),
+        getTester(Gt0, ['date', '2017-05-21'], model),
+
+        getTester(Gte0, ['gross', '100'], model),
+        getTester(Gte0, ['net', '100'], model),
+        getTester(Gte0, ['date', '2018-01-01'], model),
+        getTester(Gte0, ['date', '2017-05-21'], model),
+
+        getTester(Lt0, ['gross', '125'], model),
+        getTester(Lt0, ['tax', '25'], model),
+        getTester(Lt0, ['date', '2018-05-21'], model),
+
+        getTester(Lte0, ['date', '2018-01-01'], model),
+        getTester(Lte0, ['date', '2018-05-21'], model),
+        getTester(Lte0, ['name', 'an item'], model),
+      ];
+
+      const falseTesters = [
+        getTester(Lte0, ['gross', '100'], model),
+        getTester(Lte0, ['net', '99'], model),
+        getTester(Lte0, ['date', '2017-05-21'], model),
+        getTester(Lte0, ['name', 'aa item'], model),
+      ];
+
+      trueTesters.forEach(tester => {
+        it(`should evaluate expression "${tester.ast}" to True`, () => {
+          expect(tester.test(values).value).to.be.true;
+          expect(tester.test(values).matches().isNone()).to.be.true;
+        });
+      });
+
+      falseTesters.forEach(tester => {
+        it(`should evaluate expression "${tester.ast}" to False`, () => {
+          expect(tester.test(values).value).to.be.false;
+          expect(tester.test(values).matches().isNone()).to.be.true;
+        });
       });
     });
 

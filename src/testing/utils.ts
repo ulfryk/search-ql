@@ -53,7 +53,7 @@ const eq = (l: TermExpression, r: TermExpression, op: EqualityOperator | Relatio
     op.is(RelationalOperator) ? r : PhraseExpression.fromTerm(r),
   ]);
 
-const eqR = (l: TermExpression, r: TermExpression, op: EqualityOperator | RelationalOperator) =>
+const eqR = (l: Expression, r: Expression, op: EqualityOperator | RelationalOperator) =>
   new BinaryOperationExpression(op, [l, r]);
 
 // tslint:disable:no-unnecessary-callback-wrapper
@@ -67,15 +67,15 @@ const gte = (l: TermExpression, r: TermExpression, op: GteOperator = Gte) => eq(
 const lt = (l: TermExpression, r: TermExpression, op: LtOperator = Lt) => eq(l, r, op);
 const lte = (l: TermExpression, r: TermExpression, op: LteOperator = Lte) => eq(l, r, op);
 
-const likeR = (l: TermExpression, r: TermExpression, op: LikeOperator = Like) => eqR(l, r, op);
-const notLikeR = (l: TermExpression, r: TermExpression, op: NotLikeOperator = NotLike) =>
+const likeR = (l: Expression, r: Expression, op: LikeOperator = Like) => eqR(l, r, op);
+const notLikeR = (l: Expression, r: Expression, op: NotLikeOperator = NotLike) =>
   eqR(l, r, op);
-const isR = (l: TermExpression, r: TermExpression, op: IsOperator = Is) => eqR(l, r, op);
-const isNotR = (l: TermExpression, r: TermExpression, op: IsNotOperator = IsNot) => eqR(l, r, op);
-const gtR = (l: TermExpression, r: TermExpression, op: GtOperator = Gt) => eqR(l, r, op);
-const gteR = (l: TermExpression, r: TermExpression, op: GteOperator = Gte) => eqR(l, r, op);
-const ltR = (l: TermExpression, r: TermExpression, op: LtOperator = Lt) => eqR(l, r, op);
-const lteR = (l: TermExpression, r: TermExpression, op: LteOperator = Lte) => eqR(l, r, op);
+const isR = (l: Expression, r: Expression, op: IsOperator = Is) => eqR(l, r, op);
+const isNotR = (l: Expression, r: Expression, op: IsNotOperator = IsNot) => eqR(l, r, op);
+const gtR = (l: Expression, r: Expression, op: GtOperator = Gt) => eqR(l, r, op);
+const gteR = (l: Expression, r: Expression, op: GteOperator = Gte) => eqR(l, r, op);
+const ltR = (l: Expression, r: Expression, op: LtOperator = Lt) => eqR(l, r, op);
+const lteR = (l: Expression, r: Expression, op: LteOperator = Lte) => eqR(l, r, op);
 // tslint:enable:no-unnecessary-callback-wrapper
 
 const or = (l: Expression, r: Expression, op: OrOperator = Or) =>
@@ -96,6 +96,9 @@ const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expressio
     () => () => NodeEvaluation.ofBoolean(Map(), null)(false),
   ), args);
 
+const func = (name: string, cfg = config) => (...args: Expression[]) =>
+  FunctionExpression.fromParseResult(cfg.functions.get(name), args);
+
 export {
   config,
   date, num, phrase, phraseFrom, sel, txt, txtFrom,
@@ -110,5 +113,5 @@ export {
   lte, Lte, Lte0, lteR,
   not, Not, Not0,
   or, Or, Or0,
-  fn,
+  fn, func,
 };

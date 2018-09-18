@@ -4,10 +4,10 @@ import { Map } from 'immutable';
 import { zip } from 'lodash';
 import { Either } from 'monet';
 
-import { AndOperator, FunctionExpression, LikeOperator, OrOperator } from './ast';
+import { AndOperator, LikeOperator, OrOperator } from './ast';
 import { ParseFailure, ValueType } from './common/model';
 import { SearchQLParser } from './search-ql-parser';
-import { and, config, fn, isNotR, isR, like, likeR, not, notLike, or, phrase, txt } from './testing/utils';
+import { and, fn, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
 
 describe('SearchQL', () => {
 
@@ -110,6 +110,7 @@ describe('SearchQL', () => {
   describe('SearchQLParser with regular config and defined model', () => {
 
     const model = Map<string, ValueType>({
+      age: ValueType.Number,
       first_name: ValueType.Text,
       token_expired: ValueType.Text, // add BooleanTerm
     });
@@ -123,6 +124,7 @@ describe('SearchQL', () => {
       'is_empty(first_name)',
       '! is_empty(first_name)',
       'first_name !~ noone',
+      'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
     ];
 
     const successfulOutputValues = [
@@ -131,9 +133,16 @@ describe('SearchQL', () => {
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
-      FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')]),
-      not(FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')])),
+      func('is_empty')(txt('first_name')),
+      not(func('is_empty')(txt('first_name'))),
       notLike(txt('first_name'), txt('noone')),
+      or(
+        and(
+          gteR(sel('age', ValueType.Number), num('13')),
+          ltR(sel('age', ValueType.Number), num('18'))),
+        and(
+          gtR(func('length')(txt('first_name')), num('1')),
+          lteR(func('length')(txt('first_name')), num('4')))),
     ].map(Either.of);
 
     const successfulOutputEvaluations = [
@@ -143,6 +152,7 @@ describe('SearchQL', () => {
       false,
       false,
       false,
+      true,
       true,
       true,
     ];
