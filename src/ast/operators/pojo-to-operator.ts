@@ -1,6 +1,6 @@
 import { OperatorType } from '../../common/model';
 import { IOperator } from '../../dto';
-import { AndOperator, IsNotOperator, IsOperator, LikeOperator, NotLikeOperator, OrOperator } from './binary';
+import { AndOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, OrOperator } from './binary';
 
 // tslint:disable-next-line:cyclomatic-complexity
 export const pojoToOperator = (pojo: IOperator) => {
@@ -11,6 +11,10 @@ export const pojoToOperator = (pojo: IOperator) => {
     case OperatorType.NotLike: return new NotLikeOperator(pojo.token);
     case OperatorType.Is: return new IsOperator(pojo.token);
     case OperatorType.IsNot: return new IsNotOperator(pojo.token);
+    case OperatorType.Gt: return new GtOperator(pojo.token);
+    case OperatorType.Gte: return new GteOperator(pojo.token);
+    case OperatorType.Lt: return new LtOperator(pojo.token);
+    case OperatorType.Lte: return new LteOperator(pojo.token);
     default: throw Error(`No such operator type: "${pojo.type}"`);
   }
 };

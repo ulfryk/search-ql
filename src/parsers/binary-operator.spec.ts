@@ -6,13 +6,13 @@ import { ParserConfig } from '../config';
 import { binaryOperator } from './binary-operator';
 
 const config = new ParserConfig();
-const { AND, IS, IS_NOT, LIKE, NOT_LIKE, OR } = config;
+const { binaryOperators } = config;
 
 describe('SearchQL parsers', () => {
 
   describe('binaryOperator', () => {
 
-    const validInput = [...AND, ...IS, ...IS_NOT, ...LIKE, ...NOT_LIKE, ...OR];
+    const validInput = binaryOperators;
 
     validInput.forEach(input => {
       describe(`for '${input}'`, () => {

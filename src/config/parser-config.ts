@@ -91,7 +91,7 @@ export class ParserConfig {
   public get binaryOperators() {
     const { AND, LIKE, NOT_LIKE, OR, GT, LT, IS, GTE, LTE, IS_NOT } = this;
 
-    return [...AND, ...OR, ...LIKE, ...NOT_LIKE, ...GT, ...LT, ...IS_NOT, ...IS, ...GTE, ...LTE];
+    return [...AND, ...OR, ...LIKE, ...NOT_LIKE, ...GTE, ...LTE, ...GT, ...LT, ...IS_NOT, ...IS];
   }
 
   public get unaryOperators() {
