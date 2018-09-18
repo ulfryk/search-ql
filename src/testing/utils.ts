@@ -3,7 +3,7 @@ import { List, Map } from 'immutable';
 import { None } from 'monet';
 
 import { BinaryOperationExpression, DateExpression, fromMatch, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
-import { AndOperator, EqualityOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, NotOperator, OrOperator } from '../ast/operators';
+import { AndOperator, EqualityOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, NotOperator, OrOperator, RelationalOperator } from '../ast/operators';
 import { Expression, NodeEvaluation, ValueType } from '../common/model';
 import { FunctionConfig, OptionalFunctionArg, ParserConfig } from '../config';
 
@@ -45,15 +45,15 @@ const txtFrom = (e: TermExpression) => TextExpression.fromTerm(e);
 const and = (l: Expression, r: Expression, op: AndOperator = And) =>
   new BinaryOperationExpression(op, [l, r]);
 
-const eq = (l: TermExpression, r: TermExpression, op: EqualityOperator) =>
+const eq = (l: TermExpression, r: TermExpression, op: EqualityOperator | RelationalOperator) =>
   new BinaryOperationExpression(op, [
     SelectorExpression.of(l.value)(
       (r as PhraseExpression<any>).term && (r as PhraseExpression<any>).term.returnType ||
       r.returnType),
-    PhraseExpression.fromTerm(r),
+    op.is(RelationalOperator) ? r : PhraseExpression.fromTerm(r),
   ]);
 
-const eqR = (l: TermExpression, r: TermExpression, op: EqualityOperator) =>
+const eqR = (l: TermExpression, r: TermExpression, op: EqualityOperator | RelationalOperator) =>
   new BinaryOperationExpression(op, [l, r]);
 
 // tslint:disable:no-unnecessary-callback-wrapper

@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { Expression, ValueType } from '../../common/model';
-import { and, And, andNot, config, is, Is, isNot, IsNot, Like, like, Not, NotLike, notLike, or, Or, sel } from '../../testing/utils';
+import { and, And, andNot, config, Gt, gt, gte, Gte, is, Is, isNot, IsNot, Like, like, Lt, lt, lte, Lte, Not, NotLike, notLike, Or, or, sel } from '../../testing/utils';
 import { fromMatch, NotExpression, PhraseExpression, TextExpression } from '../expressions';
 import { Operator } from '../operators';
 import { BinaryOperationChain } from './binary-operation-chain';
@@ -303,6 +303,9 @@ describe('SearchQL ast', () => {
           sa, [Is, b], [And, sc], [IsNot, d],
           [Or, sa], [IsNot, b], [And, sc], [Is, d]);
         const chainF = buildChain(sa, [NotLike, b], [And, sc], [Like, d], [Or, se], [NotLike, f]);
+        const chainG = buildChain(
+          sa, [Lt, b], [And, sc], [Gt, d],
+          [Or, sa], [Gte, b], [And, sc], [Lte, d]);
 
         const expression0 = is(sa, b);
         const expressionA = or(and(like(sa, b), like(sc, d)), like(se, f));
@@ -311,6 +314,7 @@ describe('SearchQL ast', () => {
         const expressionD = or(and(is(sa, b), isNot(sc, d)), isNot(sa, b));
         const expressionE = or(and(is(sa, b), isNot(sc, d)), and(isNot(sa, b), is(sc, d)));
         const expressionF = or(and(notLike(sa, b), like(sc, d)), notLike(se, f));
+        const expressionG = or(and(lt(sa, b), gt(sc, d)), and(gte(sa, b), lte(sc, d)));
 
         testReshapeMethod(chain0, expression0);
         testReshapeMethod(chainA, expressionA);
@@ -319,6 +323,7 @@ describe('SearchQL ast', () => {
         testReshapeMethod(chainD, expressionD);
         testReshapeMethod(chainE, expressionE);
         testReshapeMethod(chainF, expressionF);
+        testReshapeMethod(chainG, expressionG);
       });
 
     });

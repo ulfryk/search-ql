@@ -5,16 +5,20 @@ import { zip } from 'lodash';
 
 import { Expression, ExpressionType, OperatorType, ValueType } from '../../common/model';
 import { ParserConfig } from '../../config';
-import { AndOperator, IsNotOperator, IsOperator, LikeOperator, NotLikeOperator, OrOperator } from '../operators';
+import { AndOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, OrOperator } from '../operators';
 import { BinaryOperationExpression } from './binary-operation';
 import { fromMatch, NumberExpression, PhraseExpression, SelectorExpression, TextExpression } from './term';
 
 const config = new ParserConfig();
-const { AND, IS, IS_NOT, LIKE, NOT_LIKE, OR } = config;
+const { AND, GT, GTE, IS, IS_NOT, LIKE, LT, LTE, NOT_LIKE, OR } = config;
 const And = new AndOperator(AND[0]);
+const Gt = new GtOperator(GT[0]);
+const Gte = new GteOperator(GTE[0]);
 const Is = new IsOperator(IS[0]);
 const IsNot = new IsNotOperator(IS_NOT[0]);
 const Like = new LikeOperator(LIKE[0]);
+const Lt = new LtOperator(LT[0]);
+const Lte = new LteOperator(LTE[0]);
 const NotLike = new NotLikeOperator(NOT_LIKE[0]);
 const Or = new OrOperator(OR[0]);
 const phrase = (val: string) => PhraseExpression.fromTerm(fromMatch(config)(val));
@@ -97,6 +101,42 @@ describe('SearchQL expressions', () => {
         )).to.deep.equal(new BinaryOperationExpression(Or, [
           phrase('aaa'),
           phrase('123'),
+        ]));
+
+      });
+
+      it('should properly create relational expressions (GT, LT, GTE, LTE)', () => {
+
+        expect(BinaryOperationExpression.fromPair(Gt)(
+          SelectorExpression.of('age')(ValueType.Number),
+          NumberExpression.of('123'),
+        )).to.deep.equal(new BinaryOperationExpression(Gt, [
+          SelectorExpression.of('age')(ValueType.Number),
+          NumberExpression.of('123'),
+        ]));
+
+        expect(BinaryOperationExpression.fromPair(Lte)(
+          NumberExpression.of('123'),
+          SelectorExpression.of('age')(ValueType.Number),
+        )).to.deep.equal(new BinaryOperationExpression(Lte, [
+          NumberExpression.of('123'),
+          SelectorExpression.of('age')(ValueType.Number),
+        ]));
+
+        expect(BinaryOperationExpression.fromPair(Gte)(
+          TextExpression.of('age'),
+          NumberExpression.of('123'),
+        )).to.deep.equal(new BinaryOperationExpression(Gte, [
+          TextExpression.of('age'),
+          NumberExpression.of('123'),
+        ]));
+
+        expect(BinaryOperationExpression.fromPair(Lt)(
+          NumberExpression.of('123'),
+          TextExpression.of('age'),
+        )).to.deep.equal(new BinaryOperationExpression(Lt, [
+          NumberExpression.of('123'),
+          TextExpression.of('age'),
         ]));
 
       });

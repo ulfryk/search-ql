@@ -6,9 +6,7 @@ import { Either } from 'monet';
 
 import { AndOperator, FunctionExpression, LikeOperator, OrOperator } from './ast';
 import { ParseFailure, ValueType } from './common/model';
-import { ParserConfig } from './config';
 import { SearchQLParser } from './search-ql-parser';
-import { Tester } from './testers';
 import { and, config, fn, isNotR, isR, like, likeR, not, notLike, or, phrase, txt } from './testing/utils';
 
 describe('SearchQL', () => {
@@ -182,19 +180,19 @@ describe('SearchQL', () => {
       ],
     ];
 
+    const entity = Map<string, string>({
+      age: '55',
+      first_name: 'Adam',
+      last_name: 'aaa bbb',
+      token_expired: 'false',
+    });
+
     zip<any>(validInput, successfulOutputValues, successfulOutputEvaluations)
       .forEach(([input, output, evaluation]) => {
         describe(`for valid input: ${input}`, () => {
-          const parsed = SearchQLParser.create({ model }).parse(input);
-
-          const tested = parsed
-            .map(Tester.fromAst(ParserConfig.create({ model })))
-            .map(tester => tester.test(Map<string, string>({
-              age: '55',
-              first_name: 'Adam',
-              last_name: 'aaa bbb',
-              token_expired: 'false',
-            })));
+          const parser = SearchQLParser.create({ model });
+          const parsed = parser.parse(input);
+          const tested = parser.toTester(parsed).map(__ => __.test(entity));
 
           it('should return Right', () => {
             expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;

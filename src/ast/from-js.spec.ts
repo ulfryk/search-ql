@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { ExpressionType, OperatorType, ValueType } from '../common/model';
-import { and, andNot, config, like, likeR, or, phrase, txt } from '../testing/utils';
+import { and, andNot, config, gt, gte, gteR, gtR, like, likeR, lt, lte, lteR, ltR, num, or, phrase, txt } from '../testing/utils';
 import { fromJS } from './from-js';
 
 describe('SearchQL ast', () => {
@@ -14,6 +14,14 @@ describe('SearchQL ast', () => {
       and(phrase('aaa'), phrase('bbb')),
       likeR(txt('first_name'), txt('John')),
       like(txt('first_name'), txt('John')),
+      ltR(num('123'), num('123')),
+      lt(txt('age'), num('50')),
+      lteR(num('123'), num('123')),
+      lte(txt('age'), num('50')),
+      gtR(num('123'), num('123')),
+      gt(txt('age'), num('50')),
+      gteR(num('123'), num('123')),
+      gte(txt('age'), num('50')),
       andNot(phrase('aaa'), phrase('bbb')),
       or(phrase('aaa'), and(phrase('bbb'), phrase('ccc'))),
       or(phrase('aaa'), and(or(phrase('aaa'), and(phrase('bbb'), phrase('ccc'))), phrase('ccc'))),

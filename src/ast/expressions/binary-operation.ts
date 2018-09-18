@@ -20,7 +20,11 @@ export class BinaryOperationExpression extends Expression {
     // tslint:disable-next-line:cyclomatic-complexity
     return (lhs: Expression, rhs: Expression) => {
 
-      if (operator.is(EqualityOperator) || operator.is(RelationalOperator)) {
+      if (operator.is(RelationalOperator)) {
+        return new BinaryOperationExpression(operator, [lhs, rhs]);
+      }
+
+      if (operator.is(EqualityOperator)) {
         if (lhs.is(SelectorExpression as any)) {
           return new BinaryOperationExpression(operator, [
             lhs,
