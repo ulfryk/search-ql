@@ -57,7 +57,7 @@ export class FunctionExpression extends Expression {
     return this.config.name;
   }
 
-  public get returnType() {
+  public get returnType(): ValueType {
     return this.config.returnType;
   }
 

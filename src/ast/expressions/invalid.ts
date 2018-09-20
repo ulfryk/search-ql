@@ -1,6 +1,6 @@
 import { List, Set } from 'immutable';
 
-import { Expression, ExpressionType } from '../../common/model';
+import { Expression, ExpressionType, ValueType } from '../../common/model';
 import { IExpression } from '../../dto';
 
 export class InvalidExpression extends Expression {
@@ -25,7 +25,7 @@ export class InvalidExpression extends Expression {
     public readonly errors: Set<string>,
   ) { super(); }
 
-  public get returnType() {
+  public get returnType(): ValueType {
     return this.value.returnType;
   }
 

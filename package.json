@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "@samwise-tech/core": "^2.0.1",
+    "@types/parsimmon": "^1.10.0",
     "immutable": "^3.8.2",
     "monet": "0.9.0-alpha.4",
     "parsimmon": "^1.12.0"
@@ -47,7 +48,6 @@
     "@types/lodash": "4.14.116",
     "@types/mocha": "5.2.5",
     "@types/node": "10.10.1",
-    "@types/parsimmon": "1.10.0",
     "chai": "4.1.2",
     "circular-dependency-plugin": "5.0.2",
     "core-js": "2.5.7",
