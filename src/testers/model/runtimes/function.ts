@@ -1,6 +1,8 @@
 import { List, Map } from 'immutable';
 
-import { Expression, NodeEvaluation } from '../model';
+import { Expression } from '../../../index';
+
+import { NodeEvaluation } from '../node-evaluation';
 
 export type FunctionRuntime<R> =
   (values: Map<string, string>, node: Expression) =>

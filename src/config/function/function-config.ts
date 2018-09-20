@@ -3,20 +3,18 @@ import { List } from 'immutable';
 import { Maybe } from 'monet';
 
 import { ValueType } from '../../common/model';
-import { FunctionRuntime } from '../../common/runtimes';
 import { FunctionArg, OptionalFunctionArg } from './function-arg';
 
-export class FunctionConfig<R> implements ISetoid {
+export class FunctionConfig implements ISetoid {
 
   constructor(
     public readonly name: string,
     public readonly args: List<FunctionArg>,
     public readonly argsRest: Maybe<OptionalFunctionArg>,
     public readonly returnType: ValueType,
-    public readonly runtime: FunctionRuntime<R>,
   ) {}
 
-  public equals(other: FunctionConfig<any>) {
+  public equals(other: FunctionConfig) {
     return this === other || (
       this.name === other.name &&
       this.args.equals(other.args) &&

@@ -1,15 +1,16 @@
 import { Map } from 'immutable';
 
-import { DateExpression } from '../../ast';
-import { NodeEvaluation } from '../../common/model';
-import { ParserConfig } from '../../config';
+import { DateExpression } from '../../index';
+
+import { TesterConfig } from '../config';
+import { NodeEvaluation } from '../model';
 import { Tester } from '../tester';
 
 export class DateExpressionTester extends Tester<number, DateExpression, null> {
 
   constructor(
     public readonly ast: DateExpression,
-    public readonly config: ParserConfig,
+    public readonly config: TesterConfig,
   ) {
     super(ast, null, config);
   }

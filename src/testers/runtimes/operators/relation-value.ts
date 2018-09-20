@@ -1,7 +1,8 @@
 import { Map } from 'immutable';
 
-import { DateExpression, NumberExpression, SelectorExpression } from '../../ast';
-import { compareNum, IOrd, NodeEvaluation, Ordering, ValueType } from '../../common/model';
+import { compareNum, DateExpression, IOrd, NumberExpression, Ordering, SelectorExpression, ValueType } from '../../../index';
+
+import { NodeEvaluation } from '../../model';
 
 const normalizeValue = <E>(v: string, type: ValueType) => {
   if (type === ValueType.Date) {

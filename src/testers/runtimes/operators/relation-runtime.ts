@@ -1,4 +1,4 @@
-import { BinaryOperatorRuntime } from '../../common/runtimes';
+import { BinaryOperatorRuntime } from '../../model';
 
 export type RelPlain<T> = BinaryOperatorRuntime<T, T, boolean>;
 export type RelSel<T> = BinaryOperatorRuntime<string, T, boolean>

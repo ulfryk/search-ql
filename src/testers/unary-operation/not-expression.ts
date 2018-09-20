@@ -1,8 +1,9 @@
 import { Map } from 'immutable';
 import { None, Some } from 'monet';
 
-import { NotExpression } from '../../ast';
-import { Expression, Match, NodeEvaluation, ValueType } from '../../common/model';
+import { Expression, Match, NotExpression, ValueType } from '../../index';
+
+import { NodeEvaluation } from '../model';
 import { Tester } from '../tester';
 
 export class NotExpressionTester

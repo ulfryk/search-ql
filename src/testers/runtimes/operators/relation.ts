@@ -1,6 +1,7 @@
-import { RelationRuntime } from './relation-runtime';
+import { Ordering } from '../../../index';
 
-import { NodeEvaluation, Ordering } from '../../common/model';
+import { NodeEvaluation } from '../../model';
+import { RelationRuntime } from './relation-runtime';
 import { RelationValue } from './relation-value';
 
 export const relational =

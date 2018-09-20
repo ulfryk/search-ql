@@ -1,7 +1,6 @@
 import { Maybe } from 'monet';
 
-import { NodeEvaluation } from '../../common/model';
-import { BinaryOperatorRuntime } from '../../common/runtimes';
+import { BinaryOperatorRuntime, NodeEvaluation } from '../../model';
 
 export const or: BinaryOperatorRuntime<boolean, boolean, boolean> =
   (values, node) => (left, right) => {

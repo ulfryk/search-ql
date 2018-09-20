@@ -1,17 +1,16 @@
 import { List } from 'immutable';
 
-import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TextExpression } from '../ast';
-import { ParserConfig } from '../config';
+import { BinaryOperationExpression, DateExpression, Expression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TextExpression } from '../index';
 
-import { Expression } from '../common/model';
 import { BinaryOperationExpressionTester } from './binary-operation';
+import { TesterConfig } from './config';
 import { FunctionExpressionTester } from './function';
 import { DateExpressionTester, NumberExpressionTester, PhraseExpressionTester, TextExpressionTester } from './term';
 import { Tester } from './tester';
 import { NotExpressionTester } from './unary-operation';
 
 // tslint:disable-next-line:cyclomatic-complexity
-Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
+Tester.fromAst = (config: TesterConfig) => (ast: Expression) => {
   switch (ast.constructor) {
 
     case DateExpression:
@@ -35,7 +34,7 @@ Tester.fromAst = (config: ParserConfig) => (ast: Expression) => {
 
     case FunctionExpression:
       return new FunctionExpressionTester(
-        ast as FunctionExpression<any>,
+        ast as FunctionExpression,
         ast.value.map(Tester.fromAst(config)),
         config);
 

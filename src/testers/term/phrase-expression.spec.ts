@@ -2,15 +2,17 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { fromMatch, PhraseExpression } from '../../ast';
-import { ParserConfig } from '../../config';
+import { fromMatch, ParserConfig, PhraseExpression } from '../../index';
+
+import { TesterConfig } from '../config';
 import { PhraseExpressionTester } from './phrase-expression';
 
-const config = new ParserConfig();
-const phrase = (val: string) => PhraseExpression.fromTerm(fromMatch(config)(val));
+const pConfig = ParserConfig.create({});
+const tConfig = TesterConfig.create({});
+const phrase = (val: string) => PhraseExpression.fromTerm(fromMatch(pConfig)(val));
 
 const getTester = (expr: PhraseExpression<any>) =>
-  new PhraseExpressionTester(expr, config);
+  new PhraseExpressionTester(expr, tConfig);
 
 describe('SearchQL testers', () => {
 

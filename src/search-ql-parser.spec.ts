@@ -145,17 +145,17 @@ describe('SearchQL', () => {
           lteR(func('length')(txt('first_name')), num('4')))),
     ].map(Either.of);
 
-    const successfulOutputEvaluations = [
-      true,
-      false,
-      true,
-      false,
-      false,
-      false,
-      true,
-      true,
-      true,
-    ];
+    // const successfulOutputEvaluations = [
+    //   true,
+    //   false,
+    //   true,
+    //   false,
+    //   false,
+    //   false,
+    //   true,
+    //   true,
+    //   true,
+    // ];
 
     const invalidInput = [
       'ASDfas 32%@$%4512 u954anna as d][;];.{P} AND',
@@ -190,19 +190,19 @@ describe('SearchQL', () => {
       ],
     ];
 
-    const entity = Map<string, string>({
-      age: '55',
-      first_name: 'Adam',
-      last_name: 'aaa bbb',
-      token_expired: 'false',
-    });
+    // const entity = Map<string, string>({
+    //   age: '55',
+    //   first_name: 'Adam',
+    //   last_name: 'aaa bbb',
+    //   token_expired: 'false',
+    // });
 
-    zip<any>(validInput, successfulOutputValues, successfulOutputEvaluations)
-      .forEach(([input, output, evaluation]) => {
+    zip<any>(validInput, successfulOutputValues)
+      .forEach(([input, output]) => {
         describe(`for valid input: ${input}`, () => {
           const parser = SearchQLParser.create({ model });
           const parsed = parser.parse(input);
-          const tested = parser.toTester(parsed).map(__ => __.test(entity));
+          // const tested = parser.toTester(parsed).map(__ => __.test(entity));
 
           it('should return Right', () => {
             expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
@@ -212,9 +212,9 @@ describe('SearchQL', () => {
             expect(parsed.equals(output)).to.be.true;
           });
 
-          it('should properly evaluate expression against input object', () => {
-            expect(tested.right().value).to.equal(evaluation);
-          });
+          // it('should properly evaluate expression against input object', () => {
+          //   expect(tested.right().value).to.equal(evaluation);
+          // });
 
         });
       });

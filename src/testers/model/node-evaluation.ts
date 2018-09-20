@@ -1,9 +1,7 @@
 import { Map } from 'immutable';
 import { Maybe, None } from 'monet';
 
-import { Expression } from './expression';
-import { Match } from './match';
-import { ValueType } from './value-type';
+import { Expression, Match, ValueType } from '../../index';
 
 // IDefaultInput below is not used right now. Yet will be in future :)
 export class NodeEvaluation<V> {

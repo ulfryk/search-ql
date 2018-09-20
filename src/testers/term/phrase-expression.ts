@@ -2,16 +2,17 @@ import { indexOf } from '@samwise-tech/core';
 import { Map, OrderedSet } from 'immutable';
 import { Maybe, Some } from 'monet';
 
-import { PhraseExpression } from '../../ast';
-import { Match, NodeEvaluation } from '../../common/model';
-import { ParserConfig } from '../../config';
+import { Match, PhraseExpression } from '../../index';
+
+import { TesterConfig } from '../config';
+import { NodeEvaluation } from '../model';
 import { Tester } from '../tester';
 
 export class PhraseExpressionTester extends Tester<boolean, PhraseExpression<any>, null> {
 
   constructor(
     public readonly ast: PhraseExpression<any>,
-    public readonly config: ParserConfig,
+    public readonly config: TesterConfig,
   ) {
     super(ast, null, config);
   }

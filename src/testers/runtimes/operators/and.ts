@@ -1,5 +1,6 @@
-import { Match, NodeEvaluation } from '../../common/model';
-import { BinaryOperatorRuntime } from '../../common/runtimes';
+import { Match } from '../../../index';
+
+import { BinaryOperatorRuntime, NodeEvaluation } from '../../model';
 
 export const and: BinaryOperatorRuntime<boolean, boolean, boolean> =
   (values, node) => (left, right) => {

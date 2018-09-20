@@ -2,18 +2,20 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { fromMatch, NotExpression, PhraseExpression } from '../../ast';
-import { ParserConfig } from '../../config';
+import { fromMatch, NotExpression, ParserConfig, PhraseExpression } from '../../index';
+
+import { TesterConfig } from '../config';
 import { PhraseExpressionTester } from '../term';
 import { NotExpressionTester } from './not-expression';
 
-const config = new ParserConfig();
+const pConfig = ParserConfig.create({});
+const tConfig = TesterConfig.create({});
 
 const getNotPhraseTester = (value: string): NotExpressionTester => {
-  const text = PhraseExpression.fromTerm(fromMatch(config)(value));
+  const text = PhraseExpression.fromTerm(fromMatch(pConfig)(value));
   const expr = new NotExpression(text);
 
-  return new NotExpressionTester(expr, new PhraseExpressionTester(text, config), config);
+  return new NotExpressionTester(expr, new PhraseExpressionTester(text, tConfig), tConfig);
 };
 
 describe('SearchQL testers', () => {

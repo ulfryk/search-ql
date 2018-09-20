@@ -1,8 +1,9 @@
 import { Map } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Match, NodeEvaluation, ValueType } from '../../common/model';
-import { BinaryOperatorRuntime } from '../../common/runtimes';
+import { Match, ValueType } from '../../../index';
+
+import { BinaryOperatorRuntime, NodeEvaluation } from '../../model';
 
 const getLabel = (selector: string, values: Map<string, string>): Maybe<string> =>
   values.has(selector) ? Some(selector) : None();

@@ -2,16 +2,19 @@
 import { expect } from 'chai';
 import { List, Map } from 'immutable';
 
-import { FunctionExpression } from '../../ast';
-import { Expression } from '../../common/model';
+import { Expression, FunctionExpression } from '../../index';
 import { config, txt } from '../../testing/utils';
+
+import { TesterConfig } from '../config';
 import { FunctionExpressionTester, Tester } from '../index';
 
+const tConfig = TesterConfig.create({});
+
 const getFnTester = (name: string) => (...args: Expression[]) =>
-  new FunctionExpressionTester(
+  new FunctionExpressionTester<any>(
     FunctionExpression.fromParseResult(config.functions.get(name), args),
-    List(args.map(Tester.fromAst(config))),
-    config);
+    List(args.map(Tester.fromAst(tConfig))),
+    tConfig);
 
 describe('SearchQL testers', () => {
 

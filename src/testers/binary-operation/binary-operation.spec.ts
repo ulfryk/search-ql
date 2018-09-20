@@ -2,11 +2,13 @@
 import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
 
-import { BinaryOperationExpression, fromMatch, Operator } from '../../ast';
-import { Expression, ValueType } from '../../common/model';
-import { ParserConfig } from '../../config';
+import { BinaryOperationExpression, Expression, fromMatch, Operator, ParserConfig, ValueType } from '../../index';
 import { And0, Gt0, Gte0, Is0, IsNot0, Like0, Lt0, Lte0, NotLike0, Or0 } from '../../testing/utils';
+
+import { TesterConfig } from '../config';
 import { BinaryOperationExpressionTester, Tester } from '../index';
+
+const tConfig = TesterConfig.create({});
 
 const getTester = (operator: Operator, values: [string, string], model: Map<string, ValueType>) => {
   const config = ParserConfig.create({ model });
@@ -15,8 +17,8 @@ const getTester = (operator: Operator, values: [string, string], model: Map<stri
 
   return new BinaryOperationExpressionTester<any, any, any>(
     expr,
-    OrderedSet<Expression>(expr.value).map(Tester.fromAst(config)).toOrderedSet(),
-    config);
+    OrderedSet<Expression>(expr.value).map(Tester.fromAst(tConfig)).toOrderedSet(),
+    tConfig);
 };
 
 describe('SearchQL testers', () => {
