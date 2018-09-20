@@ -6,6 +6,7 @@ import { None, Some } from 'monet';
 
 import { Expression, ExpressionType, ValueType } from '../../../common/model';
 import { FunctionConfig, OptionalFunctionArg, ParserConfig, RequiredFunctionArg } from '../../../config';
+import { ArgDemand } from '../../../dto';
 import { AndOperator, LikeOperator } from '../../operators';
 import { BinaryOperationExpression } from '../binary-operation';
 import { NotExpression } from '../not';
@@ -197,13 +198,27 @@ describe('SearchQL expressions', () => {
 
       const rhs = [
         {
-          name: 'return_null',
+          config: {
+            args: [] as any[],
+            argsRest: null as any,
+            name: 'return_null',
+            returnType: ValueType.Boolean,
+          },
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [] as any[],
         },
         {
-          name: 'id',
+          config: {
+            args: [{
+              demand: ArgDemand.Optional,
+              label: 'arg0',
+              type: ValueType.Text,
+            }],
+            argsRest: null as any,
+            name: 'id',
+            returnType: ValueType.Boolean,
+          },
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [{
@@ -214,7 +229,16 @@ describe('SearchQL expressions', () => {
           }],
         },
         {
-          name: 'is_date',
+          config: {
+            args: [{
+              demand: ArgDemand.Optional,
+              label: 'arg0',
+              type: ValueType.Date,
+            }],
+            argsRest: null as any,
+            name: 'is_date',
+            returnType: ValueType.Boolean,
+          },
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [{

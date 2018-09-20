@@ -3,9 +3,18 @@ import { List } from 'immutable';
 import { Maybe } from 'monet';
 
 import { ValueType } from '../../common/model';
+import { IFunctionConfig } from '../../dto';
 import { FunctionArg, OptionalFunctionArg } from './function-arg';
 
 export class FunctionConfig implements ISetoid {
+
+  public static fromJS({ args, argsRest, name, returnType }: IFunctionConfig): FunctionConfig {
+    return new FunctionConfig(
+      name,
+      List(args.map(FunctionArg.fromJS)),
+      Maybe.fromNull(argsRest).map(FunctionArg.fromJS),
+      returnType);
+  }
 
   constructor(
     public readonly name: string,
@@ -20,6 +29,15 @@ export class FunctionConfig implements ISetoid {
       this.args.equals(other.args) &&
       this.returnType === other.returnType
     );
+  }
+
+  public toJS(): IFunctionConfig {
+    return {
+      args: this.args.toArray().map(arg => arg.toJS()),
+      argsRest: this.argsRest.map(arg => arg.toJS()).orNull(),
+      name: this.name,
+      returnType: this.returnType,
+    };
   }
 
 }

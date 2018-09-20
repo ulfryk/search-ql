@@ -97,7 +97,7 @@ export class FunctionExpression extends Expression {
 
   public toJS(): IFunctionExpression {
     return {
-      name: this.name,
+      config: this.config.toJS(),
       returnType: this.returnType,
       type: this.type,
       value: this.value.map(arg => arg.toJS()).toArray(),
