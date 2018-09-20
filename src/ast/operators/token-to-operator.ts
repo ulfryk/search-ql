@@ -4,7 +4,7 @@ import { Maybe } from 'monet';
 import { OperatorType } from '../../common/model';
 import { ParserConfig } from '../../config';
 
-import { AndOperator, BinaryOperator, IsNotOperator, IsOperator, LikeOperator, OrOperator } from './binary';
+import { AndOperator, BinaryOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, OrOperator } from './binary';
 import { Operator } from './operator';
 import { NotOperator } from './unary';
 
@@ -13,8 +13,13 @@ const operatorMapping = Map<OperatorType, (token: string) => BinaryOperator>([
   [OperatorType.Is, (token: string) => new IsOperator(token)],
   [OperatorType.IsNot, (token: string) => new IsNotOperator(token)],
   [OperatorType.Like, (token: string) => new LikeOperator(token)],
+  [OperatorType.NotLike, (token: string) => new NotLikeOperator(token)],
   [OperatorType.Not, (token: string) => new NotOperator(token)],
   [OperatorType.Or, (token: string) => new OrOperator(token)],
+  [OperatorType.Gt, (token: string) => new GtOperator(token)],
+  [OperatorType.Gte, (token: string) => new GteOperator(token)],
+  [OperatorType.Lt, (token: string) => new LtOperator(token)],
+  [OperatorType.Lte, (token: string) => new LteOperator(token)],
 ]);
 
 export const tokenToOperator = (config: ParserConfig) => (token: string): Operator =>

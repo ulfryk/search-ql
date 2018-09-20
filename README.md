@@ -2,6 +2,8 @@
 
 QL used for advanced searches in Samwise applications. It's a slightly updated subset of [GitHub search syntax][1]. Implemented using [parsimmon][2] - a monadic parser combinator library for javascript.
 
+See [documentation][5].
+
 ## Syntax
 
 There are few special words and characters used in SearchQL (configurable):
@@ -71,12 +73,12 @@ It's just a set of any SearchQL expressions joined together by logical operators
 import { parseSearchQL } from '@samwise-tech/search-ql';
 
 // Create a pre-configured parser
-const parse = parseSearchQL({ …config… });
+const parser = SearchQLParser.create({ …config… });
 
 // The parser fed with search query will produce expression tree which can be used for testing some
 // list of values or for building queries that work with other systems (e.g. ElasticSearch)
-const validExpression = parse('description LIKE (ipsum OR NOT dolor) AND "john doe"'); // Right { Expression }
-const failure = parse('des:: c: ipsum OR NOT dolor AND "john doe":"'); // Left { ParseFailure }
+const validExpression = parser.parse('description LIKE (ipsum OR NOT dolor) AND "john doe"'); // Right { Expression }
+const failure = parser.parse('des:: c: ipsum OR NOT dolor AND "john doe":"'); // Left { ParseFailure }
 ```
 
 The returned expression is wrapped in an `Either` monad (coming from [monet][3]), it's `Right { Expression }` if passed string was valid SearchQL query or `Left { ParseFailure }` if parser failed to parse given query.
@@ -86,7 +88,7 @@ A valid expression can be then transformed to a Tester instance:
 ```typescript
 import { ParserConfig, Tester } from '@samwise-tech/search-ql';
 
-const tester = validExpression.map(Tester.fromAst(ParserConfig.create({ …config… })));
+const tester = parser.toTester(validExpression); // Right { Tester }
 ```
 
 To test some object against SearchQL expression, it has to be serialized to a `Map<string, string>`. It has to be [ImmutableJS][4] implementation, native `Map` is not supported for now.
@@ -101,10 +103,10 @@ tester
   }))); // => Right { Some(Map { "description" : Match {…} }) }
 
 tester
-    .map(validTester => validTester.test(Map({
-      description: "Lorem ipsum dolor",
-      name: "John Doe",
-    }))); // => Right { None }
+  .map(validTester => validTester.test(Map({
+    description: "Lorem ipsum dolor",
+    name: "John Doe",
+  }))); // => Right { None }
 
 ```
 
@@ -112,3 +114,4 @@ tester
 [2]: https://github.com/jneen/parsimmon
 [3]: https://cwmyers.github.io/monet.js/
 [4]: https://facebook.github.io/immutable-js/
+[5]: docs/README.md

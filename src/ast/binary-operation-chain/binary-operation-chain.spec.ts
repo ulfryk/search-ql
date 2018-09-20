@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { Expression, ValueType } from '../../common/model';
-import { and, And, andNot, config, is, Is, isNot, IsNot, Like, like, Not, or, Or, sel } from '../../testing/utils';
+import { and, And, andNot, config, Gt, gt, gte, Gte, is, Is, isNot, IsNot, Like, like, Lt, lt, lte, Lte, Not, NotLike, notLike, Or, or, sel } from '../../testing/utils';
 import { fromMatch, NotExpression, PhraseExpression, TextExpression } from '../expressions';
 import { Operator } from '../operators';
 import { BinaryOperationChain } from './binary-operation-chain';
@@ -12,7 +12,7 @@ const buildChain = (initial: Expression, ...chain: [Operator, Expression][]) =>
     (acc, [op, expr]) => acc.append(expr, config)(op),
     BinaryOperationChain.init(initial));
 
-const testRebuildMethod = (chain: BinaryOperationChain, expected: Expression) => {
+const testReshapeMethod = (chain: BinaryOperationChain, expected: Expression) => {
   const expression = chain.reshape();
 
   describe(`chain: ${chain}`, () => {
@@ -208,7 +208,7 @@ describe('SearchQL ast', () => {
       describe('for single expression', () => {
         const a = fromMatch(config)('aaaa');
 
-        testRebuildMethod(buildChain(a), a);
+        testReshapeMethod(buildChain(a), a);
 
       });
 
@@ -229,11 +229,11 @@ describe('SearchQL ast', () => {
         const expression5 = and(expression4, e);
         const expression6 = and(expression5, f);
 
-        testRebuildMethod(chain2, expression2);
-        testRebuildMethod(chain3, expression3);
-        testRebuildMethod(chain4, expression4);
-        testRebuildMethod(chain5, expression5);
-        testRebuildMethod(chain6, expression6);
+        testReshapeMethod(chain2, expression2);
+        testReshapeMethod(chain3, expression3);
+        testReshapeMethod(chain4, expression4);
+        testReshapeMethod(chain5, expression5);
+        testReshapeMethod(chain6, expression6);
 
       });
 
@@ -254,11 +254,11 @@ describe('SearchQL ast', () => {
         const expression5 = or(expression4, e);
         const expression6 = or(expression5, f);
 
-        testRebuildMethod(chain2, expression2);
-        testRebuildMethod(chain3, expression3);
-        testRebuildMethod(chain4, expression4);
-        testRebuildMethod(chain5, expression5);
-        testRebuildMethod(chain6, expression6);
+        testReshapeMethod(chain2, expression2);
+        testReshapeMethod(chain3, expression3);
+        testReshapeMethod(chain4, expression4);
+        testReshapeMethod(chain5, expression5);
+        testReshapeMethod(chain6, expression6);
 
       });
 
@@ -279,11 +279,11 @@ describe('SearchQL ast', () => {
         const expressionD = or(or(and(a, b), and(c, d)), and(e, f));
         const expressionE = or(or(or(or(a, b), and(c, d)), e), f);
 
-        testRebuildMethod(chainA, expressionA);
-        testRebuildMethod(chainB, expressionB);
-        testRebuildMethod(chainC, expressionC);
-        testRebuildMethod(chainD, expressionD);
-        testRebuildMethod(chainE, expressionE);
+        testReshapeMethod(chainA, expressionA);
+        testReshapeMethod(chainB, expressionB);
+        testReshapeMethod(chainC, expressionC);
+        testReshapeMethod(chainD, expressionD);
+        testReshapeMethod(chainE, expressionE);
       });
 
       describe('for mixed chains', () => {
@@ -302,6 +302,10 @@ describe('SearchQL ast', () => {
         const chainE = buildChain(
           sa, [Is, b], [And, sc], [IsNot, d],
           [Or, sa], [IsNot, b], [And, sc], [Is, d]);
+        const chainF = buildChain(sa, [NotLike, b], [And, sc], [Like, d], [Or, se], [NotLike, f]);
+        const chainG = buildChain(
+          sa, [Lt, b], [And, sc], [Gt, d],
+          [Or, sa], [Gte, b], [And, sc], [Lte, d]);
 
         const expression0 = is(sa, b);
         const expressionA = or(and(like(sa, b), like(sc, d)), like(se, f));
@@ -309,13 +313,17 @@ describe('SearchQL ast', () => {
         const expressionC = and(is(sa, b), isNot(sc, d));
         const expressionD = or(and(is(sa, b), isNot(sc, d)), isNot(sa, b));
         const expressionE = or(and(is(sa, b), isNot(sc, d)), and(isNot(sa, b), is(sc, d)));
+        const expressionF = or(and(notLike(sa, b), like(sc, d)), notLike(se, f));
+        const expressionG = or(and(lt(sa, b), gt(sc, d)), and(gte(sa, b), lte(sc, d)));
 
-        testRebuildMethod(chain0, expression0);
-        testRebuildMethod(chainA, expressionA);
-        testRebuildMethod(chainB, expressionB);
-        testRebuildMethod(chainC, expressionC);
-        testRebuildMethod(chainD, expressionD);
-        testRebuildMethod(chainE, expressionE);
+        testReshapeMethod(chain0, expression0);
+        testReshapeMethod(chainA, expressionA);
+        testReshapeMethod(chainB, expressionB);
+        testReshapeMethod(chainC, expressionC);
+        testReshapeMethod(chainD, expressionD);
+        testReshapeMethod(chainE, expressionE);
+        testReshapeMethod(chainF, expressionF);
+        testReshapeMethod(chainG, expressionG);
       });
 
     });

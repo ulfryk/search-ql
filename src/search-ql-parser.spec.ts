@@ -4,23 +4,14 @@ import { Map } from 'immutable';
 import { zip } from 'lodash';
 import { Either } from 'monet';
 
-import { AndOperator, FunctionExpression, LikeOperator, OrOperator } from './ast';
+import { AndOperator, LikeOperator, OrOperator } from './ast';
 import { ParseFailure, ValueType } from './common/model';
-import { ParserConfig, ParserName } from './config';
-import { parseSearchQL } from './parse-search-ql';
-import { Tester } from './testers';
-import { and, config, fn, isNotR, isR, like, likeR, not, or, phrase, txt } from './testing/utils';
-
-const allParserNames = [
-  ParserName.Basic,
-  ParserName.BinaryOperation,
-  ParserName.Function,
-  ParserName.Not,
-];
+import { SearchQLParser } from './search-ql-parser';
+import { and, fn, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
 
 describe('SearchQL', () => {
 
-  describe('parseSearchQL with regular config', () => {
+  describe('SearchQLParser with regular config', () => {
 
     const validInput = [
       'aaa & bbb',
@@ -69,7 +60,7 @@ describe('SearchQL', () => {
 
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
-        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
+        const parsed = SearchQLParser.create().parse(input);
 
         it('should return Right', () => {
           expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
@@ -84,7 +75,7 @@ describe('SearchQL', () => {
 
     invalidInput.forEach(input => {
       describe(`for invalid input: ${input}`, () => {
-        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
+        const parsed = SearchQLParser.create().parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft()).to.be.true;
@@ -101,7 +92,7 @@ describe('SearchQL', () => {
 
     invalidTypesInput.forEach((input, i) => {
       describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
-        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
+        const parsed = SearchQLParser.create().parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
@@ -116,9 +107,10 @@ describe('SearchQL', () => {
 
   });
 
-  describe('parseSearchQL with regular config and defined model', () => {
+  describe('SearchQLParser with regular config and defined model', () => {
 
     const model = Map<string, ValueType>({
+      age: ValueType.Number,
       first_name: ValueType.Text,
       token_expired: ValueType.Text, // add BooleanTerm
     });
@@ -131,6 +123,8 @@ describe('SearchQL', () => {
       'aaa = bbb & cc != dd',
       'is_empty(first_name)',
       '! is_empty(first_name)',
+      'first_name !~ noone',
+      'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
     ];
 
     const successfulOutputValues = [
@@ -139,8 +133,16 @@ describe('SearchQL', () => {
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
-      FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')]),
-      not(FunctionExpression.fromParseResult(config.functions.get('is_empty'), [txt('first_name')])),
+      func('is_empty')(txt('first_name')),
+      not(func('is_empty')(txt('first_name'))),
+      notLike(txt('first_name'), txt('noone')),
+      or(
+        and(
+          gteR(sel('age', ValueType.Number), num('13')),
+          ltR(sel('age', ValueType.Number), num('18'))),
+        and(
+          gtR(func('length')(txt('first_name')), num('1')),
+          lteR(func('length')(txt('first_name')), num('4')))),
     ].map(Either.of);
 
     const successfulOutputEvaluations = [
@@ -150,6 +152,8 @@ describe('SearchQL', () => {
       false,
       false,
       false,
+      true,
+      true,
       true,
     ];
 
@@ -186,19 +190,19 @@ describe('SearchQL', () => {
       ],
     ];
 
+    const entity = Map<string, string>({
+      age: '55',
+      first_name: 'Adam',
+      last_name: 'aaa bbb',
+      token_expired: 'false',
+    });
+
     zip<any>(validInput, successfulOutputValues, successfulOutputEvaluations)
       .forEach(([input, output, evaluation]) => {
         describe(`for valid input: ${input}`, () => {
-          const parsed = parseSearchQL({ model, parserNames: allParserNames })(input);
-
-          const tested = parsed
-            .map(Tester.fromAst(ParserConfig.create({ model, parserNames: allParserNames })))
-            .map(tester => tester.test(Map<string, string>({
-              age: '55',
-              first_name: 'Adam',
-              last_name: 'aaa bbb',
-              token_expired: 'false',
-            })));
+          const parser = SearchQLParser.create({ model });
+          const parsed = parser.parse(input);
+          const tested = parser.toTester(parsed).map(__ => __.test(entity));
 
           it('should return Right', () => {
             expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
@@ -217,7 +221,7 @@ describe('SearchQL', () => {
 
     invalidInput.forEach(input => {
       describe(`for invalid input: ${input}`, () => {
-        const parsed = parseSearchQL({ model, parserNames: allParserNames })(input);
+        const parsed = SearchQLParser.create({ model }).parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft()).to.be.true;
@@ -234,7 +238,7 @@ describe('SearchQL', () => {
 
     invalidTypesInput.forEach((input, i) => {
       describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
-        const parsed = parseSearchQL({ parserNames: allParserNames })(input);
+        const parsed = SearchQLParser.create().parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
@@ -249,7 +253,7 @@ describe('SearchQL', () => {
 
   });
 
-  describe('parseSearchQL with custom config', () => {
+  describe('SearchQLParser with custom config', () => {
 
     const model = Map<string, ValueType>({
       first_name: ValueType.Text,
@@ -263,7 +267,6 @@ describe('SearchQL', () => {
       LIKE: ['~='],
       OR: ['||'],
       model,
-      parserNames: allParserNames,
     };
 
     const AndC = new AndOperator('&&');
@@ -304,7 +307,7 @@ describe('SearchQL', () => {
 
     zip<any>(validInput, successfulOutputValues).forEach(([input, output]) => {
       describe(`for valid input: ${input}`, () => {
-        const parsed = parseSearchQL(configC)(input);
+        const parsed = SearchQLParser.create(configC).parse(input);
 
         it('should return Right', () => {
           expect(parsed.isRight(), parsed.cata(String, String)).to.be.true;
@@ -319,7 +322,7 @@ describe('SearchQL', () => {
 
     invalidInput.forEach(input => {
       describe(`for invalid input: ${input}`, () => {
-        const parsed = parseSearchQL(configC)(input);
+        const parsed = SearchQLParser.create(configC).parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft()).to.be.true;

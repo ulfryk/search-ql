@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { ExpressionType, OperatorType, ValueType } from '../common/model';
-import { and, andNot, config, like, likeR, or, phrase, txt } from '../testing/utils';
+import { and, andNot, config, gt, gte, gteR, gtR, like, likeR, lt, lte, lteR, ltR, num, or, phrase, txt } from '../testing/utils';
 import { fromJS } from './from-js';
 
 describe('SearchQL ast', () => {
@@ -14,6 +14,14 @@ describe('SearchQL ast', () => {
       and(phrase('aaa'), phrase('bbb')),
       likeR(txt('first_name'), txt('John')),
       like(txt('first_name'), txt('John')),
+      ltR(num('123'), num('123')),
+      lt(txt('age'), num('50')),
+      lteR(num('123'), num('123')),
+      lte(txt('age'), num('50')),
+      gtR(num('123'), num('123')),
+      gt(txt('age'), num('50')),
+      gteR(num('123'), num('123')),
+      gte(txt('age'), num('50')),
       andNot(phrase('aaa'), phrase('bbb')),
       or(phrase('aaa'), and(phrase('bbb'), phrase('ccc'))),
       or(phrase('aaa'), and(or(phrase('aaa'), and(phrase('bbb'), phrase('ccc'))), phrase('ccc'))),
@@ -21,7 +29,7 @@ describe('SearchQL ast', () => {
     ];
 
     ast.forEach(expression => {
-      it(`should properly convert JSON created ba 'toJS' method back to data (for ${expression})`,
+      it(`should properly convert JSON created by 'toJS' method back to data (for ${expression})`,
         () => {
           expect(fromJS(config)(expression.toJS()).toJS()).to.deep.equal(expression.toJS());
           expect(fromJS(config)(expression.toJS()).equals(expression)).to.be.true;
@@ -89,7 +97,7 @@ describe('SearchQL ast', () => {
       ],
     };
 
-    it('should properly work for manually input', () => {
+    it('should properly work for manual input', () => {
       expect(pojo).to.deep.equal(ast.slice().pop().toJS());
       expect(fromJS(config)(pojo).equals(ast.slice().pop())).to.be.true;
     });

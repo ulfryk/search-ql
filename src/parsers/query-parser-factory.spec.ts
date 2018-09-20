@@ -5,7 +5,7 @@ import { zip } from 'lodash';
 
 import { Expression, ValueType } from '../common/model';
 import { ParserConfig, ParserName } from '../config';
-import { and, And0, andNot, config, fn, is, isNot, Like0, likeR, not, or, Or0, phrase, sel, txt } from '../testing/utils';
+import { and, And0, andNot, config, fn, is, isNot, Like0, likeR, not, NotLike0, notLikeR, or, Or0, phrase, sel, txt } from '../testing/utils';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
@@ -56,7 +56,7 @@ const test = (
 
 describe('SearchQL parsers', () => {
 
-  describe('QueryParserFactory', () => {
+  describe('QueryParser', () => {
 
     describe('with all parsers', () => {
 
@@ -82,6 +82,7 @@ describe('SearchQL parsers', () => {
         'age != 16 & name = John',
         'age = 24 & name != Doe',
         'age != 16 & name = John | age = 24 & name != Doe',
+        'aaa !~ bbb & ccc NOT LIKE ddd',
       ];
 
       const validOutput = [
@@ -110,6 +111,7 @@ describe('SearchQL parsers', () => {
         or(
           and(isNot(sel('age', ValueType.Number), phrase('16')), is(sel('name', ValueType.Text), phrase('John'))),
           and(is(sel('age', ValueType.Number), phrase('24')), isNot(sel('name', ValueType.Text), phrase('Doe')))),
+        and(notLikeR(txt('aaa'), txt('bbb')), notLikeR(txt('ccc'), txt('ddd'), NotLike0)),
       ];
 
       const invalidInput = [

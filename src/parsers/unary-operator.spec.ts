@@ -6,13 +6,13 @@ import { ParserConfig } from '../config';
 import { unaryOperator } from './unary-operator';
 
 const config = new ParserConfig();
-const { NOT } = config;
+const { unaryOperators } = config;
 
 describe('SearchQL parsers', () => {
 
   describe('unaryOperator', () => {
 
-    const validInput = [...NOT];
+    const validInput = unaryOperators;
 
     validInput.forEach(input => {
       describe(`for '${input}'`, () => {

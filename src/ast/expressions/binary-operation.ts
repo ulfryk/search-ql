@@ -3,7 +3,7 @@ import { Maybe, None, Some } from 'monet';
 
 import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
 import { IBinaryOperationExpression, IExpression } from '../../dto';
-import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator } from '../operators';
+import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator, RelationalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './term';
 
@@ -19,6 +19,10 @@ export class BinaryOperationExpression extends Expression {
   public static fromPair(operator: BinaryOperator) {
     // tslint:disable-next-line:cyclomatic-complexity
     return (lhs: Expression, rhs: Expression) => {
+
+      if (operator.is(RelationalOperator)) {
+        return new BinaryOperationExpression(operator, [lhs, rhs]);
+      }
 
       if (operator.is(EqualityOperator)) {
         if (lhs.is(SelectorExpression as any)) {
