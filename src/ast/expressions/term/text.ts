@@ -1,7 +1,7 @@
-import { Map } from 'immutable';
-import { None } from 'monet';
+import { None, Some } from 'monet';
 
-import { ExpressionType, ValueType } from '../../../common/model';
+import { Expression, ExpressionType } from '../../../common/model';
+import { InvalidExpression } from '../invalid';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
@@ -21,13 +21,19 @@ export class TextExpression extends TermExpression<string> {
     super(value, preparedValue);
   }
 
+  public checkIntegrity(): Expression {
+    return this.getIntegrityError()
+      .foldLeft(this as Expression)(InvalidExpression.fromError);
+  }
+
   protected toPhrase(): TermExpression {
     return PhraseExpression.fromTerm(this);
   }
 
-  protected getIntegrityError(_model: Map<string, ValueType>) {
-    // TODO: Integrity
-    return None<string>();
+  private getIntegrityError() {
+    return this.value.trim() === this.preparedValue ? None<string>() :
+      Some('Values of TextExpression doesn\'t match: ' +
+        `{ value: ${this.value.trim()}, preparedValue: ${this.preparedValue}}`);
   }
 
 }
