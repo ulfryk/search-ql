@@ -7,13 +7,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 4.0.0 - 2018-09-19
+
+### Added
+- `GT`, `GTE`, `LT` and `LTE` relational (ord) binary operators
+- `NOT LIKE` similarity binary operator
+
+### Changed
+- **breaking** changed entry point - `SearchQLParser` class instead of `parseSearchQL` function
+
+### Fixed
+- update dependencies
+
 ## 3.0.0 - 2018-09-15
 
 ### Added
 - allow custom configuration
 - operators and binary operation expressions
   - `AND`, `OR` logical operators (used with `BinaryOperationExpression`)
-  - `LIKE` equality operator (replacement for `LabelledExpression`)
+  - `LIKE` similarity operator (replacement for `LabelledExpression`)
   - `IS`, `IS NOT` equality operators (used with `BinaryOperationExpression`)
   - `NOT` - (used with `NotExpression`, `UnaryOperationExpression` will be implemented soon)
 - abstract `TermExpression` with sub expressions:

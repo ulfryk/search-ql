@@ -30,9 +30,9 @@
     tslint-eslint-rules "5.3.1"
     tslint-immutable "4.6.0"
 
-"@types/chai@4.1.4":
-  version "4.1.4"
-  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.4.tgz#5ca073b330d90b4066d6ce18f60d57f2084ce8ca"
+"@types/chai@4.1.5":
+  version "4.1.5"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.5.tgz#6163dc60078d215ec46186dc76062ef6ed68d39c"
 
 "@types/lodash@4.14.116":
   version "4.14.116"
@@ -677,8 +677,8 @@ circular-dependency-plugin@5.0.2:
   resolved "https://registry.yarnpkg.com/circular-dependency-plugin/-/circular-dependency-plugin-5.0.2.tgz#da168c0b37e7b43563fb9f912c1c007c213389ef"
 
 circular-json@^0.5.5:
-  version "0.5.5"
-  resolved "https://registry.yarnpkg.com/circular-json/-/circular-json-0.5.5.tgz#64182ef359042d37cd8e767fc9de878b1e9447d3"
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/circular-json/-/circular-json-0.5.7.tgz#b8be478d72ea58c7eeda26bf1cf1fba43d188842"
 
 class-utils@^0.3.5:
   version "0.3.6"
