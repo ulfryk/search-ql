@@ -1,3 +1,6 @@
+import { Map } from 'immutable';
+import { None } from 'monet';
+
 import { ExpressionType, ValueType } from '../../../common/model';
 import { isNumber } from './is-number';
 import { PhraseExpression } from './phrase';
@@ -27,6 +30,11 @@ export class NumberExpression extends TermExpression<number> {
 
   protected toPhrase(): TermExpression {
     return PhraseExpression.fromTerm(this);
+  }
+
+  protected getIntegrityError(_model: Map<string, ValueType>) {
+    // TODO: Integrity
+    return None<string>();
   }
 
 }

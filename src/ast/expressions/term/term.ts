@@ -1,8 +1,9 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { Maybe } from 'monet';
 
 import { Expression, ReshapeContext, ValueType } from '../../../common/model';
 import { ITermExpression } from '../../../dto';
+import { InvalidExpression } from '../invalid';
 
 export abstract class TermExpression<PV = any> extends Expression {
 
@@ -53,6 +54,12 @@ export abstract class TermExpression<PV = any> extends Expression {
     };
   }
 
+  public checkIntegrity(model: Map<string, ValueType>): Expression {
+    return this.getIntegrityError(model)
+      .foldLeft(this as Expression)(InvalidExpression.fromError);
+  }
+
   protected abstract toPhrase(): TermExpression;
+  protected abstract getIntegrityError(model: Map<string, ValueType>): Maybe<string>;
 
 }

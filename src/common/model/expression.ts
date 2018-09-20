@@ -1,5 +1,5 @@
 import { ISetoid } from '@samwise-tech/core';
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 
 import { ReshapeContext, ValueType } from '../../common/model';
 import { IExpression } from '../../dto';
@@ -12,6 +12,7 @@ export abstract class Expression implements IExpression, ISetoid {
   public abstract equals(other: Expression): boolean;
   public abstract reshape(ctx?: ReshapeContext): Expression;
   public abstract checkTypes(): Expression;
+  public abstract checkIntegrity(model: Map<string, ValueType>): Expression;
   public abstract isValid(): boolean;
   public abstract toString(): string;
   public abstract toList(): List<Expression>;

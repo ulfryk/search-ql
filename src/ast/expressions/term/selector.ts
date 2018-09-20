@@ -1,3 +1,6 @@
+import { Map } from 'immutable';
+import { None } from 'monet';
+
 import { ExpressionType, ValueType } from '../../../common/model';
 import { ISelectorExpression } from '../../../dto';
 import { PhraseExpression } from './phrase';
@@ -32,6 +35,11 @@ export class SelectorExpression extends TermExpression<string> {
 
   protected toPhrase(): TermExpression {
     return PhraseExpression.fromTerm(this);
+  }
+
+  protected getIntegrityError(_model: Map<string, ValueType>) {
+    // TODO: Integrity
+    return None<string>();
   }
 
 }

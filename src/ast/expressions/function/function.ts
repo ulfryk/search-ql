@@ -1,6 +1,6 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { zip } from 'lodash';
-import { Maybe, Some } from 'monet';
+import { Maybe, None, Some } from 'monet';
 
 import { checkBoolCompatibility, Expression, ExpressionType, isSubtype, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
@@ -80,8 +80,14 @@ export class FunctionExpression extends Expression {
   }
 
   public checkTypes() {
-    return this.getErrors()
+    return this.getTypeErrors()
       .foldLeft(this.clone(this.value.map(arg => arg.checkTypes()).toList()))(
+        InvalidExpression.fromErrors);
+  }
+
+  public checkIntegrity(model: Map<string, ValueType>) {
+    return this.getIntegrityErrors(model)
+      .foldLeft(this.clone(this.value.map(arg => arg.checkIntegrity(model)).toList()))(
         InvalidExpression.fromErrors);
   }
 
@@ -112,7 +118,7 @@ export class FunctionExpression extends Expression {
     return new FunctionExpression(args, this.config);
   }
 
-  private getErrors(): Maybe<string[]> {
+  private getTypeErrors(): Maybe<string[]> {
     const restArgs = this.value.slice(this.config.args.size).toList();
     const initialArgs = this.value.slice(0, this.config.args.size).toList();
     const requiredArgsCount = this.config.args
@@ -172,6 +178,11 @@ export class FunctionExpression extends Expression {
           `should be ${type} but is ${arg.returnType}`))
       .filter(errors => !errors.isEmpty())
       .fold([])(errors => errors.toArray());
+  }
+
+  private getIntegrityErrors(_model: Map<string, ValueType>) {
+    // TODO: Integrity
+    return None<string[]>();
   }
 
 }

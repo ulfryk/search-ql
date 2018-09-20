@@ -1,4 +1,4 @@
-import { List, Set } from 'immutable';
+import { List, Map, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
 import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
@@ -79,6 +79,16 @@ export class BinaryOperationExpression extends Expression {
 
   public checkTypes() {
     const [newLeft, newRight] = this.value.map(side => side.checkTypes());
+
+    return this.check(newLeft, newRight)
+      .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
+  }
+
+  public checkIntegrity(model: Map<string, ValueType>) {
+    const [newLeft, newRight] = this.value.map(side => side.checkIntegrity(model));
+
+    // TODO: Integrity
+    // - exactly same values on each side
 
     return this.check(newLeft, newRight)
       .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);

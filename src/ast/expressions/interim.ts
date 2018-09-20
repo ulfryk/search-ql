@@ -15,6 +15,10 @@ export abstract class InterimExpression extends Expression {
     throw Error(`${this.errorPrefix} Its type is not known.`);
   }
 
+  public checkIntegrity(): Expression {
+    throw Error(`${this.errorPrefix} Its integrity is not known.`);
+  }
+
   public toList(): List<Expression> {
     throw Error(`${this.errorPrefix} Can not be converted to a List.`);
   }

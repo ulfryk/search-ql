@@ -1,5 +1,5 @@
-import { List } from 'immutable';
-import { Some } from 'monet';
+import { List, Map } from 'immutable';
+import { None, Some } from 'monet';
 
 import { Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { INotExpression } from '../../dto';
@@ -39,8 +39,13 @@ export class NotExpression extends Expression {
   }
 
   public checkTypes() {
-    return this.getError()
+    return this.getTypeError()
       .foldLeft(this.clone(this.value.checkTypes()))(InvalidExpression.fromError);
+  }
+
+  public checkIntegrity(model: Map<string, ValueType>) {
+    return this.getIntegrityError()
+      .foldLeft(this.clone(this.value.checkIntegrity(model)))(InvalidExpression.fromError);
   }
 
   public reshape() {
@@ -74,11 +79,16 @@ export class NotExpression extends Expression {
     return new NotExpression(newValue);
   }
 
-  private getError() {
+  private getTypeError() {
     return Some(this.value)
       .filter(value => !(isBooleanType(value.returnType) || value.is(PhraseExpression as any)))
       .map(({ returnType }) =>
         `Operand of NOT operation should be a BOOLEAN, but got ${returnType}`);
+  }
+
+  private getIntegrityError() {
+    // TODO: Integrity
+    return None();
   }
 
 }

@@ -1,4 +1,7 @@
-import { ExpressionType } from '../../../common/model';
+import { Map } from 'immutable';
+import { None } from 'monet';
+
+import { ExpressionType, ValueType } from '../../../common/model';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
@@ -20,6 +23,11 @@ export class TextExpression extends TermExpression<string> {
 
   protected toPhrase(): TermExpression {
     return PhraseExpression.fromTerm(this);
+  }
+
+  protected getIntegrityError(_model: Map<string, ValueType>) {
+    // TODO: Integrity
+    return None<string>();
   }
 
 }
