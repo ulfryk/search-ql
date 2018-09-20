@@ -2,7 +2,7 @@
 
 QL used for advanced searches in Samwise applications. It's a slightly updated subset of [GitHub search syntax][1]. Implemented using [parsimmon][2] - a monadic parser combinator library for javascript.
 
-See [documentation][5].
+See [documentation][4].
 
 ## Syntax
 
@@ -83,35 +83,7 @@ const failure = parser.parse('des:: c: ipsum OR NOT dolor AND "john doe":"'); //
 
 The returned expression is wrapped in an `Either` monad (coming from [monet][3]), it's `Right { Expression }` if passed string was valid SearchQL query or `Left { ParseFailure }` if parser failed to parse given query.
 
-A valid expression can be then transformed to a Tester instance:
-
-```typescript
-import { ParserConfig, Tester } from '@samwise-tech/search-ql';
-
-const tester = parser.toTester(validExpression); // Right { Tester }
-```
-
-To test some object against SearchQL expression, it has to be serialized to a `Map<string, string>`. It has to be [ImmutableJS][4] implementation, native `Map` is not supported for now.
-
-```typescript
-import { Map } from 'immutable';
-
-tester
-  .map(validTester => validTester.test(Map({
-    description: "Lorem ipsum",
-    name: "John Doe",
-  }))); // => Right { Some(Map { "description" : Match {…} }) }
-
-tester
-  .map(validTester => validTester.test(Map({
-    description: "Lorem ipsum dolor",
-    name: "John Doe",
-  }))); // => Right { None }
-
-```
-
 [1]: https://help.github.com/articles/search-syntax/
 [2]: https://github.com/jneen/parsimmon
 [3]: https://cwmyers.github.io/monet.js/
-[4]: https://facebook.github.io/immutable-js/
-[5]: docs/README.md
+[4]: docs/README.md
