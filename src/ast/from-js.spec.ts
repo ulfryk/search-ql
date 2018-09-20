@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 
 import { ExpressionType, OperatorType, ValueType } from '../common/model';
-import { and, andNot, config, gt, gte, gteR, gtR, like, likeR, lt, lte, lteR, ltR, num, or, phrase, txt } from '../testing/utils';
+import { and, andNot, gt, gte, gteR, gtR, like, likeR, lt, lte, lteR, ltR, num, or, phrase, txt } from '../testing/utils';
 import { fromJS } from './from-js';
 
 describe('SearchQL ast', () => {
@@ -31,8 +31,8 @@ describe('SearchQL ast', () => {
     ast.forEach(expression => {
       it(`should properly convert JSON created by 'toJS' method back to data (for ${expression})`,
         () => {
-          expect(fromJS(config)(expression.toJS()).toJS()).to.deep.equal(expression.toJS());
-          expect(fromJS(config)(expression.toJS()).equals(expression)).to.be.true;
+          expect(fromJS(expression.toJS()).toJS()).to.deep.equal(expression.toJS());
+          expect(fromJS(expression.toJS()).equals(expression)).to.be.true;
         });
     });
 
@@ -99,7 +99,7 @@ describe('SearchQL ast', () => {
 
     it('should properly work for manual input', () => {
       expect(pojo).to.deep.equal(ast.slice().pop().toJS());
-      expect(fromJS(config)(pojo).equals(ast.slice().pop())).to.be.true;
+      expect(fromJS(pojo).equals(ast.slice().pop())).to.be.true;
     });
 
   });

@@ -5,7 +5,8 @@ import { zip } from 'lodash';
 import { None, Some } from 'monet';
 
 import { Expression, ExpressionType, ValueType } from '../../../common/model';
-import { FunctionConfig, OptionalFunctionArg, ParserConfig, RequiredFunctionArg, testFunction } from '../../../config';
+import { FunctionConfig, OptionalFunctionArg, ParserConfig, RequiredFunctionArg } from '../../../config';
+import { ArgDemand } from '../../../dto';
 import { AndOperator, LikeOperator } from '../../operators';
 import { BinaryOperationExpression } from '../binary-operation';
 import { NotExpression } from '../not';
@@ -19,8 +20,7 @@ const fn = (name: string, ...args: Expression[]) =>
       name,
       List(args.map(({ returnType: t }, i) => OptionalFunctionArg.fromType(t, `arg${i}`))),
       None(),
-      ValueType.Boolean,
-      testFunction.runtime));
+      ValueType.Boolean));
 
 const phrase = (val: string): PhraseExpression<any> =>
   PhraseExpression.fromTerm(fromMatch(config)(val));
@@ -76,15 +76,15 @@ describe('SearchQL expressions', () => {
 
       const cfgTextIsDate = new FunctionConfig(
         'text_is_date', List([RequiredFunctionArg.fromType(ValueType.Text, 'text')]),
-        None(), ValueType.Boolean, testFunction.runtime);
+        None(), ValueType.Boolean);
 
       const cfgIsDate = new FunctionConfig(
         'is_date', List([RequiredFunctionArg.fromType(ValueType.Any, 'input')]),
-        None(), ValueType.Boolean, testFunction.runtime);
+        None(), ValueType.Boolean);
 
       const cfgTrim = new FunctionConfig(
         'trim', List([RequiredFunctionArg.fromType(ValueType.Text, 'text')]),
-        None(), ValueType.Text, testFunction.runtime);
+        None(), ValueType.Text);
 
       const cfgCoalesce = new FunctionConfig(
         'coalesce', List([
@@ -92,7 +92,7 @@ describe('SearchQL expressions', () => {
           RequiredFunctionArg.fromType(ValueType.Text, 'option'),
         ]),
         Some(OptionalFunctionArg.fromType(ValueType.Text, 'option')),
-        ValueType.Text, testFunction.runtime);
+        ValueType.Text);
 
       const validFns = [
         FunctionExpression.fromParseResult(cfgIsDate, [new NotExpression(phrase('lorem'))]),
@@ -198,13 +198,27 @@ describe('SearchQL expressions', () => {
 
       const rhs = [
         {
-          name: 'return_null',
+          config: {
+            args: [] as any[],
+            argsRest: null as any,
+            name: 'return_null',
+            returnType: ValueType.Boolean,
+          },
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [] as any[],
         },
         {
-          name: 'id',
+          config: {
+            args: [{
+              demand: ArgDemand.Optional,
+              label: 'arg0',
+              type: ValueType.Text,
+            }],
+            argsRest: null as any,
+            name: 'id',
+            returnType: ValueType.Boolean,
+          },
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [{
@@ -215,7 +229,16 @@ describe('SearchQL expressions', () => {
           }],
         },
         {
-          name: 'is_date',
+          config: {
+            args: [{
+              demand: ArgDemand.Optional,
+              label: 'arg0',
+              type: ValueType.Date,
+            }],
+            argsRest: null as any,
+            name: 'is_date',
+            returnType: ValueType.Boolean,
+          },
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [{

@@ -5,7 +5,6 @@ import { validate } from './ast';
 import { Expression, Failure, ParseFailure } from './common/model';
 import { ParserConfig } from './config';
 import { QueryParserFactory } from './parsers';
-import { Tester } from './testers';
 
 export class SearchQLParser {
 
@@ -23,12 +22,6 @@ export class SearchQLParser {
     return parsed.status ?
       Right<Failure[], Expression>(parsed.value).flatMap(validate) :
       Left<Failure[], Expression>([ParseFailure.fromFailure(parsed as P.Failure, query)]);
-  }
-
-  public toTester(
-    parsed: Either<Failure[], Expression>,
-  ): Either<Failure[], Tester<any, Expression, any>> {
-    return parsed.map(Tester.fromAst(this.factory.config));
   }
 
 }

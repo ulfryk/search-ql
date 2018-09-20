@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 5.0.0 - 2018-09-20
+
+### Removed
+- **breaking** - testers completely moved out from library
+
+### Changed
+- **breaking** changed API of `SearchQLParser` - `toTester` method removed
+
+### Fixed
+- update dependencies
+
 ## 4.0.0 - 2018-09-19
 
 ### Added

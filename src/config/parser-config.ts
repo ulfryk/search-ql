@@ -9,13 +9,13 @@ export class ParserConfig {
 
   public static create(
     {
-      caseSensitive, parserNames, model, builtInFunctions, customFunctions,
+      parserNames, model, builtInFunctions, customFunctions,
       AND, OR, GT, LT, GTE, LTE, IS, IS_NOT, LIKE, NOT_LIKE, NOT,
       GROUP_START, GROUP_END, EXACT_MATCHER,
       FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR,
     }: Partial<ParserConfig>,
   ) {
-    return new ParserConfig(caseSensitive, parserNames, model, builtInFunctions, customFunctions,
+    return new ParserConfig(parserNames, model, builtInFunctions, customFunctions,
       AND, OR, LIKE, NOT_LIKE, GT, LT, IS, GTE, LTE, IS_NOT, NOT, GROUP_START, GROUP_END,
       EXACT_MATCHER, FN_LEFT_PAREN, FN_RIGHT_PAREN, FN_ARG_SEPARATOR);
   }
@@ -37,18 +37,17 @@ export class ParserConfig {
     ...this.NOT.map(token => [token, OperatorType.Not]),
   ]);
 
-  public readonly functions = Map<string, FunctionConfig<any>>([
+  public readonly functions = Map<string, FunctionConfig>([
     ...this.builtInFunctions,
     ...this.customFunctions,
   ].map(fnConfig => [fnConfig.name, fnConfig]));
 
   constructor(
-    public readonly caseSensitive: boolean = false,
     public readonly parserNames: ParserName[] = allParsers,
     public readonly model: Map<string, ValueType> = Map(),
     // functions
-    public readonly builtInFunctions: FunctionConfig<any>[] = allBuiltInFunctions,
-    public readonly customFunctions: FunctionConfig<any>[] = [],
+    public readonly builtInFunctions: FunctionConfig[] = allBuiltInFunctions,
+    public readonly customFunctions: FunctionConfig[] = [],
     // binary operators
     public readonly AND = ['AND', '&'],
     public readonly OR = ['OR', '|'],

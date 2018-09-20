@@ -5,7 +5,7 @@ import { ReshapeContext, ValueType } from '../../common/model';
 import { IExpression } from '../../dto';
 import { ExpressionType } from './expression-type';
 
-export abstract class Expression implements ISetoid {
+export abstract class Expression implements IExpression, ISetoid {
   public abstract readonly value: any;
   public abstract readonly returnType: ValueType;
   public abstract readonly type: ExpressionType;

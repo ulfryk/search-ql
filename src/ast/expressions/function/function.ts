@@ -9,9 +9,9 @@ import { IFunctionExpression } from '../../../dto';
 import { InvalidExpression } from '../invalid';
 import { DateExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../term';
 
-export class FunctionExpression<R> extends Expression {
+export class FunctionExpression extends Expression {
 
-  public static fromParseResult<O>(config: FunctionConfig<O>, args: Expression[]) {
+  public static fromParseResult(config: FunctionConfig, args: Expression[]) {
     const argsCount = args.length;
     const baseArgsCount = config.args.size;
     const restArgsCount = argsCount - baseArgsCount;
@@ -50,7 +50,7 @@ export class FunctionExpression<R> extends Expression {
 
   constructor(
     public readonly value: List<Expression>,
-    public readonly config: FunctionConfig<R>,
+    public readonly config: FunctionConfig,
   ) { super(); }
 
   public get name() {
@@ -97,7 +97,7 @@ export class FunctionExpression<R> extends Expression {
 
   public toJS(): IFunctionExpression {
     return {
-      name: this.name,
+      config: this.config.toJS(),
       returnType: this.returnType,
       type: this.type,
       value: this.value.map(arg => arg.toJS()).toArray(),

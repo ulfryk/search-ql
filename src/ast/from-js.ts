@@ -1,12 +1,12 @@
 import { List } from 'immutable';
 import { Expression, ExpressionType } from '../common/model';
-import { ParserConfig } from '../config';
+import { FunctionConfig } from '../config';
 import { IBinaryOperationExpression, IExpression, IFunctionExpression, INotExpression, IPhraseExpression, ISelectorExpression, ITermExpression } from '../dto';
 import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './expressions';
 import { Operator } from './operators';
 
 // tslint:disable-next-line:cyclomatic-complexity
-export const fromJS = <E extends IExpression>(config: ParserConfig) => (pojo: E): Expression => {
+export const fromJS = <E extends IExpression>(pojo: E): Expression => {
 
   switch (pojo.type) {
     case ExpressionType.Date: {
@@ -31,24 +31,24 @@ export const fromJS = <E extends IExpression>(config: ParserConfig) => (pojo: E)
 
     case ExpressionType.Phrase: {
       const { term } = (pojo as any as IPhraseExpression<any>);
-      return new PhraseExpression(fromJS(config)(term) as TermExpression);
+      return new PhraseExpression(fromJS(term) as TermExpression);
     }
 
     case ExpressionType.Not: {
       const { value } = (pojo as any as INotExpression);
-      return new NotExpression(fromJS(config)(value));
+      return new NotExpression(fromJS(value));
     }
 
     case ExpressionType.Binary: {
       const { operator, value } = (pojo as any as IBinaryOperationExpression<any, any>);
       const [lhs, rhs] = value;
       return new BinaryOperationExpression(Operator.fromJS(operator),
-        [fromJS(config)(lhs), fromJS(config)(rhs)]);
+        [fromJS(lhs), fromJS(rhs)]);
     }
 
     case ExpressionType.Function: {
-      const { name, value } = (pojo as any as IFunctionExpression);
-      return new FunctionExpression(List(value.map(fromJS(config))), config.functions.get(name));
+      const { config, value } = (pojo as any as IFunctionExpression);
+      return new FunctionExpression(List(value.map(fromJS)), FunctionConfig.fromJS(config));
     }
 
     default: throw new Error(`No such expression type: "${pojo.type}"`);
