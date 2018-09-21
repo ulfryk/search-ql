@@ -32,7 +32,7 @@ export class TextExpression extends TermExpression<string> {
 
   private getIntegrityError() {
     return this.value.trim() === this.preparedValue ? None<string>() :
-      Some('Values of TextExpression doesn\'t match: ' +
+      Some('Values of TextExpression don\'t match: ' +
         `{ value: ${this.value.trim()}, preparedValue: ${this.preparedValue}}`);
   }
 

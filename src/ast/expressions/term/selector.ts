@@ -53,7 +53,7 @@ export class SelectorExpression extends TermExpression<string> {
 
   private getNotInModelError(model: Map<string, ValueType>) {
     return model.has(this.preparedValue) ? [] : [
-      `SelectorExpression is invalid ${this.preparedValue} is ` +
+      `SelectorExpression is invalid - "${this.preparedValue}" is ` +
         'not available on model definition',
     ];
   }
@@ -68,7 +68,7 @@ export class SelectorExpression extends TermExpression<string> {
 
   private getNotMatchingValuesError() {
     return this.value.trim() === this.preparedValue ? [] : [
-      'Values of SelectorExpression doesn\'t match: ' +
+      'Values of SelectorExpression don\'t match: ' +
         `{ value: ${this.value.trim()}, preparedValue: ${this.preparedValue}}`,
     ];
   }

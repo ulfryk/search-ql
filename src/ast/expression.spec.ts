@@ -117,13 +117,13 @@ describe('SearchQL ast: Expression tree', () => {
         returnType: ValueType.Text,
         type: ExpressionType.Text,
         value: 'ccc',
-      }, ['Values of TextExpression doesn\'t match: { value: ccc, preparedValue:  c c c }']],
+      }, ['Values of TextExpression don\'t match: { value: ccc, preparedValue:  c c c }']],
       [{
         preparedValue: ' c c c ',
         returnType: ValueType.Text,
         type: ExpressionType.Text,
         value: 'ccc',
-      }, ['Values of TextExpression doesn\'t match: { value: ccc, preparedValue:  c c c }']],
+      }, ['Values of TextExpression don\'t match: { value: ccc, preparedValue:  c c c }']],
 
       // --- NUMBER ---
       [{
@@ -212,7 +212,7 @@ describe('SearchQL ast: Expression tree', () => {
         returnType: ValueType.Text,
         type: ExpressionType.Selector,
         value: 'firstName',
-      }, ['SelectorExpression is invalid firstName is not available on model definition']],
+      }, ['SelectorExpression is invalid - "firstName" is not available on model definition']],
 
       // --- PHRASE ---
       [{
@@ -226,7 +226,7 @@ describe('SearchQL ast: Expression tree', () => {
         },
         type: ExpressionType.Phrase,
         value: ' lorem ipsum ',
-      }, ['PhraseExpression term error: Values of TextExpression doesn\'t match: { value: lorem ipsum, preparedValue: orem psum}']],
+      }, ['PhraseExpression term error: Values of TextExpression don\'t match: { value: lorem ipsum, preparedValue: orem psum}']],
 
     ] as [any, string[]][];
 
