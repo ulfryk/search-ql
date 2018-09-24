@@ -14,7 +14,8 @@ export const fromPairs =
         (acc, [token, rhs]) => acc
           .flatMap(group => token
             .map(Operator.fromToken(config))
-            .map<Expression>(group.append(rhs, config)))
+            .map(group.append(rhs, config)))
           .orElse(Some(BinaryOperationChain.init(rhs))),
         None<BinaryOperationChain>())
+      .map(e => e as Expression)
       .orJust(InvalidExpression.empty('No valid expression found.'));

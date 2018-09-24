@@ -8,7 +8,7 @@ import { fromJS } from './from-js';
 
 const getErrors = (e: Expression) => e.toList()
   .filter(node => node instanceof InvalidExpression)
-  .flatMap(({ errors }: InvalidExpression) => errors)
+  .flatMap(expr => (expr as InvalidExpression).errors)
   .toArray();
 
 describe('SearchQL ast: Expression tree', () => {

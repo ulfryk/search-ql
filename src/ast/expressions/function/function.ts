@@ -46,7 +46,7 @@ export class FunctionExpression extends Expression {
     return new FunctionExpression(argExpressions, config);
   }
 
-  public readonly type = ExpressionType.Function;
+  public readonly type: ExpressionType.Function = ExpressionType.Function;
 
   constructor(
     public readonly value: List<Expression>,

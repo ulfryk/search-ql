@@ -17,7 +17,7 @@ export class InvalidExpression extends Expression {
     return InvalidExpression.fromError(null, error);
   }
 
-  public readonly type = ExpressionType.Invalid;
+  public readonly type: ExpressionType.Invalid = ExpressionType.Invalid;
 
   constructor(
     public readonly value: Expression,

@@ -15,7 +15,7 @@ export class TextExpression extends TermExpression<string> {
     return new TextExpression(value);
   }
 
-  public readonly type = ExpressionType.Text;
+  public readonly type: ExpressionType.Text = ExpressionType.Text;
 
   constructor(value: string, preparedValue = value.trim()) {
     super(value, preparedValue);

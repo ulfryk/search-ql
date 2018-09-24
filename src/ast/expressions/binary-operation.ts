@@ -49,7 +49,7 @@ export class BinaryOperationExpression extends Expression {
     };
   }
 
-  public readonly type = ExpressionType.Binary;
+  public readonly type: ExpressionType.Binary = ExpressionType.Binary;
 
   constructor(
     public readonly operator: BinaryOperator,

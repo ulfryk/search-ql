@@ -1,5 +1,5 @@
 import { ISetoid } from '@samwise-tech/core';
-import { Iterable, Map, OrderedSet } from 'immutable';
+import { Iterable, Map, OrderedSet, Seq } from 'immutable';
 import { Maybe } from 'monet';
 
 import { MatchError } from './error';
@@ -65,9 +65,8 @@ export class Match implements ISetoid {
   }
 
   public getFlatMatched(): OrderedSet<MatchCoords> {
-    return this.matched.entrySeq()
-      .flatMap<number, MatchCoords>(([__, coords]: [string, OrderedSet<MatchCoords>]) => coords
-        .map(singleCoords => singleCoords))
+    return (this.matched.entrySeq() as Seq.Indexed<[string, OrderedSet<MatchCoords>]>)
+      .flatMap(([__, coords]) => coords.map(singleCoords => singleCoords))
       .sort((a, b) => a.compare(b))
       .reduce((acc, next) =>
         Maybe.fromNull(acc.last()).cata(

@@ -22,7 +22,7 @@ export class NumberExpression extends TermExpression<number> {
   }
 
   public readonly returnType = ValueType.Number;
-  public readonly type = ExpressionType.Number;
+  public readonly type: ExpressionType.Number = ExpressionType.Number;
 
   constructor(value: string, preparedValue = NumberExpression.prepareValue(value)) {
     super(value, preparedValue);

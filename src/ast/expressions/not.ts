@@ -1,5 +1,5 @@
 import { List, Map } from 'immutable';
-import { None, Some } from 'monet';
+import { Maybe, None, Some } from 'monet';
 
 import { Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { INotExpression } from '../../dto';
@@ -16,7 +16,7 @@ export class NotExpression extends Expression {
     return NotExpression.of(operand);
   }
 
-  public readonly type = ExpressionType.Not;
+  public readonly type: ExpressionType.Not = ExpressionType.Not;
 
   constructor(
     public readonly value: Expression,
@@ -86,7 +86,7 @@ export class NotExpression extends Expression {
         `Operand of NOT operation should be a BOOLEAN, but got ${returnType}`);
   }
 
-  private getIntegrityError() {
+  private getIntegrityError(): Maybe<string> {
     // TODO: Integrity
     return None();
   }

@@ -69,7 +69,8 @@ describe('SearchQL', () => {
 
     it(`should properly convert number to ordinal (String)`, () => {
 
-      input.forEach(([n, o]: [number, string]) => {
+      input.forEach(pair => {
+        const [n, o] = pair as [number, string];
         expect(toOrdinal(n)).to.equal(o);
       });
 

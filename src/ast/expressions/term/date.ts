@@ -22,7 +22,7 @@ export class DateExpression extends TermExpression<number> {
   }
 
   public readonly returnType = ValueType.Date;
-  public readonly type = ExpressionType.Date;
+  public readonly type: ExpressionType.Date = ExpressionType.Date;
 
   constructor(value: string, preparedValue = DateExpression.prepareValue(value)) {
     super(value, preparedValue);

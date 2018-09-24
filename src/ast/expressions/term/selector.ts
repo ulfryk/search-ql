@@ -14,7 +14,7 @@ export class SelectorExpression extends TermExpression<string> {
       new SelectorExpression(matchingType, value);
   }
 
-  public readonly type = ExpressionType.Selector;
+  public readonly type: ExpressionType.Selector = ExpressionType.Selector;
 
   constructor(
     public readonly matchingType: ValueType,

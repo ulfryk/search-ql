@@ -21,7 +21,7 @@ export class SearchQLParser {
 
     return parsed.status ?
       Right<Failure[], Expression>(parsed.value).flatMap(validate) :
-      Left<Failure[], Expression>([ParseFailure.fromFailure(parsed as P.Failure, query)]);
+      Left([ParseFailure.fromFailure(parsed as P.Failure, query)]);
   }
 
 }

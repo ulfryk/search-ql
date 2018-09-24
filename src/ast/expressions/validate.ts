@@ -12,6 +12,6 @@ export const validate = (e: Expression): Either<TypeFailure[], Expression> => {
 
   return Left(validated.toList()
     .filter(node => node instanceof InvalidExpression)
-    .flatMap(({ errors }: InvalidExpression) => errors.map(TypeFailure.fromError(validated)))
+    .flatMap(expr => (expr as InvalidExpression).errors.map(TypeFailure.fromError(validated)))
     .toArray());
 };

@@ -83,7 +83,7 @@ describe('SearchQL', () => {
 
         it('should provide original input', () => {
           expect(parsed.cata(
-            f => f.map(({ query }: ParseFailure) => query)[0],
+            f => f.map(failure => (failure as ParseFailure).query)[0],
             () => null)).to.equal(input);
         });
 
@@ -205,7 +205,7 @@ describe('SearchQL', () => {
 
         it('should provide original input', () => {
           expect(parsed.cata(
-            f => f.map(({ query }: ParseFailure) => query)[0],
+            f => f.map(failure => (failure as ParseFailure).query)[0],
             () => null)).to.equal(input);
         });
 
@@ -306,7 +306,7 @@ describe('SearchQL', () => {
 
         it('should provide original input', () => {
           expect(parsed.cata(
-            f => f.map(({ query }: ParseFailure) => query)[0],
+            f => f.map(failure => (failure as ParseFailure).query)[0],
             () => null)).to.equal(input);
         });
 
