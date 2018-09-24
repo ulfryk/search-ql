@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { Map } from 'immutable';
 
-import { Expression, ExpressionType, ValueType } from '../common/model';
+import { Expression, ExpressionType, OperatorType, ValueType } from '../common/model';
 import { InvalidExpression } from './expressions';
 import { fromJS } from './from-js';
 
@@ -61,53 +61,65 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Phrase,
         value: ' lorem ipsum ',
       },
-    ];
 
-    // {
-    //   operator: {
-    //     token: 'AND',
-    //     type: OperatorType.And,
-    //   },
-    //   returnType: ValueType.Phrase,
-    //   type: ExpressionType.Binary,
-    //   value: [
-    //     {
-    //       operator: {
-    //         token: '&',
-    //         type: OperatorType.And,
-    //       },
-    //       returnType: ValueType.Phrase,
-    //       type: ExpressionType.Binary,
-    //       value: [
-    //         {
-    //           preparedValue: 'aaa',
-    //           returnType: ValueType.Phrase,
-    //           term: {
-    //             preparedValue: 'aaa',
-    //             returnType: ValueType.Text,
-    //             type: ExpressionType.Text,
-    //             value: 'aaa',
-    //           },
-    //           type: ExpressionType.Phrase,
-    //           value: 'aaa',
-    //         },
-    //         {
-    //           preparedValue: 'bbb',
-    //           returnType: ValueType.Phrase,
-    //           term: {
-    //             preparedValue: 'bbb',
-    //             returnType: ValueType.Text,
-    //             type: ExpressionType.Text,
-    //             value: 'bbb',
-    //           },
-    //           type: ExpressionType.Phrase,
-    //           value: 'bbb',
-    //         },
-    //       ],
-    //     },
-    //
-    //   ],
-    // };
+      {
+        operator: {
+          token: '&',
+          type: OperatorType.And,
+        },
+        returnType: ValueType.Phrase,
+        type: ExpressionType.Binary,
+        value: [
+          {
+            preparedValue: 'aaa',
+            returnType: ValueType.Phrase,
+            term: {
+              preparedValue: 'aaa',
+              returnType: ValueType.Text,
+              type: ExpressionType.Text,
+              value: 'aaa',
+            },
+            type: ExpressionType.Phrase,
+            value: 'aaa',
+          },
+          {
+            preparedValue: 'bbb',
+            returnType: ValueType.Phrase,
+            term: {
+              preparedValue: 'bbb',
+              returnType: ValueType.Text,
+              type: ExpressionType.Text,
+              value: 'bbb',
+            },
+            type: ExpressionType.Phrase,
+            value: 'bbb',
+          },
+        ],
+      },
+
+      {
+        operator: {
+          token: '<',
+          type: OperatorType.Lt,
+        },
+        returnType: ValueType.Boolean,
+        type: ExpressionType.Binary,
+        value: [
+          {
+            preparedValue: 12,
+            returnType: ValueType.Number,
+            type: ExpressionType.Number,
+            value: '00012',
+          },
+          {
+            preparedValue: 13,
+            returnType: ValueType.Number,
+            type: ExpressionType.Number,
+            value: '13.00',
+          },
+        ],
+      },
+    ];
 
     const invalidDTO = [
 
@@ -227,6 +239,45 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Phrase,
         value: ' lorem ipsum ',
       }, ['PhraseExpression term error: Values of TextExpression don\'t match: { value: lorem ipsum, preparedValue: orem psum}']],
+
+      // --- BINARY ---
+      [{
+        operator: {
+          token: '>=',
+          type: OperatorType.Gte,
+        },
+        returnType: ValueType.Boolean,
+        type: ExpressionType.Binary,
+        value: [
+          {
+            preparedValue: 'aaa',
+            returnType: ValueType.Phrase,
+            term: {
+              preparedValue: 'aaa',
+              returnType: ValueType.Text,
+              type: ExpressionType.Text,
+              value: 'aaa',
+            },
+            type: ExpressionType.Phrase,
+            value: 'aaa',
+          },
+          {
+            preparedValue: 'bbb',
+            returnType: ValueType.Phrase,
+            term: {
+              preparedValue: 'bbb',
+              returnType: ValueType.Text,
+              type: ExpressionType.Text,
+              value: 'bbb',
+            },
+            type: ExpressionType.Phrase,
+            value: 'bbb',
+          },
+        ],
+      }, [
+        'The LHS of >= shouldn\'t evaluate to Phrase.',
+        'The RHS of >= shouldn\'t evaluate to Phrase.',
+      ]],
 
     ] as [any, string[]][];
 

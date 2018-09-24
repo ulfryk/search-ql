@@ -84,7 +84,7 @@ export class NotExpression extends Expression {
 
   private getTypeError() {
     return Some(this.value)
-      .filter(value => !(isBooleanType(value.returnType) || value.is(PhraseExpression as any)))
+      .filter(value => !(isBooleanType(value.returnType) || isPhraseType(value.returnType)))
       .map(({ returnType }) =>
         `Operand of NOT operation should be a BOOLEAN, but got ${returnType}`);
   }

@@ -1,7 +1,7 @@
 import { List, Map, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
+import { allBinaryOperators, checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { IBinaryOperationExpression, IExpression } from '../../dto';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator, RelationalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
@@ -78,9 +78,7 @@ export class BinaryOperationExpression extends Expression {
   public checkIntegrity(model: Map<string, ValueType>) {
     const [newLeft, newRight] = this.value.map(side => side.checkIntegrity(model));
 
-    // TODO: Integrity
-
-    return this.checkSidesIntegrity(newLeft, newRight)
+    return this.checkTheIntegrity(newLeft, newRight)
       .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
   }
 
@@ -123,8 +121,28 @@ export class BinaryOperationExpression extends Expression {
 
   // Integrity checking
 
-  private checkSidesIntegrity(_newLeft: Expression, _newRight: Expression): Maybe<string[]> {
-    return None();
+  private checkTheIntegrity(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    if (this.operator.is(EqualityOperator) || this.operator.is(RelationalOperator)) {
+      return Some([
+        ...this.getIntegritySideErrors('L', newLeft),
+        ...this.getIntegritySideErrors('R', newRight),
+      ]).filter(errors => errors.length > 0);
+    }
+
+    return Some(this.getOperatorErrors()).filter(errors => errors.length > 0);
+  }
+
+  private getIntegritySideErrors(side: 'L' | 'R', operand: Expression) {
+    return isPhraseType(operand.returnType) ? [
+      `The ${side}HS of ${this.operator.token} shouldn't evaluate to Phrase.`,
+    ] : [];
+  }
+
+  private getOperatorErrors() {
+    return allBinaryOperators.includes(this.operator.type) ? [] : [
+      `BinaryOperation should use known operator, ` +
+      `but got ${this.operator.type} ( "${this.operator.token}" )`,
+    ];
   }
 
   // Type checking

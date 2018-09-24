@@ -41,6 +41,7 @@ describe('SearchQLParser', () => {
       'test_function(test_function(aaa), (token_expired ~ true), (! is_empty(ccc)))',
       'test_function(aaa, bbb, (! ccc)) ~ (! "John Doe")',
       'a ISNT is_empty(b)',
+      '(bb AND cc) >= bbb',
     ];
 
     const invalidTypesOutput = [
@@ -55,6 +56,9 @@ describe('SearchQLParser', () => {
       ],
       [
         'TypeError: Both sides of ISNT expression should be of same type, but got LHS: TEXT and RHS: BOOLEAN.',
+      ],
+      [
+        'TypeError: Both sides of >= expression should be of same type, but got LHS: PHRASE and RHS: TEXT.',
       ],
     ];
 
@@ -125,6 +129,7 @@ describe('SearchQLParser', () => {
       '! is_empty(first_name)',
       'first_name !~ noone',
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
+      'length(token_expired) >= age',
     ];
 
     const successfulOutputValues = [
@@ -143,6 +148,7 @@ describe('SearchQLParser', () => {
         and(
           gtR(func('length')(txt('first_name')), num('1')),
           lteR(func('length')(txt('first_name')), num('4')))),
+      gteR(func('length')(txt('token_expired')), sel('age', ValueType.Number)),
     ].map(Either.of);
 
     const invalidInput = [
@@ -153,18 +159,22 @@ describe('SearchQLParser', () => {
     ];
 
     const invalidTypesInput = [
-      'test_function(aaa, (token_expired ~ true))',
+      'test_function(aaa, (token_expires_xxx ~ true))',
       'test_function(test_function(aaa), (token_expired ~ true), (! is_empty(ccc)))',
       'test_function(aaa, bbb, (! ccc)) ~ (! (first_name IS "John Doe"))',
       'a ISNT is_empty(b)',
       '! length(first_name)',
+      'aaa = (bb AND cc)',
+      'first_name != age',
+      'length(first_name) < is_empty(age)',
+      'first_name < is_empty(age)',
     ];
 
     const invalidTypesOutput = [
       ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
       [
         'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is PHRASE',
         'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
       ],
       [
@@ -175,6 +185,18 @@ describe('SearchQLParser', () => {
       ],
       [
         'TypeError: Operand of NOT operation should be a BOOLEAN, but got NUMBER',
+      ],
+      [
+        'TypeError: Both sides of = expression should be of same type, but got LHS: TEXT and RHS: PHRASE.',
+      ],
+      [
+        'TypeError: If both sides of != expression are model selectors, than their matching types should equal, but got LHS matching type: TEXT, RHS matching type: NUMBER.',
+      ],
+      [
+        'TypeError: Both sides of < expression should be of same type, but got LHS: NUMBER and RHS: BOOLEAN.',
+      ],
+      [
+        'TypeError: If LHS of < expression is model selector, than its matching type should equal RHS return type, but got LHS matching type: TEXT, RHS return type: BOOLEAN.',
       ],
     ];
 
@@ -200,7 +222,7 @@ describe('SearchQLParser', () => {
         const parsed = SearchQLParser.create({ model }).parse(input);
 
         it('should return Left', () => {
-          expect(parsed.isLeft()).to.be.true;
+          expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
         });
 
         it('should provide original input', () => {
@@ -214,7 +236,7 @@ describe('SearchQLParser', () => {
 
     invalidTypesInput.forEach((input, i) => {
       describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
-        const parsed = SearchQLParser.create().parse(input);
+        const parsed = SearchQLParser.create({ model }).parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
