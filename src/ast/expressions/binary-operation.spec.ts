@@ -36,15 +36,15 @@ describe('SearchQL expressions', () => {
           new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(Like, [
           SelectorExpression.of('aaa')(ValueType.Number),
-          phrase('123'),
+          NumberExpression.of('123'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(NotLike)(
+          NumberExpression.of('123'),
           SelectorExpression.of('aaa')(ValueType.Number),
-          new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(NotLike, [
+          new NumberExpression('123'),
           SelectorExpression.of('aaa')(ValueType.Number),
-          phrase('123'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(Like)(
@@ -72,15 +72,23 @@ describe('SearchQL expressions', () => {
           NumberExpression.of('123'),
         )).to.deep.equal(new BinaryOperationExpression(Is, [
           SelectorExpression.of('age')(ValueType.Number),
-          phrase('123'),
+          new NumberExpression('123'),
         ]));
 
         expect(BinaryOperationExpression.fromPair(IsNot)(
           TextExpression.of('age'),
-          NumberExpression.of('123'),
+          new NumberExpression('123'),
         )).to.deep.equal(new BinaryOperationExpression(IsNot, [
           TextExpression.of('age'),
           NumberExpression.of('123'),
+        ]));
+
+        expect(BinaryOperationExpression.fromPair(IsNot)(
+          NumberExpression.of('123'),
+          SelectorExpression.of('age')(ValueType.Number),
+        )).to.deep.equal(new BinaryOperationExpression(IsNot, [
+          new NumberExpression('123'),
+          SelectorExpression.of('age')(ValueType.Number),
         ]));
 
       });

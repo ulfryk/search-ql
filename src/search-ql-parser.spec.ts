@@ -9,9 +9,9 @@ import { ParseFailure, ValueType } from './common/model';
 import { SearchQLParser } from './search-ql-parser';
 import { and, fn, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
 
-describe('SearchQL', () => {
+describe('SearchQLParser', () => {
 
-  describe('SearchQLParser with regular config', () => {
+  describe('with regular config', () => {
 
     const validInput = [
       'aaa & bbb',
@@ -107,7 +107,7 @@ describe('SearchQL', () => {
 
   });
 
-  describe('SearchQLParser with regular config and defined model', () => {
+  describe('with regular config and defined model', () => {
 
     const model = Map<string, ValueType>({
       age: ValueType.Number,
@@ -229,7 +229,7 @@ describe('SearchQL', () => {
 
   });
 
-  describe('SearchQLParser with custom config', () => {
+  describe('with custom config', () => {
 
     const model = Map<string, ValueType>({
       first_name: ValueType.Text,

@@ -13,7 +13,10 @@ export class NotExpression extends Expression {
   }
 
   public static fromParseResult(__: string, operand: Expression) {
-    return NotExpression.of(operand);
+    return NotExpression.of(
+      operand.is(TermExpression as any) ?
+        PhraseExpression.fromTerm(operand as TermExpression) :
+        operand);
   }
 
   public readonly type: ExpressionType.Not = ExpressionType.Not;

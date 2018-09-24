@@ -1,11 +1,11 @@
 import { List, Map, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, isSubtype, ValueType } from '../../common/model';
+import { checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
 import { IBinaryOperationExpression, IExpression } from '../../dto';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator, RelationalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
-import { PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './term';
+import { PhraseExpression, SelectorExpression, TermExpression } from './term';
 
 const BI = 2;
 
@@ -19,25 +19,6 @@ export class BinaryOperationExpression extends Expression {
   public static fromPair(operator: BinaryOperator) {
     // tslint:disable-next-line:cyclomatic-complexity
     return (lhs: Expression, rhs: Expression) => {
-
-      if (operator.is(RelationalOperator)) {
-        return new BinaryOperationExpression(operator, [lhs, rhs]);
-      }
-
-      if (operator.is(EqualityOperator)) {
-        if (lhs.is(SelectorExpression as any)) {
-          return new BinaryOperationExpression(operator, [
-            lhs,
-            rhs.is(TermExpression as any) ? PhraseExpression.fromTerm(rhs as TermExpression) : rhs,
-          ]);
-        }
-        return new BinaryOperationExpression(operator, [
-          lhs,
-          rhs.is(SelectorExpression as any) ?
-            TextExpression.fromTerm(rhs as SelectorExpression) : rhs,
-        ]);
-      }
-
       if (operator.is(LogicalOperator)) {
         return new BinaryOperationExpression(operator, [
           lhs.is(TermExpression as any) ? PhraseExpression.fromTerm(lhs as TermExpression) : lhs,
@@ -61,9 +42,19 @@ export class BinaryOperationExpression extends Expression {
     }
   }
 
+  // tslint:disable-next-line:cyclomatic-complexity
   public get returnType(): ValueType {
-    return this.value.some(({ returnType }) => isPhraseType(returnType)) ?
-      ValueType.Phrase : ValueType.Boolean;
+    if ((
+      this.operator.is(LogicalOperator) &&
+      this.value.some(({ returnType }) => isPhraseType(returnType))
+    ) || (
+      this.operator.is(EqualityOperator) &&
+      this.value.some(({ type }) => type === ExpressionType.Selector)
+    )) {
+      return ValueType.Phrase;
+    }
+
+    return ValueType.Boolean;
   }
 
   public equals(other: Expression): boolean {
@@ -80,7 +71,7 @@ export class BinaryOperationExpression extends Expression {
   public checkTypes() {
     const [newLeft, newRight] = this.value.map(side => side.checkTypes());
 
-    return this.check(newLeft, newRight)
+    return this.checkSidesTypes(newLeft, newRight)
       .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
   }
 
@@ -88,9 +79,8 @@ export class BinaryOperationExpression extends Expression {
     const [newLeft, newRight] = this.value.map(side => side.checkIntegrity(model));
 
     // TODO: Integrity
-    // - exactly same values on each side
 
-    return this.check(newLeft, newRight)
+    return this.checkSidesIntegrity(newLeft, newRight)
       .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
   }
 
@@ -131,7 +121,19 @@ export class BinaryOperationExpression extends Expression {
     return new BinaryOperationExpression(this.operator, [newLeft, newRight]);
   }
 
-  private check(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+  // Integrity checking
+
+  private checkSidesIntegrity(_newLeft: Expression, _newRight: Expression): Maybe<string[]> {
+    return None();
+  }
+
+  // Type checking
+
+  private checkSidesTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    if (this.operator.is(RelationalOperator)) {
+      return this.checkRelationalTypes(newLeft, newRight);
+    }
+
     if (this.operator.is(EqualityOperator)) {
       return this.checkEqualityTypes(newLeft, newRight);
     }
@@ -143,10 +145,16 @@ export class BinaryOperationExpression extends Expression {
     return None();
   }
 
+  // Ord operators type checking
+
+  private checkRelationalTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
+    return this.checkEqualityTypes(newLeft, newRight);
+  }
+
   // Eq operators type checking
 
   private checkEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
-    if (newLeft.is(SelectorExpression as any)) {
+    if (newLeft.is(SelectorExpression as any) || newRight.is(SelectorExpression as any)) {
       return this.checkSelectorEqualityTypes(newLeft, newRight);
     }
     return this.checkRegularEqualityTypes(newLeft, newRight);
@@ -164,16 +172,33 @@ export class BinaryOperationExpression extends Expression {
       checkBoolCompatibility(newLeft.returnType, newRight.returnType);
   }
 
+  // tslint:disable-next-line:cyclomatic-complexity
   private checkSelectorEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
-    return Some([
-      ...this.getEqualitySideErrors('L', newLeft.returnType, ValueType.Text),
-      ...this.getEqualitySideErrors('R', newRight.returnType, ValueType.Phrase),
-    ]).filter(errors => errors.length > 0);
-  }
+    const lhsType = (newLeft as SelectorExpression).matchingType;
+    const rhsType = (newRight as SelectorExpression).matchingType;
 
-  private getEqualitySideErrors(side: 'L' | 'R', actual: ValueType, superType: ValueType): string[] {
-    return isSubtype(actual, superType) ? [] :
-      this.getError(side, actual, [superType]).toList().toArray();
+    if (newLeft.is(SelectorExpression as any) && newRight.is(SelectorExpression as any)) {
+      return lhsType === rhsType ? None() : Some([
+        `If both sides of ${this.operator.token} expression are model selectors, ` +
+        `than their matching types should equal, ` +
+        `but got LHS matching type: ${lhsType}, RHS matching type: ${rhsType}.`,
+      ]);
+    }
+
+    if (newLeft.is(SelectorExpression as any)) {
+      return lhsType === newRight.returnType ? None() : Some([
+        `If LHS of ${this.operator.token} expression is model selector, ` +
+        `than its matching type should equal RHS return type, ` +
+        `but got LHS matching type: ${lhsType}, RHS return type: ${newRight.returnType}.`,
+      ]);
+    }
+
+    return newLeft.returnType === rhsType ?
+      None() : Some([
+        `If RHS of ${this.operator.token} expression is model selector, ` +
+        `than its matching type should equal LHS return type, ` +
+        `but got LHS return type : ${newLeft.returnType}, RHS matching type: ${rhsType}.`,
+      ]);
   }
 
   // Logical operators type checking
@@ -187,7 +212,7 @@ export class BinaryOperationExpression extends Expression {
 
   private getLogicalSideErrors(side: 'L' | 'R', e: Expression): string[] {
     return this.isSideTypeValid(e) ? [] :
-    this.getError(side, e.returnType, [ValueType.Boolean, ValueType.Phrase]).toList().toArray();
+      this.getError(side, e.returnType, [ValueType.Boolean, ValueType.Phrase]).toList().toArray();
   }
 
   private isSideTypeValid({ returnType }: Expression): boolean {

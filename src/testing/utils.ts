@@ -50,7 +50,7 @@ const eq = (l: TermExpression, r: TermExpression, op: EqualityOperator | Relatio
     SelectorExpression.of(l.value)(
       (r as PhraseExpression<any>).term && (r as PhraseExpression<any>).term.returnType ||
       r.returnType),
-    op.is(RelationalOperator) ? r : PhraseExpression.fromTerm(r),
+    r,
   ]);
 
 const eqR = (l: Expression, r: Expression, op: EqualityOperator | RelationalOperator) =>
