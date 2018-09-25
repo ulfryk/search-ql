@@ -8,7 +8,7 @@ import { fromJS } from './from-js';
 
 const getErrors = (e: Expression) => e.toList()
   .filter(node => node instanceof InvalidExpression)
-  .flatMap(expr => (expr as InvalidExpression).errors)
+  .flatMap(expr => (expr as InvalidExpression).errors.map(String))
   .toArray();
 
 describe('SearchQL ast: Expression tree', () => {
@@ -129,13 +129,13 @@ describe('SearchQL ast: Expression tree', () => {
         returnType: ValueType.Text,
         type: ExpressionType.Text,
         value: 'ccc',
-      }, ['Values of TextExpression don\'t match: { value: ccc, preparedValue:  c c c }']],
+      }, ['IntegrityError: Values of TextExpression don\'t match: { value: ccc, preparedValue:  c c c }']],
       [{
         preparedValue: ' c c c ',
         returnType: ValueType.Text,
         type: ExpressionType.Text,
         value: 'ccc',
-      }, ['Values of TextExpression don\'t match: { value: ccc, preparedValue:  c c c }']],
+      }, ['IntegrityError: Values of TextExpression don\'t match: { value: ccc, preparedValue:  c c c }']],
 
       // --- NUMBER ---
       [{
@@ -144,22 +144,22 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Number,
         value: '00123aaa',
       }, [
-        'NumberExpression contains a non-number value: "00123aaa".',
-        'NumberExpression value ("00123aaa") doesn\'t match preparedValue ("123").',
+        'IntegrityError: NumberExpression contains a non-number value: "00123aaa".',
+        'IntegrityError: NumberExpression value ("00123aaa") doesn\'t match preparedValue ("123").',
       ]],
       [{
         preparedValue: 123,
         returnType: ValueType.Number,
         type: ExpressionType.Number,
         value: '00124.00',
-      }, ['NumberExpression value ("00124.00") doesn\'t match preparedValue ("123").']],
+      }, ['IntegrityError: NumberExpression value ("00124.00") doesn\'t match preparedValue ("123").']],
       [{
         preparedValue: '123',
         returnType: ValueType.Number,
         type: ExpressionType.Number,
         value: '00123.00',
       }, [
-        'NumberExpression contains a non-number preparedValue: "123" (string).',
+        'IntegrityError: NumberExpression contains a non-number preparedValue: "123" (string).',
       ]],
       [{
         preparedValue: '01201',
@@ -167,9 +167,9 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Number,
         value: 'xxe0012300',
       }, [
-        'NumberExpression contains a non-number value: "xxe0012300".',
-        'NumberExpression contains a non-number preparedValue: "01201" (string).',
-        'NumberExpression value ("xxe0012300") doesn\'t match preparedValue ("01201").',
+        'IntegrityError: NumberExpression contains a non-number value: "xxe0012300".',
+        'IntegrityError: NumberExpression contains a non-number preparedValue: "01201" (string).',
+        'IntegrityError: NumberExpression value ("xxe0012300") doesn\'t match preparedValue ("01201").',
       ]],
 
       // --- DATE ---
@@ -179,7 +179,7 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Date,
         value: '2018-08-01T07:44:58.070Z',
       }, [
-        'DateExpression value ("2018-08-01T07:44:58.070Z") doesn\'t match preparedValue ("1533195898070").',
+        'IntegrityError: DateExpression value ("2018-08-01T07:44:58.070Z") doesn\'t match preparedValue ("1533195898070").',
       ]],
       [{
         preparedValue: 1533195898070,
@@ -187,8 +187,8 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Date,
         value: 'a20180802T07:44:58aaa',
       }, [
-        'DateExpression contains a non-date value: "a20180802T07:44:58aaa".',
-        'DateExpression value ("a20180802T07:44:58aaa") doesn\'t match preparedValue ("1533195898070").',
+        'IntegrityError: DateExpression contains a non-date value: "a20180802T07:44:58aaa".',
+        'IntegrityError: DateExpression value ("a20180802T07:44:58aaa") doesn\'t match preparedValue ("1533195898070").',
       ]],
       [{
         preparedValue: '1533195898070',
@@ -196,8 +196,8 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Date,
         value: '2018-08-02T07:44:58.070Z',
       }, [
-        'DateExpression contains a non-number preparedValue: 1533195898070.',
-        'DateExpression value ("2018-08-02T07:44:58.070Z") doesn\'t match preparedValue ("1533195898070").',
+        'IntegrityError: DateExpression contains a non-number preparedValue: 1533195898070.',
+        'IntegrityError: DateExpression value ("2018-08-02T07:44:58.070Z") doesn\'t match preparedValue ("1533195898070").',
       ]],
       [{
         preparedValue: '2018-08-02T07:44:58.070Z',
@@ -205,9 +205,9 @@ describe('SearchQL ast: Expression tree', () => {
         type: ExpressionType.Date,
         value: 'asd2018-08-02asasd',
       }, [
-        'DateExpression contains a non-date value: "asd2018-08-02asasd".',
-        'DateExpression contains a non-number preparedValue: 2018-08-02T07:44:58.070Z.',
-        'DateExpression value ("asd2018-08-02asasd") doesn\'t match preparedValue ("2018-08-02T07:44:58.070Z").',
+        'IntegrityError: DateExpression contains a non-date value: "asd2018-08-02asasd".',
+        'IntegrityError: DateExpression contains a non-number preparedValue: 2018-08-02T07:44:58.070Z.',
+        'IntegrityError: DateExpression value ("asd2018-08-02asasd") doesn\'t match preparedValue ("2018-08-02T07:44:58.070Z").',
       ]],
 
       // --- SELECTOR ---
@@ -217,14 +217,14 @@ describe('SearchQL ast: Expression tree', () => {
         returnType: ValueType.Text,
         type: ExpressionType.Selector,
         value: 'first_name',
-      }, ['SelectorExpression is invalid - "matchingType" should equal TEXT but is NUMBER']],
+      }, ['IntegrityError: SelectorExpression is invalid - "matchingType" should equal TEXT but is NUMBER']],
       [{
         matchingType: ValueType.Text,
         preparedValue: 'firstName',
         returnType: ValueType.Text,
         type: ExpressionType.Selector,
         value: 'firstName',
-      }, ['SelectorExpression is invalid - "firstName" is not available on model definition']],
+      }, ['IntegrityError: SelectorExpression is invalid - "firstName" is not available on model definition']],
 
       // --- PHRASE ---
       [{
@@ -238,7 +238,9 @@ describe('SearchQL ast: Expression tree', () => {
         },
         type: ExpressionType.Phrase,
         value: ' lorem ipsum ',
-      }, ['PhraseExpression term error: Values of TextExpression don\'t match: { value: lorem ipsum, preparedValue: orem psum}']],
+      }, [
+        'IntegrityError: PhraseExpression term error: IntegrityError: Values of TextExpression don\'t match: { value: lorem ipsum, preparedValue: orem psum}',
+      ]],
 
       // --- BINARY ---
       [{
@@ -275,8 +277,8 @@ describe('SearchQL ast: Expression tree', () => {
           },
         ],
       }, [
-        'The LHS of >= shouldn\'t evaluate to Phrase.',
-        'The RHS of >= shouldn\'t evaluate to Phrase.',
+        'IntegrityError: The LHS of >= shouldn\'t evaluate to Phrase.',
+        'IntegrityError: The RHS of >= shouldn\'t evaluate to Phrase.',
       ]],
 
     ] as [any, string[]][];

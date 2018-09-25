@@ -16,6 +16,14 @@ export class TypeFailure extends Failure {
     super([], None() /* TODO: use info from parsimmon's `node` when available */);
   }
 
+  public equals(other: Failure): boolean {
+    return this === other || (
+      other instanceof TypeFailure &&
+      this.error === other.error &&
+      this.ast.equals(other.ast)
+    );
+  }
+
   public toString() {
     return `TypeError: ${this.error}`;
   }

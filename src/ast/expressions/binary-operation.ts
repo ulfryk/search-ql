@@ -1,7 +1,7 @@
 import { List, Map, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { allBinaryOperators, checkBoolCompatibility, Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
+import { allBinaryOperators, checkBoolCompatibility, Expression, ExpressionType, IntegrityFailure, isBooleanType, isPhraseType, TypeFailure, ValueType } from '../../common/model';
 import { IBinaryOperationExpression, IExpression } from '../../dto';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator, RelationalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
@@ -68,17 +68,19 @@ export class BinaryOperationExpression extends Expression {
     return this.value.every(operand => operand.isValid());
   }
 
-  public checkTypes() {
+  public checkTypes(): Expression {
     const [newLeft, newRight] = this.value.map(side => side.checkTypes());
 
     return this.checkSidesTypes(newLeft, newRight)
+      .map(errors => errors.map(TypeFailure.fromError(this)))
       .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
   }
 
-  public checkIntegrity(model: Map<string, ValueType>) {
+  public checkIntegrity(model: Map<string, ValueType>): Expression {
     const [newLeft, newRight] = this.value.map(side => side.checkIntegrity(model));
 
     return this.checkTheIntegrity(newLeft, newRight)
+      .map(errors => errors.map(IntegrityFailure.fromError(this)))
       .foldLeft(this.clone(newLeft, newRight))(InvalidExpression.fromErrors);
   }
 

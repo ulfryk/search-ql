@@ -42,7 +42,7 @@ export class FunctionConfig implements ISetoid {
 
   public checkIntegrity(): Maybe<string[]> {
     return this.argsRest
-      .filter(arg => arg instanceof OptionalFunctionArg)
+      .filter(arg => !(arg instanceof OptionalFunctionArg))
       .map(arg => [`FunctionConfig argsRest should contain optional arg but got: ${arg}`]);
   }
 

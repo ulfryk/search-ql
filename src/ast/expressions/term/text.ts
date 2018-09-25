@@ -1,6 +1,6 @@
 import { None, Some } from 'monet';
 
-import { Expression, ExpressionType } from '../../../common/model';
+import { Expression, ExpressionType, IntegrityFailure } from '../../../common/model';
 import { InvalidExpression } from '../invalid';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
@@ -23,6 +23,7 @@ export class TextExpression extends TermExpression<string> {
 
   public checkIntegrity(): Expression {
     return this.getIntegrityError()
+      .map(IntegrityFailure.fromError(this))
       .foldLeft(this as Expression)(InvalidExpression.fromError);
   }
 

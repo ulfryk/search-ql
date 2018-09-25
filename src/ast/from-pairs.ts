@@ -1,6 +1,6 @@
 import { None, Some } from 'monet';
 
-import { Expression } from '../common/model';
+import { Expression, ParseFailure } from '../common/model';
 import { ParserConfig } from '../config';
 import { BinaryOperationChain } from './binary-operation-chain';
 import { InvalidExpression } from './expressions';
@@ -18,4 +18,5 @@ export const fromPairs =
           .orElse(Some(BinaryOperationChain.init(rhs))),
         None<BinaryOperationChain>())
       .map(e => e as Expression)
-      .orJust(InvalidExpression.empty('No valid expression found.'));
+      .orJust(InvalidExpression
+        .empty(new ParseFailure('No valid expression found.')));

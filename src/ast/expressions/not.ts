@@ -1,7 +1,7 @@
 import { List, Map } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, ExpressionType, isBooleanType, isPhraseType, ValueType } from '../../common/model';
+import { Expression, ExpressionType, IntegrityFailure, isBooleanType, isPhraseType, TypeFailure, ValueType } from '../../common/model';
 import { INotExpression } from '../../dto';
 import { InvalidExpression } from './invalid';
 import { PhraseExpression, TermExpression } from './term';
@@ -41,13 +41,15 @@ export class NotExpression extends Expression {
     return this.value.isValid();
   }
 
-  public checkTypes() {
+  public checkTypes(): Expression {
     return this.getTypeError()
+      .map(TypeFailure.fromError(this))
       .foldLeft(this.clone(this.value.checkTypes()))(InvalidExpression.fromError);
   }
 
-  public checkIntegrity(model: Map<string, ValueType>) {
+  public checkIntegrity(model: Map<string, ValueType>): Expression {
     return this.getIntegrityError()
+      .map(IntegrityFailure.fromError(this))
       .foldLeft(this.clone(this.value.checkIntegrity(model)))(InvalidExpression.fromError);
   }
 

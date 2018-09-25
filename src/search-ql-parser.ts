@@ -20,7 +20,7 @@ export class SearchQLParser {
     const parsed = this.factory.getParser().parse(query);
 
     return parsed.status ?
-      Right<Failure[], Expression>(parsed.value).flatMap(validate) :
+      Right<Failure[], Expression>(parsed.value).flatMap(validate(this.factory.config.model)) :
       Left([ParseFailure.fromFailure(parsed as P.Failure, query)]);
   }
 

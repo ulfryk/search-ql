@@ -14,6 +14,14 @@ export class IntegrityFailure extends Failure {
     super([]);
   }
 
+  public equals(other: Failure): boolean {
+    return this === other || (
+      other instanceof IntegrityFailure &&
+      this.error === other.error &&
+      this.ast.equals(other.ast)
+    );
+  }
+
   public toString() {
     return `IntegrityError: ${this.error}`;
   }

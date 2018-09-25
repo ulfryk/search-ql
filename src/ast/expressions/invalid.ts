@@ -1,19 +1,19 @@
-import { List, Map, Set } from 'immutable';
+import { List, Map } from 'immutable';
 
-import { Expression, ExpressionType, ValueType } from '../../common/model';
+import { Expression, ExpressionType, Failure, ValueType } from '../../common/model';
 import { IExpression } from '../../dto';
 
 export class InvalidExpression extends Expression {
 
-  public static fromError(original: Expression, error: string) {
+  public static fromError(original: Expression, error: Failure) {
     return InvalidExpression.fromErrors(original, [error]);
   }
 
-  public static fromErrors(original: Expression, errors: string[]) {
-    return new InvalidExpression(original, Set(errors));
+  public static fromErrors(original: Expression, errors: Failure[]) {
+    return new InvalidExpression(original, List(errors));
   }
 
-  public static empty(error: string) {
+  public static empty(error: Failure) {
     return InvalidExpression.fromError(null, error);
   }
 
@@ -22,7 +22,7 @@ export class InvalidExpression extends Expression {
   constructor(
     public readonly value: Expression,
     // TEMPORARY, should be a class extending same base as ParseFailure
-    public readonly errors: Set<string>,
+    public readonly errors: List<Failure>,
   ) { super(); }
 
   public get returnType(): ValueType {

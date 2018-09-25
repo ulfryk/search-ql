@@ -1,6 +1,6 @@
 import { Maybe, Some } from 'monet';
 
-import { Expression, ExpressionType, ValueType } from '../../../common/model';
+import { Expression, ExpressionType, IntegrityFailure, ValueType } from '../../../common/model';
 import { InvalidExpression } from '../invalid';
 import { isDate } from './is-date';
 import { PhraseExpression } from './phrase';
@@ -30,6 +30,7 @@ export class DateExpression extends TermExpression<number> {
 
   public checkIntegrity(): Expression {
     return this.getIntegrityErrors()
+      .map(errors => errors.map(IntegrityFailure.fromError(this)))
       .foldLeft(this as Expression)(InvalidExpression.fromErrors);
   }
 

@@ -1,7 +1,7 @@
 import { List, Map } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { Expression, ExpressionType, ValueType } from '../../../common/model';
+import { Expression, ExpressionType, IntegrityFailure, ValueType } from '../../../common/model';
 import { IPhraseExpression } from '../../../dto';
 import { InvalidExpression } from '../invalid';
 import { TermExpression } from './term';
@@ -46,6 +46,7 @@ export class PhraseExpression<T> extends TermExpression<string> {
 
   public checkIntegrity(model: Map<string, ValueType>): Expression {
     return this.getIntegrityErrors(model)
+      .map(errors => errors.map(IntegrityFailure.fromError(this)))
       .foldLeft(this as Expression)(InvalidExpression.fromErrors);
   }
 

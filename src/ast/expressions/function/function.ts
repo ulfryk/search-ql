@@ -2,7 +2,7 @@ import { List, Map } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
-import { checkBoolCompatibility, Expression, ExpressionType, isSubtype, ValueType } from '../../../common/model';
+import { checkBoolCompatibility, Expression, ExpressionType, IntegrityFailure, isSubtype, TypeFailure, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { IFunctionExpression } from '../../../dto';
@@ -80,14 +80,16 @@ export class FunctionExpression extends Expression {
     return this.clone(this.value.map(arg => arg.reshape()).toList());
   }
 
-  public checkTypes() {
+  public checkTypes(): Expression {
     return this.getTypeErrors()
+      .map(errors => errors.map(TypeFailure.fromError(this)))
       .foldLeft(this.clone(this.value.map(arg => arg.checkTypes()).toList()))(
         InvalidExpression.fromErrors);
   }
 
-  public checkIntegrity(model: Map<string, ValueType>) {
+  public checkIntegrity(model: Map<string, ValueType>): Expression {
     return this.getIntegrityErrors(model)
+      .map(errors => errors.map(IntegrityFailure.fromError(this)))
       .foldLeft(this.clone(this.value.map(arg => arg.checkIntegrity(model)).toList()))(
         InvalidExpression.fromErrors);
   }

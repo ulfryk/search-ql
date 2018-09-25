@@ -52,6 +52,7 @@ describe('SearchQLParser', () => {
         'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN/(not-operation)',
       ],
       [
+        'IntegrityError: The RHS of ~ shouldn\'t evaluate to Phrase.',
         'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE/(not-operation)',
       ],
       [
@@ -59,6 +60,7 @@ describe('SearchQLParser', () => {
       ],
       [
         'TypeError: Both sides of >= expression should be of same type, but got LHS: PHRASE and RHS: TEXT.',
+        'IntegrityError: The LHS of >= shouldn\'t evaluate to Phrase.',
       ],
     ];
 
@@ -178,6 +180,7 @@ describe('SearchQLParser', () => {
         'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN/(not-operation)',
       ],
       [
+        'IntegrityError: The RHS of ~ shouldn\'t evaluate to Phrase.',
         'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE/(not-operation)',
       ],
       [
@@ -188,6 +191,7 @@ describe('SearchQLParser', () => {
       ],
       [
         'TypeError: Both sides of = expression should be of same type, but got LHS: TEXT and RHS: PHRASE.',
+        'IntegrityError: The RHS of = shouldn\'t evaluate to Phrase.',
       ],
       [
         'TypeError: If both sides of != expression are model selectors, than their matching types should equal, but got LHS matching type: TEXT, RHS matching type: NUMBER.',
