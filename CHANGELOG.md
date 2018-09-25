@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 6.0.0
+
+### Changed
+- **breaking** changed `Failure` classes
+- **breaking** AST validation API
+
+### Added
+- integrity check
+
+### Fixed
+- type checker
+- update dependencies
+
 ## 5.0.1
 
 ### Fixed
