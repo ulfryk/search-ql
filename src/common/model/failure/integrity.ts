@@ -1,23 +1,21 @@
-import { None } from 'monet';
-
 import { Expression } from '../expression';
 import { Failure } from './failure';
 
-export class TypeFailure extends Failure {
+export class IntegrityFailure extends Failure {
 
   public static fromError(ast: Expression) {
-    return (error: string) => new TypeFailure(error, ast);
+    return (error: string) => new IntegrityFailure(error, ast);
   }
 
   constructor(
     public readonly error: string,
     public readonly ast: Expression,
   ) {
-    super([], None() /* TODO: use info from parsimmon's `node` when available */);
+    super([]);
   }
 
   public toString() {
-    return `TypeError: ${this.error}`;
+    return `IntegrityError: ${this.error}`;
   }
 
 }

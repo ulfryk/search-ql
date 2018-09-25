@@ -1,3 +1,4 @@
+import { Some } from 'monet';
 import { Failure as ParsimmonFailure, Index } from 'parsimmon';
 
 import { Failure } from './failure';
@@ -13,7 +14,7 @@ export class ParseFailure extends Failure {
     index: Index,
     public readonly query: string,
   ) {
-    super(expected, index);
+    super(expected, Some(index));
   }
 
   public toString() {
@@ -21,7 +22,7 @@ export class ParseFailure extends Failure {
 
     return 'ParseError in query: \n' +
       `${indent}"""\n${indent}${this.query}\n${indent}"""\n` +
-      `${indent}${this.failInfo}`;
+      `${indent}${this.failInfo.orJust('')}`;
   }
 
 }

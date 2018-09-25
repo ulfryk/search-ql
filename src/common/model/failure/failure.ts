@@ -1,10 +1,11 @@
-import { Failure as ParsimmonFailure, Index } from 'parsimmon';
+import { Maybe, None } from 'monet';
+import { Index } from 'parsimmon';
 
-export abstract class Failure implements Pick<ParsimmonFailure, 'index' | 'expected'> {
+export abstract class Failure {
 
   constructor(
     public readonly expected: string[],
-    public readonly index: Index,
+    public readonly index: Maybe<Index> = None(),
   ) {}
 
   public abstract toString(): string;
@@ -12,9 +13,10 @@ export abstract class Failure implements Pick<ParsimmonFailure, 'index' | 'expec
     return this.toString();
   }
 
-  protected get failInfo(): string {
-    return `- expected ${this.expected.map(e => `"${e}"`).join(' or ')} at ` +
-      `line ${this.index.line} column ${this.index.column} (offset: ${this.index.offset})`;
+  protected get failInfo(): Maybe<string> {
+    return this.index.map(({ column, line, offset }) =>
+      `- expected ${this.expected.map(e => `"${e}"`).join(' or ')} at ` +
+        `line ${line} column ${column} (offset: ${offset})`);
   }
 
 }
