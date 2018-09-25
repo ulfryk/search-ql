@@ -4,7 +4,7 @@ import { MatchError } from './error';
 export class MatchCoords implements IOrd<MatchCoords> {
 
   public static fromIndex(phrase: string) {
-    return (index: number) => new MatchCoords(index, phrase);
+    return (index?: number) => new MatchCoords(index, phrase);
   }
 
   constructor(

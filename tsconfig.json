@@ -19,9 +19,9 @@
     // --strict
     "alwaysStrict": true,
     "noImplicitAny": true,
-    "noImplicitThis": true
+    "noImplicitThis": true,
     // "strictNullChecks": true, // can not be used due to wrong immutable typings
-    // "strictFunctionTypes": true,
+    "strictFunctionTypes": true,
     // "strictPropertyInitialization": true
   },
   "exclude": ["node_modules", "lib"]

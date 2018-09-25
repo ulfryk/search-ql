@@ -1,5 +1,9 @@
-import { Expression, ExpressionType, ValueType } from '../../../common/model';
-import { IPhraseExpression } from '../../../dto/expressions';
+import { List, Map } from 'immutable';
+import { Maybe, None, Some } from 'monet';
+
+import { Expression, ExpressionType, IntegrityFailure, ValueType } from '../../../common/model';
+import { IPhraseExpression } from '../../../dto';
+import { InvalidExpression } from '../invalid';
 import { TermExpression } from './term';
 
 export class PhraseExpression<T> extends TermExpression<string> {
@@ -12,7 +16,7 @@ export class PhraseExpression<T> extends TermExpression<string> {
   }
 
   public readonly returnType: ValueType = ValueType.Phrase;
-  public readonly type = ExpressionType.Phrase;
+  public readonly type: ExpressionType.Phrase = ExpressionType.Phrase;
 
   constructor(public readonly term: TermExpression<T>) {
     super(term.value, term.value.trim());
@@ -36,8 +40,33 @@ export class PhraseExpression<T> extends TermExpression<string> {
     };
   }
 
+  public toList(): List<Expression> {
+    return List([this as Expression]).concat(this.term.toList()).toList();
+  }
+
+  public checkIntegrity(model: Map<string, ValueType>): Expression {
+    return this.getIntegrityErrors(model)
+      .map(errors => errors.map(IntegrityFailure.fromError(this)))
+      .foldLeft(this as Expression)(InvalidExpression.fromErrors);
+  }
+
   protected toPhrase() {
     return this;
+  }
+
+  protected getIntegrityError(_model: Map<string, ValueType>): Maybe<string> {
+    // TODO: Integrity (is there anything to check here ?)
+    return None<string>();
+  }
+
+  private getIntegrityErrors(model: Map<string, ValueType>): Maybe<string[]> {
+    const newTerm = this.term.checkIntegrity(model);
+
+    if (newTerm instanceof InvalidExpression) {
+      return Some(newTerm.errors.toArray().map(err => `PhraseExpression term error: ${err}`));
+    }
+
+    return this.getIntegrityError(model).map(err => [err]);
   }
 
 }

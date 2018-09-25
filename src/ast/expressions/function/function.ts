@@ -1,13 +1,13 @@
-import { List } from 'immutable';
+import { List, Map } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
-import { checkBoolCompatibility, Expression, ExpressionType, isSubtype, ValueType } from '../../../common/model';
+import { checkBoolCompatibility, Expression, ExpressionType, IntegrityFailure, isSubtype, TypeFailure, ValueType } from '../../../common/model';
 import { toOrdinal } from '../../../common/utils';
 import { FunctionConfig, RequiredFunctionArg } from '../../../config';
 import { IFunctionExpression } from '../../../dto';
 import { InvalidExpression } from '../invalid';
-import { DateExpression, NumberExpression, PhraseExpression, TermExpression, TextExpression } from '../term';
+import { DateExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from '../term';
 
 export class FunctionExpression extends Expression {
 
@@ -30,7 +30,8 @@ export class FunctionExpression extends Expression {
               case ValueType.Number:
                 return NumberExpression.fromTerm(arg as TermExpression);
               case ValueType.Text:
-                return TextExpression.fromTerm(arg as TermExpression);
+                return arg.is(SelectorExpression as any) ? arg :
+                  TextExpression.fromTerm(arg as TermExpression);
               case ValueType.Phrase:
                 return PhraseExpression.fromTerm(arg as TermExpression);
               case ValueType.Any:
@@ -46,7 +47,7 @@ export class FunctionExpression extends Expression {
     return new FunctionExpression(argExpressions, config);
   }
 
-  public readonly type = ExpressionType.Function;
+  public readonly type: ExpressionType.Function = ExpressionType.Function;
 
   constructor(
     public readonly value: List<Expression>,
@@ -79,9 +80,17 @@ export class FunctionExpression extends Expression {
     return this.clone(this.value.map(arg => arg.reshape()).toList());
   }
 
-  public checkTypes() {
-    return this.getErrors()
+  public checkTypes(): Expression {
+    return this.getTypeErrors()
+      .map(errors => errors.map(TypeFailure.fromError(this)))
       .foldLeft(this.clone(this.value.map(arg => arg.checkTypes()).toList()))(
+        InvalidExpression.fromErrors);
+  }
+
+  public checkIntegrity(model: Map<string, ValueType>): Expression {
+    return this.getIntegrityErrors(model)
+      .map(errors => errors.map(IntegrityFailure.fromError(this)))
+      .foldLeft(this.clone(this.value.map(arg => arg.checkIntegrity(model)).toList()))(
         InvalidExpression.fromErrors);
   }
 
@@ -112,7 +121,9 @@ export class FunctionExpression extends Expression {
     return new FunctionExpression(args, this.config);
   }
 
-  private getErrors(): Maybe<string[]> {
+  // --- type check ---
+
+  private getTypeErrors(): Maybe<string[]> {
     const restArgs = this.value.slice(this.config.args.size).toList();
     const initialArgs = this.value.slice(0, this.config.args.size).toList();
     const requiredArgsCount = this.config.args
@@ -145,33 +156,44 @@ export class FunctionExpression extends Expression {
       initialArgs.toArray())
     .map(([config, argOption], index) => {
       const arg = Maybe.fromNull(argOption);
-      const valid = arg.fold(false)(({ returnType }) =>
-        isSubtype(returnType, config.type) || checkBoolCompatibility(returnType, config.type));
+      const valid = arg.fold(false)(({ returnType, type }) =>
+        (isSubtype(returnType, config.type) || checkBoolCompatibility(returnType, config.type)) &&
+        config.expressionType.orJust([type]).includes(type));
 
       return ({ arg, config, index, valid });
     })
     .filter(({ valid }) => !valid)
     .map(( { arg, config, index }) =>
       `Function "${this.name}" has wrong arg passed: "${config.label}" ` +
-      `(${toOrdinal(index + 1)} param) should be ${config.type} but ` +
-      `is ${arg.fold('undefined')(({ returnType }) => returnType )}.`);
+      `(${toOrdinal(index + 1)} param) should be ${config.toTypeString()} but ` +
+      `is ${arg.fold('not defined')(expr => expr.toTypeString())}.`);
   }
 
   private getRestArgsErrors(restArgs: List<Expression>): string[] {
     return this.config.argsRest
-      .map(({ type }) => restArgs
+      .map(config => restArgs
         .map((arg, index) => ({
           arg,
           index,
-          valid: isSubtype(arg.returnType, type) ||
-            checkBoolCompatibility(arg.returnType, type),
+          validExpressionType: config.expressionType
+            .orJust([arg.type])
+            .includes(arg.type),
+          validReturnType: isSubtype(arg.returnType, config.type) ||
+            checkBoolCompatibility(arg.returnType, config.type),
         }))
-        .filter(({ valid }) => !valid)
+        .filter(({ validExpressionType, validReturnType }) =>
+          !validExpressionType || !validReturnType)
         .map(({ arg, index }) =>
           `Function "${this.name}" has wrong ${toOrdinal(index + 1)} rest arg passed, ` +
-          `should be ${type} but is ${arg.returnType}`))
+          `should be ${config.toTypeString()} but is ${arg.toTypeString()}`))
       .filter(errors => !errors.isEmpty())
       .fold([])(errors => errors.toArray());
+  }
+
+  // --- integrity check ---
+
+  private getIntegrityErrors(_model: Map<string, ValueType>): Maybe<string[]> {
+    return this.config.checkIntegrity();
   }
 
 }

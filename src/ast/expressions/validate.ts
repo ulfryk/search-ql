@@ -1,17 +1,19 @@
+import { Map } from 'immutable';
 import { Either, Left, Right } from 'monet';
 
-import { Expression, TypeFailure } from '../../common/model';
+import { Expression, Failure, ValueType } from '../../common/model';
 import { InvalidExpression } from './invalid';
 
-export const validate = (e: Expression): Either<TypeFailure[], Expression> => {
-  const validated = e.checkTypes();
+export const validate = (model: Map<string, ValueType>) =>
+  (e: Expression): Either<Failure[], Expression> => {
+    const validated = e.checkTypes().checkIntegrity(model);
 
-  if (validated.isValid()) {
-    return Right(e);
-  }
+    if (validated.isValid()) {
+      return Right(e);
+    }
 
-  return Left(validated.toList()
-    .filter(node => node instanceof InvalidExpression)
-    .flatMap(({ errors }: InvalidExpression) => errors.map(TypeFailure.fromError(validated)))
-    .toArray());
-};
+    return Left(validated.toList()
+      .filter(node => node instanceof InvalidExpression)
+      .flatMap(expr => (expr as InvalidExpression).errors)
+      .toArray());
+  };

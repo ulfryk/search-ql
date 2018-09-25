@@ -60,8 +60,8 @@ describe('SearchQL expressions', () => {
       ];
 
       const rhs = [
-        List([lhs[0], lhs[0].value]),
-        List([lhs[1], lhs[1].value]),
+        List([lhs[0], lhs[0].value, (lhs[0].value as PhraseExpression<any>).term]),
+        List([lhs[1], lhs[1].value, (lhs[1].value as PhraseExpression<any>).term]),
       ];
 
       it('should properly build up list of expressions', () => {

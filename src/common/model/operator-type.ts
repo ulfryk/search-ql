@@ -11,3 +11,20 @@ export enum OperatorType {
   IsNot = 'IS NOT',
   NotLike = 'NOT LIKE',
 }
+
+export const allBinaryOperators = [
+  OperatorType.And,
+  OperatorType.Like,
+  OperatorType.Or,
+  OperatorType.Gt,
+  OperatorType.Gte,
+  OperatorType.Lt,
+  OperatorType.Lte,
+  OperatorType.Is,
+  OperatorType.IsNot,
+  OperatorType.NotLike,
+];
+
+export const allUnaryOperators = [
+  OperatorType.Not,
+];

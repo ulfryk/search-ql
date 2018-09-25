@@ -9,9 +9,9 @@ import { ParseFailure, ValueType } from './common/model';
 import { SearchQLParser } from './search-ql-parser';
 import { and, fn, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
 
-describe('SearchQL', () => {
+describe('SearchQLParser', () => {
 
-  describe('SearchQLParser with regular config', () => {
+  describe('with regular config', () => {
 
     const validInput = [
       'aaa & bbb',
@@ -41,20 +41,26 @@ describe('SearchQL', () => {
       'test_function(test_function(aaa), (token_expired ~ true), (! is_empty(ccc)))',
       'test_function(aaa, bbb, (! ccc)) ~ (! "John Doe")',
       'a ISNT is_empty(b)',
+      '(bb AND cc) >= bbb',
     ];
 
     const invalidTypesOutput = [
-      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN/(binary-operation)'],
       [
-        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN/(function)',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN/(binary-operation)',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN/(not-operation)',
       ],
       [
-        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
+        'IntegrityError: The RHS of ~ shouldn\'t evaluate to Phrase.',
+        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE/(not-operation)',
       ],
       [
         'TypeError: Both sides of ISNT expression should be of same type, but got LHS: TEXT and RHS: BOOLEAN.',
+      ],
+      [
+        'TypeError: Both sides of >= expression should be of same type, but got LHS: PHRASE and RHS: TEXT.',
+        'IntegrityError: The LHS of >= shouldn\'t evaluate to Phrase.',
       ],
     ];
 
@@ -83,7 +89,7 @@ describe('SearchQL', () => {
 
         it('should provide original input', () => {
           expect(parsed.cata(
-            f => f.map(({ query }: ParseFailure) => query)[0],
+            f => f.map(failure => (failure as ParseFailure).query)[0],
             () => null)).to.equal(input);
         });
 
@@ -107,7 +113,7 @@ describe('SearchQL', () => {
 
   });
 
-  describe('SearchQLParser with regular config and defined model', () => {
+  describe('with regular config and defined model', () => {
 
     const model = Map<string, ValueType>({
       age: ValueType.Number,
@@ -125,6 +131,7 @@ describe('SearchQL', () => {
       '! is_empty(first_name)',
       'first_name !~ noone',
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
+      'length(token_expired) >= age',
     ];
 
     const successfulOutputValues = [
@@ -133,16 +140,17 @@ describe('SearchQL', () => {
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
-      func('is_empty')(txt('first_name')),
-      not(func('is_empty')(txt('first_name'))),
+      func('is_empty')(sel('first_name', ValueType.Text)),
+      not(func('is_empty')(sel('first_name', ValueType.Text))),
       notLike(txt('first_name'), txt('noone')),
       or(
         and(
           gteR(sel('age', ValueType.Number), num('13')),
           ltR(sel('age', ValueType.Number), num('18'))),
         and(
-          gtR(func('length')(txt('first_name')), num('1')),
-          lteR(func('length')(txt('first_name')), num('4')))),
+          gtR(func('length')(sel('first_name', ValueType.Text)), num('1')),
+          lteR(func('length')(sel('first_name', ValueType.Text)), num('4')))),
+      gteR(func('length')(sel('token_expired', ValueType.Text)), sel('age', ValueType.Number)),
     ].map(Either.of);
 
     const invalidInput = [
@@ -153,28 +161,46 @@ describe('SearchQL', () => {
     ];
 
     const invalidTypesInput = [
-      'test_function(aaa, (token_expired ~ true))',
+      'test_function(aaa, (token_expires_xxx ~ true))',
       'test_function(test_function(aaa), (token_expired ~ true), (! is_empty(ccc)))',
       'test_function(aaa, bbb, (! ccc)) ~ (! (first_name IS "John Doe"))',
       'a ISNT is_empty(b)',
       '! length(first_name)',
+      'aaa = (bb AND cc)',
+      'first_name != age',
+      'length(first_name) < is_empty(age)',
+      'first_name < is_empty(age)',
     ];
 
     const invalidTypesOutput = [
-      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN/(binary-operation)'],
       [
-        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN/(function)',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is PHRASE/(binary-operation)',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN/(not-operation)',
       ],
       [
-        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
+        'IntegrityError: The RHS of ~ shouldn\'t evaluate to Phrase.',
+        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE/(not-operation)',
       ],
       [
         'TypeError: Both sides of ISNT expression should be of same type, but got LHS: TEXT and RHS: BOOLEAN.',
       ],
       [
         'TypeError: Operand of NOT operation should be a BOOLEAN, but got NUMBER',
+      ],
+      [
+        'TypeError: Both sides of = expression should be of same type, but got LHS: TEXT and RHS: PHRASE.',
+        'IntegrityError: The RHS of = shouldn\'t evaluate to Phrase.',
+      ],
+      [
+        'TypeError: If both sides of != expression are model selectors, than their matching types should equal, but got LHS matching type: TEXT, RHS matching type: NUMBER.',
+      ],
+      [
+        'TypeError: Both sides of < expression should be of same type, but got LHS: NUMBER and RHS: BOOLEAN.',
+      ],
+      [
+        'TypeError: If LHS of < expression is model selector, than its matching type should equal RHS return type, but got LHS matching type: TEXT, RHS return type: BOOLEAN.',
       ],
     ];
 
@@ -189,7 +215,10 @@ describe('SearchQL', () => {
           });
 
           it('should return parsed expression', () => {
-            expect(parsed.equals(output)).to.be.true;
+            expect(
+                parsed.equals(output),
+                `${parsed.cata(String, String)} VS ${output.cata(String, String)}`)
+              .to.be.true;
           });
 
         });
@@ -200,12 +229,12 @@ describe('SearchQL', () => {
         const parsed = SearchQLParser.create({ model }).parse(input);
 
         it('should return Left', () => {
-          expect(parsed.isLeft()).to.be.true;
+          expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
         });
 
         it('should provide original input', () => {
           expect(parsed.cata(
-            f => f.map(({ query }: ParseFailure) => query)[0],
+            f => f.map(failure => (failure as ParseFailure).query)[0],
             () => null)).to.equal(input);
         });
 
@@ -214,7 +243,7 @@ describe('SearchQL', () => {
 
     invalidTypesInput.forEach((input, i) => {
       describe(`for syntactically valid yet wrongly typed input: ${input}`, () => {
-        const parsed = SearchQLParser.create().parse(input);
+        const parsed = SearchQLParser.create({ model }).parse(input);
 
         it('should return Left', () => {
           expect(parsed.isLeft(), parsed.cata(String, String)).to.be.true;
@@ -229,7 +258,7 @@ describe('SearchQL', () => {
 
   });
 
-  describe('SearchQLParser with custom config', () => {
+  describe('with custom config', () => {
 
     const model = Map<string, ValueType>({
       first_name: ValueType.Text,
@@ -306,7 +335,7 @@ describe('SearchQL', () => {
 
         it('should provide original input', () => {
           expect(parsed.cata(
-            f => f.map(({ query }: ParseFailure) => query)[0],
+            f => f.map(failure => (failure as ParseFailure).query)[0],
             () => null)).to.equal(input);
         });
 

@@ -5,7 +5,7 @@ import { zip } from 'lodash';
 
 import { Expression, ValueType } from '../common/model';
 import { ParserConfig, ParserName } from '../config';
-import { and, And0, andNot, config, fn, is, isNot, Like0, likeR, not, NotLike0, notLikeR, or, Or0, phrase, sel, txt } from '../testing/utils';
+import { and, And0, andNot, config, fn, is, isNot, Like0, likeR, not, NotLike0, notLikeR, num, or, Or0, phrase, sel, txt } from '../testing/utils';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
@@ -106,11 +106,11 @@ describe('SearchQL parsers', () => {
         and(and(phrase('aaa'), or(phrase('bbb'), phrase('ccc'), Or0), And0), not(phrase('ddd')), And0),
         and(or(phrase('aaa'), phrase('bbb'), Or0), not(phrase('ccc')), And0),
         and(and(and(phrase('aaa'), phrase('bbb'), And0), phrase('ccc'), And0), not(phrase('ddd')), And0),
-        and(isNot(sel('age', ValueType.Number), phrase('16')), is(sel('name', ValueType.Text), phrase('John'))),
-        and(is(sel('age', ValueType.Number), phrase('24')), isNot(sel('name', ValueType.Text), phrase('Doe'))),
+        and(isNot(sel('age', ValueType.Number), num('16')), is(sel('name', ValueType.Text), txt('John'))),
+        and(is(sel('age', ValueType.Number), num('24')), isNot(sel('name', ValueType.Text), txt('Doe'))),
         or(
-          and(isNot(sel('age', ValueType.Number), phrase('16')), is(sel('name', ValueType.Text), phrase('John'))),
-          and(is(sel('age', ValueType.Number), phrase('24')), isNot(sel('name', ValueType.Text), phrase('Doe')))),
+          and(isNot(sel('age', ValueType.Number), num('16')), is(sel('name', ValueType.Text), txt('John'))),
+          and(is(sel('age', ValueType.Number), num('24')), isNot(sel('name', ValueType.Text), txt('Doe')))),
         and(notLikeR(txt('aaa'), txt('bbb')), notLikeR(txt('ccc'), txt('ddd'), NotLike0)),
       ];
 

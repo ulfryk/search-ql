@@ -12,7 +12,7 @@ export class FunctionConfig implements ISetoid {
     return new FunctionConfig(
       name,
       List(args.map(FunctionArg.fromJS)),
-      Maybe.fromNull(argsRest).map(FunctionArg.fromJS),
+      Maybe.fromNull(argsRest).map(FunctionArg.fromJS) as Maybe<OptionalFunctionArg>,
       returnType);
   }
 
@@ -38,6 +38,12 @@ export class FunctionConfig implements ISetoid {
       name: this.name,
       returnType: this.returnType,
     };
+  }
+
+  public checkIntegrity(): Maybe<string[]> {
+    return this.argsRest
+      .filter(arg => !(arg instanceof OptionalFunctionArg))
+      .map(arg => [`FunctionConfig argsRest should contain optional arg but got: ${arg}`]);
   }
 
 }

@@ -30,7 +30,7 @@ export abstract class TermExpression<PV = any> extends Expression {
     return this;
   }
 
-  public reshape(ctx?: ReshapeContext) {
+  public reshape(ctx?: ReshapeContext): Expression {
     return Maybe.fromNull(ctx)
       .filter(someCtx => someCtx === ReshapeContext.Top)
       .fold(this as TermExpression)(() => this.toPhrase());
@@ -40,7 +40,7 @@ export abstract class TermExpression<PV = any> extends Expression {
     return `"${this.value}"`;
   }
 
-  public toList() {
+  public toList(): List<Expression> {
     return List([this]);
   }
 

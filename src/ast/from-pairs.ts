@@ -1,6 +1,6 @@
 import { None, Some } from 'monet';
 
-import { Expression } from '../common/model';
+import { Expression, ParseFailure } from '../common/model';
 import { ParserConfig } from '../config';
 import { BinaryOperationChain } from './binary-operation-chain';
 import { InvalidExpression } from './expressions';
@@ -14,7 +14,9 @@ export const fromPairs =
         (acc, [token, rhs]) => acc
           .flatMap(group => token
             .map(Operator.fromToken(config))
-            .map<Expression>(group.append(rhs, config)))
+            .map(group.append(rhs, config)))
           .orElse(Some(BinaryOperationChain.init(rhs))),
         None<BinaryOperationChain>())
-      .orJust(InvalidExpression.empty('No valid expression found.'));
+      .map(e => e as Expression)
+      .orJust(InvalidExpression
+        .empty(new ParseFailure('No valid expression found.')));
