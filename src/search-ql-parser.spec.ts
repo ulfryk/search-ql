@@ -45,14 +45,14 @@ describe('SearchQLParser', () => {
     ];
 
     const invalidTypesOutput = [
-      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN/(binary-operation)'],
       [
-        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN/(function)',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN/(binary-operation)',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN/(not-operation)',
       ],
       [
-        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
+        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE/(not-operation)',
       ],
       [
         'TypeError: Both sides of ISNT expression should be of same type, but got LHS: TEXT and RHS: BOOLEAN.',
@@ -138,17 +138,17 @@ describe('SearchQLParser', () => {
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
-      func('is_empty')(txt('first_name')),
-      not(func('is_empty')(txt('first_name'))),
+      func('is_empty')(sel('first_name', ValueType.Text)),
+      not(func('is_empty')(sel('first_name', ValueType.Text))),
       notLike(txt('first_name'), txt('noone')),
       or(
         and(
           gteR(sel('age', ValueType.Number), num('13')),
           ltR(sel('age', ValueType.Number), num('18'))),
         and(
-          gtR(func('length')(txt('first_name')), num('1')),
-          lteR(func('length')(txt('first_name')), num('4')))),
-      gteR(func('length')(txt('token_expired')), sel('age', ValueType.Number)),
+          gtR(func('length')(sel('first_name', ValueType.Text)), num('1')),
+          lteR(func('length')(sel('first_name', ValueType.Text)), num('4')))),
+      gteR(func('length')(sel('token_expired', ValueType.Text)), sel('age', ValueType.Number)),
     ].map(Either.of);
 
     const invalidInput = [
@@ -171,14 +171,14 @@ describe('SearchQLParser', () => {
     ];
 
     const invalidTypesOutput = [
-      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN'],
+      ['TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is BOOLEAN/(binary-operation)'],
       [
-        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN',
-        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is PHRASE',
-        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN',
+        'TypeError: Function "test_function" has wrong 1st rest arg passed, should be TEXT but is BOOLEAN/(function)',
+        'TypeError: Function "test_function" has wrong 2nd rest arg passed, should be TEXT but is PHRASE/(binary-operation)',
+        'TypeError: Function "test_function" has wrong 3rd rest arg passed, should be TEXT but is BOOLEAN/(not-operation)',
       ],
       [
-        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE',
+        'TypeError: Function \"test_function\" has wrong 3rd rest arg passed, should be TEXT but is PHRASE/(not-operation)',
       ],
       [
         'TypeError: Both sides of ISNT expression should be of same type, but got LHS: TEXT and RHS: BOOLEAN.',
@@ -211,7 +211,10 @@ describe('SearchQLParser', () => {
           });
 
           it('should return parsed expression', () => {
-            expect(parsed.equals(output)).to.be.true;
+            expect(
+                parsed.equals(output),
+                `${parsed.cata(String, String)} VS ${output.cata(String, String)}`)
+              .to.be.true;
           });
 
         });

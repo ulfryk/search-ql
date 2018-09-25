@@ -26,4 +26,8 @@ export abstract class Expression implements IExpression, ISetoid {
     return this instanceof ctor;
   }
 
+  public toTypeString() {
+    return `${this.returnType}/(${this.type})`;
+  }
+
 }

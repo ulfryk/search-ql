@@ -212,6 +212,7 @@ describe('SearchQL expressions', () => {
           config: {
             args: [{
               demand: ArgDemand.Optional,
+              expressionType: null,
               label: 'arg0',
               type: ValueType.Text,
             }],
@@ -232,6 +233,7 @@ describe('SearchQL expressions', () => {
           config: {
             args: [{
               demand: ArgDemand.Optional,
+              expressionType: null,
               label: 'arg0',
               type: ValueType.Date,
             }],

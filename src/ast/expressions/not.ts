@@ -90,7 +90,7 @@ export class NotExpression extends Expression {
   }
 
   private getIntegrityError(): Maybe<string> {
-    // TODO: Integrity
+    // nothing to check here
     return None();
   }
 

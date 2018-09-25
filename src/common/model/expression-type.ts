@@ -1,12 +1,12 @@
 export enum ExpressionType {
-  Function = 'expression:function',
-  Binary = 'expression:binary-operation',
-  Not = 'expression:not-operation', // Can be changed to unary-operation (with not-operator)
-  Date = 'expression:date-term',
-  Number = 'expression:number-term',
-  Phrase = 'expression:phrase-term',
-  Selector = 'expression:selector-term',
-  Text = 'expression:text-term',
-  // Boolean = 'expression:boolean-term',
+  Function = 'function',
+  Binary = 'binary-operation',
+  Not = 'not-operation', // Can be changed to unary-operation (with not-operator)
+  Date = 'date-term',
+  Number = 'number-term',
+  Phrase = 'phrase-term',
+  Selector = 'selector-term',
+  Text = 'text-term',
+  // Boolean = 'boolean-term',
   Invalid = 'INVALID',
 }
