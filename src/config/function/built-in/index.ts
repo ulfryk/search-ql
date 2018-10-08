@@ -3,6 +3,7 @@ import { isEmptyFunction } from './is-empty';
 import { isNumberFunction } from './is-number';
 import { lengthFunction } from './length';
 import { testFunction } from './test';
+import { typeofFunction } from './typeof';
 
 const builtInFunctions = [
   isDateFunction,
@@ -10,6 +11,7 @@ const builtInFunctions = [
   isNumberFunction,
   lengthFunction,
   testFunction,
+  typeofFunction,
 ];
 
 export {
@@ -19,4 +21,5 @@ export {
   isNumberFunction,
   lengthFunction,
   testFunction,
+  typeofFunction,
 };
