@@ -38,6 +38,8 @@ const paramTypes = Map<ValueType, (t: ValueType) => boolean>({
   [ValueType.Text]: isTextType,
 });
 
+const isType = (a: string): a is ValueType => ANY_TYPES.includes(a as any);
+
 const isSubtype = (t: ValueType, ofT: ValueType): boolean =>
   paramTypes.get(ofT)(t);
 
@@ -59,6 +61,7 @@ export {
   isSubtype,
   isSupertype,
   isTextType,
+  isType,
   paramTypes,
   TEXT_TYPES,
   ValueType,

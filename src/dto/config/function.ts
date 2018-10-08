@@ -6,5 +6,5 @@ export interface IFunctionConfig {
   readonly args: IFunctionArg[];
   readonly argsRest: IFunctionArg | null;
   readonly name: string;
-  readonly returnType: ValueType;
+  readonly returnType: ValueType | string;
 }

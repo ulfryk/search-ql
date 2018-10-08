@@ -130,6 +130,8 @@ describe('SearchQLParser', () => {
       'is_empty(first_name)',
       'is_null(first_name)',
       'is_undefined(token_expired)',
+      'is_empty("lorem ipsum")',
+      'is_null(typeof(age))',
       'is_date(token_expired)',
       'is_number(age)',
       'typeof(age) = typeof(12)',
@@ -137,6 +139,7 @@ describe('SearchQLParser', () => {
       'first_name !~ noone',
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
       'length(token_expired) >= age',
+      'coalesce(first_name, typeof(age), "Lorem ipsum dolor")',
     ];
 
     const successfulOutputValues = [
@@ -148,6 +151,8 @@ describe('SearchQLParser', () => {
       func('is_empty')(sel('first_name', ValueType.Text)),
       func('is_null')(sel('first_name', ValueType.Text)),
       func('is_undefined')(sel('token_expired', ValueType.Text)),
+      func('is_empty')(txt('lorem ipsum')),
+      func('is_null')(func('typeof')(sel('age', ValueType.Number))),
       func('is_date')(sel('token_expired', ValueType.Text)),
       func('is_number')(sel('age', ValueType.Number)),
       isR(
@@ -163,6 +168,10 @@ describe('SearchQLParser', () => {
           gtR(func('length')(sel('first_name', ValueType.Text)), num('1')),
           lteR(func('length')(sel('first_name', ValueType.Text)), num('4')))),
       gteR(func('length')(sel('token_expired', ValueType.Text)), sel('age', ValueType.Number)),
+      func('coalesce')(
+        sel('first_name', ValueType.Text),
+        func('typeof')(sel('age', ValueType.Number)),
+        txt('Lorem ipsum dolor')),
     ].map(Either.of);
 
     const invalidInput = [
@@ -182,6 +191,7 @@ describe('SearchQLParser', () => {
       'first_name != age',
       'length(first_name) < is_empty(age)',
       'first_name < is_empty(age)',
+      'coalesce(age, length(first_name), loremipsum, 12, 2012-08-07, test_function())',
     ];
 
     const invalidTypesOutput = [
@@ -213,6 +223,9 @@ describe('SearchQLParser', () => {
       ],
       [
         'TypeError: If LHS of < expression is model selector, than its matching type should equal RHS return type, but got LHS matching type: TEXT, RHS return type: BOOLEAN.',
+      ],
+      [
+        'TypeError: Each type param should match exactly one type but T has multiple resolutions: TEXT, NUMBER, DATE, BOOLEAN',
       ],
     ];
 

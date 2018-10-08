@@ -1,5 +1,5 @@
 import { List } from 'immutable';
-import { None } from 'monet';
+import { None, Right } from 'monet';
 
 import { ValueType } from '../../../common/model';
 import { RequiredFunctionArg } from '../function-arg';
@@ -10,4 +10,4 @@ export const lengthFunction =
     'length',
     List([RequiredFunctionArg.fromType(ValueType.Text, 'field_name')]),
     None(),
-    ValueType.Number);
+    Right(ValueType.Number));

@@ -8,7 +8,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## Unreleased
 ### Added
 - function aliases
-- functions:
+- generic functions
+- functions operating on ANY type values:
+  - `coalesce`
   - `is_date`
   - `is_number`
   - `typeof`

@@ -1,3 +1,4 @@
+import { coalesceFunction } from './coalesce';
 import { isDateFunction } from './is-date';
 import { isEmptyFunction } from './is-empty';
 import { isNumberFunction } from './is-number';
@@ -6,6 +7,7 @@ import { testFunction } from './test';
 import { typeofFunction } from './typeof';
 
 const builtInFunctions = [
+  coalesceFunction,
   isDateFunction,
   isEmptyFunction,
   isNumberFunction,
@@ -15,6 +17,7 @@ const builtInFunctions = [
 ];
 
 export {
+  coalesceFunction,
   builtInFunctions,
   isDateFunction,
   isEmptyFunction,

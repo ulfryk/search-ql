@@ -6,4 +6,5 @@ export interface IFunctionArg {
   readonly expressionType: ExpressionType[] | null; // non empty array or null
   readonly label: string;
   readonly type: ValueType;
+  readonly typeParam: string | null;
 }

@@ -1,6 +1,6 @@
 /* tslint:disable:strict-boolean-expressions */
 import { List } from 'immutable';
-import { None } from 'monet';
+import { None, Right } from 'monet';
 
 import { BinaryOperationExpression, DateExpression, fromMatch, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, EqualityOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, NotOperator, OrOperator, RelationalOperator } from '../ast/operators';
@@ -91,7 +91,7 @@ const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expressio
     name,
     List(args.map(({ returnType: t }, i) => OptionalFunctionArg.fromType(t, `arg${i}`))),
     None(),
-    returnType), args);
+    Right(returnType)), args);
 
 const func = (name: string, cfg = config) => (...args: Expression[]) =>
   FunctionExpression.fromParseResult(cfg.functions.get(name), args);
