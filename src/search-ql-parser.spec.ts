@@ -130,6 +130,8 @@ describe('SearchQLParser', () => {
       'is_empty(first_name)',
       'is_null(first_name)',
       'is_undefined(token_expired)',
+      'is_date(token_expired)',
+      'is_number(age)',
       '! is_empty(first_name)',
       'first_name !~ noone',
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
@@ -145,6 +147,8 @@ describe('SearchQLParser', () => {
       func('is_empty')(sel('first_name', ValueType.Text)),
       func('is_null')(sel('first_name', ValueType.Text)),
       func('is_undefined')(sel('token_expired', ValueType.Text)),
+      func('is_date')(sel('token_expired', ValueType.Text)),
+      func('is_number')(sel('age', ValueType.Number)),
       not(func('is_empty')(sel('first_name', ValueType.Text))),
       notLike(txt('first_name'), txt('noone')),
       or(
