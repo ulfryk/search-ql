@@ -128,6 +128,8 @@ describe('SearchQLParser', () => {
       'test_function(aaa, "b(b & b)")',
       'aaa = bbb & cc != dd',
       'is_empty(first_name)',
+      'is_null(first_name)',
+      'is_undefined(token_expired)',
       '! is_empty(first_name)',
       'first_name !~ noone',
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
@@ -141,6 +143,8 @@ describe('SearchQLParser', () => {
       fn('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
       func('is_empty')(sel('first_name', ValueType.Text)),
+      func('is_null')(sel('first_name', ValueType.Text)),
+      func('is_undefined')(sel('token_expired', ValueType.Text)),
       not(func('is_empty')(sel('first_name', ValueType.Text))),
       notLike(txt('first_name'), txt('noone')),
       or(

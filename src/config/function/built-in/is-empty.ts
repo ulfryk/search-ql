@@ -10,4 +10,5 @@ export const isEmptyFunction =
     'is_empty',
     List([RequiredFunctionArg.fromType(ValueType.Text, 'field_name')]),
     None(),
-    ValueType.Boolean);
+    ValueType.Boolean,
+    ['is_null', 'is_undefined']);

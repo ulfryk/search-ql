@@ -1,4 +1,4 @@
-import { Map, Set } from 'immutable';
+import { List, Map, Set } from 'immutable';
 import { Maybe } from 'monet';
 
 import { OperatorType, ValueType } from '../common/model';
@@ -37,10 +37,10 @@ export class ParserConfig {
     ...this.NOT.map(token => [token, OperatorType.Not]),
   ]);
 
-  public readonly functions = Map<string, FunctionConfig>([
+  public readonly functions = Map<string, FunctionConfig>(List([
     ...this.builtInFunctions,
     ...this.customFunctions,
-  ].map(fnConfig => [fnConfig.name, fnConfig]));
+  ]).flatMap(fnConfig => fnConfig.names.map(name => [name, fnConfig])));
 
   constructor(
     public readonly parserNames: ParserName[] = allParsers,

@@ -1,5 +1,5 @@
 import { ISetoid } from '@samwise-tech/core';
-import { List } from 'immutable';
+import { List, Set } from 'immutable';
 import { Maybe } from 'monet';
 
 import { ValueType } from '../../common/model';
@@ -21,7 +21,12 @@ export class FunctionConfig implements ISetoid {
     public readonly args: List<FunctionArg>,
     public readonly argsRest: Maybe<OptionalFunctionArg>,
     public readonly returnType: ValueType,
+    public readonly aliases: string[] = [],
   ) {}
+
+  public get names() {
+    return Set(this.aliases).add(this.name).toSet();
+  }
 
   public equals(other: FunctionConfig) {
     return this === other || (
