@@ -7,8 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 ### Added
-- function aliases
-- generic functions
+- **[breaking]** function aliases
+- **[breaking]** generic functions
+- functions operating on ANY type values:
+  - `coalesce`
+  - `is_date`
+  - `is_number`
+  - `typeof`
 - functions operating on TEXT type values:
   - `​​concat`
   - `​​trim`
@@ -16,17 +21,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `​​upper`
   - `​​remove_stop_words`
   - `​​cleanup`
-- functions operating on ANY type values:
-  - `coalesce`
-  - `is_date`
-  - `is_number`
-  - `typeof`
+- functions operating on NUMBER type values:
+  - `abs`
+  - `​​round`
+  - `​​ceil`
+  - `​​floor`
 
 ## 6.0.0
 
 ### Changed
-- **breaking** changed `Failure` classes
-- **breaking** AST validation API
+- **[breaking]** changed `Failure` classes
+- **[breaking]** AST validation API
 
 ### Added
 - integrity check
@@ -43,10 +48,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 5.0.0 - 2018-09-20
 
 ### Removed
-- **breaking** - testers completely moved out from library
+- **[breaking]** - testers completely moved out from library
 
 ### Changed
-- **breaking** changed API of `SearchQLParser` - `toTester` method removed
+- **[breaking]** changed API of `SearchQLParser` - `toTester` method removed
 
 ### Fixed
 - update dependencies
@@ -58,7 +63,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `NOT LIKE` similarity binary operator
 
 ### Changed
-- **breaking** changed entry point - `SearchQLParser` class instead of `parseSearchQL` function
+- **[breaking]** changed entry point - `SearchQLParser` class instead of `parseSearchQL` function
 
 ### Fixed
 - update dependencies
@@ -79,16 +84,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `TextExpression`
   - `PhraseExpression` (replaces `BasicExpression`)
 - operators precedence and associativity
-- **breaking** type checking
+- **[breaking]** type checking
 
 ### Removed
-- **breaking** drop `LabelledExpression`
-- **breaking** drop `BasicExpression`
-- **breaking** remove `test` method from expression
+- **[breaking]** drop `LabelledExpression`
+- **[breaking]** drop `BasicExpression`
+- **[breaking]** remove `test` method from expression
 
 ### Changed
-- **breaking** don't ignore trailing operator
-- **breaking** input testing decoupled from AST
+- **[breaking]** don't ignore trailing operator
+- **[breaking]** input testing decoupled from AST
 
 ### Fixed
 - update dependencies

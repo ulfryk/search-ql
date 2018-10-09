@@ -190,9 +190,16 @@ export class FunctionExpression extends Expression {
       initialArgs.toArray())
     .map(([config, argOption], index) => {
       const arg = Maybe.fromNull(argOption);
-      const valid = arg.fold(false)(({ returnType, type }) =>
-        (isSubtype(returnType, config.type) || checkBoolCompatibility(returnType, config.type)) &&
-        config.expressionType.orJust([type]).includes(type));
+      // tslint:disable-next-line:cyclomatic-complexity
+      const valid = arg.fold(false)(argExpression => {
+        const argType = argExpression.is(SelectorExpression as any) ?
+          (argExpression as SelectorExpression).matchingType : argExpression.returnType;
+
+        return (
+          isSubtype(argType, config.type) ||
+          checkBoolCompatibility(argType, config.type)
+        ) && config.expressionType.orJust([argExpression.type]).includes(argExpression.type);
+      });
 
       return ({ arg, config, index, valid });
     })

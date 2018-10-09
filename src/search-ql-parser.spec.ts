@@ -286,6 +286,7 @@ describe('SearchQLParser', () => {
   describe('with custom config', () => {
 
     const model = Map<string, ValueType>({
+      age: ValueType.Number,
       first_name: ValueType.Text,
     });
 
@@ -310,6 +311,7 @@ describe('SearchQLParser', () => {
       'first_name ~= Adam && token_expired ~= true',
       'test_function/    aaa|bbb/',
       'concat/ aaa | bbb| ccc | concat/eee|fff/ /',
+      'length/first_name/ = abs/age/',
     ];
 
     const successfulOutputValues = [
@@ -322,6 +324,9 @@ describe('SearchQLParser', () => {
         AndC),
       fn('test_function')(txt('aaa'), txt('bbb')),
       func('concat')(txt('aaa'), txt('bbb'), txt('ccc'), func('concat')(txt('eee'), txt('fff'))),
+      isR(
+        func('length')(sel('first_name', ValueType.Text)),
+        func('abs')(sel('age', ValueType.Number))),
     ].map(Either.of);
 
     const invalidInput = [
