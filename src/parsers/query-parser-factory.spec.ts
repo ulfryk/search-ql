@@ -84,6 +84,7 @@ describe('SearchQL parsers', () => {
         'age != 16 & name = John | age = 24 & name != Doe',
         'aaa !~ bbb & ccc NOT LIKE ddd',
         'days_diff(now(), 2018-01-01) = days_ago(2018-01-01)',
+        'max(1, 2, 3, 4) = min(4, 5, 6, 7)',
       ];
 
       const validOutput = [
@@ -116,6 +117,9 @@ describe('SearchQL parsers', () => {
         isR(
           func('days_diff')(func('now')(), date('2018-01-01')),
           func('days_ago')(date('2018-01-01'))),
+        isR(
+          func('max')(num('1'), num('2'), num('3'), num('4')),
+          func('min')(num('4'), num('5'), num('6'), num('7'))),
       ];
 
       const invalidInput = [
