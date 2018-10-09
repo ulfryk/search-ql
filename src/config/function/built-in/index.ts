@@ -1,12 +1,19 @@
-import { isEmptyFunction } from './is-empty';
-import { lengthFunction } from './length';
+import { anyFunctions } from './any';
+import { dateFunctions } from './date';
+import { numberFunctions } from './number';
 import { testFunction } from './test';
+import { textFunctions } from './text';
 
-const builtInFunctions = [isEmptyFunction, lengthFunction, testFunction];
-
-export {
-  builtInFunctions,
-  isEmptyFunction,
-  lengthFunction,
+const builtInFunctions = [
+  ...anyFunctions,
+  ...dateFunctions,
+  ...numberFunctions,
+  ...textFunctions,
   testFunction,
-};
+];
+
+export * from './any';
+export * from './date';
+export * from './number';
+export * from './text';
+export { builtInFunctions, testFunction };

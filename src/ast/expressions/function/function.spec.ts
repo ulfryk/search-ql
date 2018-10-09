@@ -2,7 +2,7 @@
 import { expect } from 'chai';
 import { List } from 'immutable';
 import { zip } from 'lodash';
-import { None, Some } from 'monet';
+import { None, Right, Some } from 'monet';
 
 import { Expression, ExpressionType, ValueType } from '../../../common/model';
 import { FunctionConfig, OptionalFunctionArg, ParserConfig, RequiredFunctionArg } from '../../../config';
@@ -20,7 +20,7 @@ const fn = (name: string, ...args: Expression[]) =>
       name,
       List(args.map(({ returnType: t }, i) => OptionalFunctionArg.fromType(t, `arg${i}`))),
       None(),
-      ValueType.Boolean));
+      Right(ValueType.Boolean)));
 
 const phrase = (val: string): PhraseExpression<any> =>
   PhraseExpression.fromTerm(fromMatch(config)(val));
@@ -76,15 +76,15 @@ describe('SearchQL expressions', () => {
 
       const cfgTextIsDate = new FunctionConfig(
         'text_is_date', List([RequiredFunctionArg.fromType(ValueType.Text, 'text')]),
-        None(), ValueType.Boolean);
+        None(), Right(ValueType.Boolean));
 
       const cfgIsDate = new FunctionConfig(
         'is_date', List([RequiredFunctionArg.fromType(ValueType.Any, 'input')]),
-        None(), ValueType.Boolean);
+        None(), Right(ValueType.Boolean));
 
       const cfgTrim = new FunctionConfig(
         'trim', List([RequiredFunctionArg.fromType(ValueType.Text, 'text')]),
-        None(), ValueType.Text);
+        None(), Right(ValueType.Text));
 
       const cfgCoalesce = new FunctionConfig(
         'coalesce', List([
@@ -92,7 +92,7 @@ describe('SearchQL expressions', () => {
           RequiredFunctionArg.fromType(ValueType.Text, 'option'),
         ]),
         Some(OptionalFunctionArg.fromType(ValueType.Text, 'option')),
-        ValueType.Text);
+        Right(ValueType.Text));
 
       const validFns = [
         FunctionExpression.fromParseResult(cfgIsDate, [new NotExpression(phrase('lorem'))]),
@@ -215,6 +215,7 @@ describe('SearchQL expressions', () => {
               expressionType: null,
               label: 'arg0',
               type: ValueType.Text,
+              typeParam: null,
             }],
             argsRest: null as any,
             name: 'id',
@@ -236,6 +237,7 @@ describe('SearchQL expressions', () => {
               expressionType: null,
               label: 'arg0',
               type: ValueType.Date,
+              typeParam: null,
             }],
             argsRest: null as any,
             name: 'is_date',

@@ -1,11 +1,8 @@
 /* tslint:disable:strict-boolean-expressions */
-import { List } from 'immutable';
-import { None } from 'monet';
-
 import { BinaryOperationExpression, DateExpression, fromMatch, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from '../ast/expressions';
 import { AndOperator, EqualityOperator, GteOperator, GtOperator, IsNotOperator, IsOperator, LikeOperator, LteOperator, LtOperator, NotLikeOperator, NotOperator, OrOperator, RelationalOperator } from '../ast/operators';
 import { Expression, ValueType } from '../common/model';
-import { FunctionConfig, OptionalFunctionArg, ParserConfig } from '../config';
+import { ParserConfig } from '../config';
 
 const config = new ParserConfig();
 const { AND, GT, GTE, IS, IS_NOT, LIKE, LT, LTE, NOT, NOT_LIKE, OR } = config;
@@ -86,13 +83,6 @@ const not = (v: Expression) => new NotExpression(v);
 const andNot = (l: Expression, r: Expression, op: AndOperator = And0) =>
   and(l, not(r), op);
 
-const fn = (name: string, returnType = ValueType.Boolean) => (...args: Expression[]) =>
-  FunctionExpression.fromParseResult(new FunctionConfig(
-    name,
-    List(args.map(({ returnType: t }, i) => OptionalFunctionArg.fromType(t, `arg${i}`))),
-    None(),
-    returnType), args);
-
 const func = (name: string, cfg = config) => (...args: Expression[]) =>
   FunctionExpression.fromParseResult(cfg.functions.get(name), args);
 
@@ -110,5 +100,5 @@ export {
   lte, Lte, Lte0, lteR,
   not, Not, Not0,
   or, Or, Or0,
-  fn, func,
+  func,
 };

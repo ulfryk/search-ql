@@ -1,4 +1,5 @@
-import { List, Map } from 'immutable';
+import { Bind } from '@samwise-tech/core';
+import { List, Map, Set } from 'immutable';
 import { zip } from 'lodash';
 import { Maybe, Some } from 'monet';
 
@@ -52,14 +53,17 @@ export class FunctionExpression extends Expression {
   constructor(
     public readonly value: List<Expression>,
     public readonly config: FunctionConfig,
-  ) { super(); }
+  ) {
+    super();
+    Bind.to(this);
+  }
 
   public get name() {
     return this.config.name;
   }
 
   public get returnType(): ValueType {
-    return this.config.returnType;
+    return this.config.returnType.cata(this.deriveReturnTypeFromArgs, __ => __);
   }
 
   // tslint:disable-next-line:cyclomatic-complexity
@@ -121,6 +125,23 @@ export class FunctionExpression extends Expression {
     return new FunctionExpression(args, this.config);
   }
 
+  @Bind private deriveReturnTypeFromArgs(returnTypeParam: string): ValueType {
+    return Map<string, ValueType>(this.getGenericParams()).get(returnTypeParam);
+  }
+
+  private getGenericParams(): [string, ValueType][] {
+    const restSize = this.config.argsRest.fold(0)(() =>
+      this.value.size > this.config.args.size ?
+        this.value.size - this.config.args.size : 0);
+    const restArgs = this.config.argsRest.fold([])(arg => Array(restSize).fill(arg));
+    const argConfigs = this.config.args.concat(restArgs).toArray();
+
+    return zip(argConfigs, this.value.toArray())
+      .filter(([config, arg]) => Boolean(config) && Boolean(arg))
+      .filter(([config, _arg]) => config.typeParam.isSome())
+      .map(([config, arg]) => [config.typeParam.some(), arg.returnType] as [string, ValueType]);
+  }
+
   // --- type check ---
 
   private getTypeErrors(): Maybe<string[]> {
@@ -135,7 +156,20 @@ export class FunctionExpression extends Expression {
       ...this.getToFewArgsErrors(initialArgs.size, requiredArgsCount),
       ...this.getInitialArgsErrors(initialArgs),
       ...this.getRestArgsErrors(restArgs),
+      ...this.getWrongTypeParamsErrors(),
     ]).filter(errors => errors.length > 0);
+  }
+
+  private getWrongTypeParamsErrors(): string[] {
+    return List(this.getGenericParams())
+      .groupBy(([param]) => param)
+      .map<Set<ValueType>>(group => Set(group.map(([_p, type]) => type)))
+      .filter(group => group.size > 1)
+      .map<[string, ValueType[]]>((group, param: string) => [param, group.toArray()])
+      .toArray()
+      .map(([param, types]: [string, ValueType[]]) =>
+        `Each type param should match exactly one type but ${param} ` +
+        `has multiple resolutions: ${types.join(', ')}`);
   }
 
   private getTooMuchArgsErrors(restArgs: List<Expression>) {
@@ -156,9 +190,16 @@ export class FunctionExpression extends Expression {
       initialArgs.toArray())
     .map(([config, argOption], index) => {
       const arg = Maybe.fromNull(argOption);
-      const valid = arg.fold(false)(({ returnType, type }) =>
-        (isSubtype(returnType, config.type) || checkBoolCompatibility(returnType, config.type)) &&
-        config.expressionType.orJust([type]).includes(type));
+      // tslint:disable-next-line:cyclomatic-complexity
+      const valid = arg.fold(false)(argExpression => {
+        const argType = argExpression.is(SelectorExpression as any) ?
+          (argExpression as SelectorExpression).matchingType : argExpression.returnType;
+
+        return (
+          isSubtype(argType, config.type) ||
+          checkBoolCompatibility(argType, config.type)
+        ) && config.expressionType.orJust([argExpression.type]).includes(argExpression.type);
+      });
 
       return ({ arg, config, index, valid });
     })

@@ -15,6 +15,7 @@ abstract class FunctionArg {
   constructor(
     public readonly type: ValueType,
     public readonly label: string,
+    public readonly typeParam: Maybe<string>,
     public readonly expressionType: Maybe<ExpressionType[]> = None(), // non empty array
   ) {}
 
@@ -24,6 +25,7 @@ abstract class FunctionArg {
       expressionType: this.expressionType.orNull(),
       label: this.label,
       type: this.type,
+      typeParam: this.typeParam.orNull(),
     };
   }
 
@@ -33,15 +35,18 @@ abstract class FunctionArg {
   }
 
   public toTypeString() {
-    return `${this.type}${this.expressionType.fold('')(et => `/(${et})`)}`;
+    const expressionTypeSuffix = this.expressionType.fold('')(et => `/(${et})`);
+
+    return this.typeParam.fold(`${this.type}${expressionTypeSuffix}`)(
+      param => `${param}${expressionTypeSuffix}`);
   }
 
 }
 
 class OptionalFunctionArg extends FunctionArg {
 
-  public static fromType(type: ValueType, label: string) {
-    return new OptionalFunctionArg(type, label);
+  public static fromType(type: ValueType, label: string, typeParam?: string | null) {
+    return new OptionalFunctionArg(type, label, Maybe.fromNull(typeParam));
   }
 
   public readonly demand: ArgDemand.Optional = ArgDemand.Optional;
@@ -50,18 +55,18 @@ class OptionalFunctionArg extends FunctionArg {
 
 class RequiredFunctionArg extends FunctionArg {
 
-  public static fromType(type: ValueType, label: string) {
-    return new RequiredFunctionArg(type, label);
+  public static fromType(type: ValueType, label: string, typeParam?: string | null) {
+    return new RequiredFunctionArg(type, label, Maybe.fromNull(typeParam));
   }
 
   public readonly demand: ArgDemand.Required = ArgDemand.Required;
 
 }
 
-FunctionArg.fromJS = ({ demand, label, type }: IFunctionArg) => {
+FunctionArg.fromJS = ({ demand, label, type, typeParam }: IFunctionArg) => {
   switch (demand) {
-    case ArgDemand.Optional: return OptionalFunctionArg.fromType(type, label);
-    case ArgDemand.Required: return RequiredFunctionArg.fromType(type, label);
+    case ArgDemand.Optional: return OptionalFunctionArg.fromType(type, label, typeParam);
+    case ArgDemand.Required: return RequiredFunctionArg.fromType(type, label, typeParam);
     default: throw Error(`No such ArgDemand value: ${demand}`);
   }
 };

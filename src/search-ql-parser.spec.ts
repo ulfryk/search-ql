@@ -7,7 +7,7 @@ import { Either } from 'monet';
 import { AndOperator, LikeOperator, OrOperator } from './ast';
 import { ParseFailure, ValueType } from './common/model';
 import { SearchQLParser } from './search-ql-parser';
-import { and, fn, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
+import { and, date, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
 
 describe('SearchQLParser', () => {
 
@@ -19,14 +19,18 @@ describe('SearchQLParser', () => {
       'first_name ~ Adam | token_expired ~ true',
       'test_function(aaa, "b(b & b)")',
       'aaa = bbb & cc != dd',
+      'days_diff(2018-01-01, 2018-01-31) > years_ago(2016-01-01)',
     ];
 
     const successfulOutputValues = [
       and(phrase('aaa'), phrase('bbb')),
       likeR(txt('token_expired'), txt('true')),
       or(likeR(txt('first_name'), txt('Adam')), likeR(txt('token_expired'), txt('true'))),
-      fn('test_function')(txt('aaa'), txt('b(b & b)')),
+      func('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
+      gtR(
+        func('days_diff')(date('2018-01-01'), date('2018-01-31')),
+        func('years_ago')(date('2016-01-01'))),
     ].map(Either.of);
 
     const invalidInput = [
@@ -128,19 +132,36 @@ describe('SearchQLParser', () => {
       'test_function(aaa, "b(b & b)")',
       'aaa = bbb & cc != dd',
       'is_empty(first_name)',
+      'is_null(first_name)',
+      'is_undefined(token_expired)',
+      'is_empty("lorem ipsum")',
+      'is_null(typeof(age))',
+      'is_date(token_expired)',
+      'is_number(age)',
+      'typeof(age) = typeof(12)',
       '! is_empty(first_name)',
       'first_name !~ noone',
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
       'length(token_expired) >= age',
+      'coalesce(first_name, typeof(age), "Lorem ipsum dolor")',
     ];
 
     const successfulOutputValues = [
       and(phrase('aaa'), phrase('bbb')),
       like(txt('token_expired'), txt('true')),
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
-      fn('test_function')(txt('aaa'), txt('b(b & b)')),
+      func('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
       func('is_empty')(sel('first_name', ValueType.Text)),
+      func('is_null')(sel('first_name', ValueType.Text)),
+      func('is_undefined')(sel('token_expired', ValueType.Text)),
+      func('is_empty')(txt('lorem ipsum')),
+      func('is_null')(func('typeof')(sel('age', ValueType.Number))),
+      func('is_date')(sel('token_expired', ValueType.Text)),
+      func('is_number')(sel('age', ValueType.Number)),
+      isR(
+        func('typeof')(sel('age', ValueType.Number)),
+        func('typeof')(num('12'))),
       not(func('is_empty')(sel('first_name', ValueType.Text))),
       notLike(txt('first_name'), txt('noone')),
       or(
@@ -151,6 +172,10 @@ describe('SearchQLParser', () => {
           gtR(func('length')(sel('first_name', ValueType.Text)), num('1')),
           lteR(func('length')(sel('first_name', ValueType.Text)), num('4')))),
       gteR(func('length')(sel('token_expired', ValueType.Text)), sel('age', ValueType.Number)),
+      func('coalesce')(
+        sel('first_name', ValueType.Text),
+        func('typeof')(sel('age', ValueType.Number)),
+        txt('Lorem ipsum dolor')),
     ].map(Either.of);
 
     const invalidInput = [
@@ -170,6 +195,7 @@ describe('SearchQLParser', () => {
       'first_name != age',
       'length(first_name) < is_empty(age)',
       'first_name < is_empty(age)',
+      'coalesce(age, length(first_name), loremipsum, 12, 2012-08-07, test_function())',
     ];
 
     const invalidTypesOutput = [
@@ -201,6 +227,9 @@ describe('SearchQLParser', () => {
       ],
       [
         'TypeError: If LHS of < expression is model selector, than its matching type should equal RHS return type, but got LHS matching type: TEXT, RHS return type: BOOLEAN.',
+      ],
+      [
+        'TypeError: Each type param should match exactly one type but T has multiple resolutions: TEXT, NUMBER, DATE, BOOLEAN',
       ],
     ];
 
@@ -261,6 +290,7 @@ describe('SearchQLParser', () => {
   describe('with custom config', () => {
 
     const model = Map<string, ValueType>({
+      age: ValueType.Number,
       first_name: ValueType.Text,
     });
 
@@ -284,6 +314,8 @@ describe('SearchQLParser', () => {
       'first_name ~= Adam',
       'first_name ~= Adam && token_expired ~= true',
       'test_function/    aaa|bbb/',
+      'concat/ aaa | bbb| ccc | concat/eee|fff/ /',
+      'length/first_name/ = abs/age/',
     ];
 
     const successfulOutputValues = [
@@ -294,7 +326,11 @@ describe('SearchQLParser', () => {
         like(txt('first_name'), txt('Adam'), LikeC),
         likeR(txt('token_expired'), txt('true'), LikeC),
         AndC),
-      fn('test_function')(txt('aaa'), txt('bbb')),
+      func('test_function')(txt('aaa'), txt('bbb')),
+      func('concat')(txt('aaa'), txt('bbb'), txt('ccc'), func('concat')(txt('eee'), txt('fff'))),
+      isR(
+        func('length')(sel('first_name', ValueType.Text)),
+        func('abs')(sel('age', ValueType.Number))),
     ].map(Either.of);
 
     const invalidInput = [
