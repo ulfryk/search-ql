@@ -5,7 +5,7 @@ import { zip } from 'lodash';
 
 import { Expression, ValueType } from '../common/model';
 import { ParserConfig, ParserName } from '../config';
-import { and, And0, andNot, config, fn, is, isNot, Like0, likeR, not, NotLike0, notLikeR, num, or, Or0, phrase, sel, txt } from '../testing/utils';
+import { and, And0, andNot, config, date, func, is, isNot, isR, Like0, likeR, not, NotLike0, notLikeR, num, or, Or0, phrase, sel, txt } from '../testing/utils';
 import { QueryParserFactory } from './query-parser-factory';
 
 const { AND, EXACT_MATCHER, GROUP_END, GROUP_START, OR } = config;
@@ -83,6 +83,7 @@ describe('SearchQL parsers', () => {
         'age = 24 & name != Doe',
         'age != 16 & name = John | age = 24 & name != Doe',
         'aaa !~ bbb & ccc NOT LIKE ddd',
+        'days_diff(now(), 2018-01-01) = days_ago(2018-01-01)',
       ];
 
       const validOutput = [
@@ -112,6 +113,9 @@ describe('SearchQL parsers', () => {
           and(isNot(sel('age', ValueType.Number), num('16')), is(sel('name', ValueType.Text), txt('John'))),
           and(is(sel('age', ValueType.Number), num('24')), isNot(sel('name', ValueType.Text), txt('Doe')))),
         and(notLikeR(txt('aaa'), txt('bbb')), notLikeR(txt('ccc'), txt('ddd'), NotLike0)),
+        isR(
+          func('days_diff')(func('now')(), date('2018-01-01')),
+          func('days_ago')(date('2018-01-01'))),
       ];
 
       const invalidInput = [
@@ -162,8 +166,8 @@ describe('SearchQL parsers', () => {
             'test_function(aaa, test_function(aaa, bbb), 12)',
           ],
           validOutput: [
-            fn('test_function')(txt('aaa')),
-            fn('test_function')(txt('aaa'), fn('test_function')(txt('aaa'), txt('bbb')), txt('12')),
+            func('test_function')(txt('aaa')),
+            func('test_function')(txt('aaa'), func('test_function')(txt('aaa'), txt('bbb')), txt('12')),
           ],
         },
 
@@ -183,9 +187,9 @@ describe('SearchQL parsers', () => {
             'test_function() ! test_function(NOT test_function())',
           ],
           validOutput: [
-            not(fn('test_function')()),
-            or(and(fn('test_function')(), fn('test_function')()), fn('test_function')()),
-            andNot(fn('test_function')(), fn('test_function')(not(fn('test_function')()))),
+            not(func('test_function')()),
+            or(and(func('test_function')(), func('test_function')()), func('test_function')()),
+            andNot(func('test_function')(), func('test_function')(not(func('test_function')()))),
           ],
         },
 

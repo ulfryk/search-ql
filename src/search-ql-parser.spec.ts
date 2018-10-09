@@ -7,7 +7,7 @@ import { Either } from 'monet';
 import { AndOperator, LikeOperator, OrOperator } from './ast';
 import { ParseFailure, ValueType } from './common/model';
 import { SearchQLParser } from './search-ql-parser';
-import { and, fn, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
+import { and, date, func, gteR, gtR, isNotR, isR, like, likeR, lteR, ltR, not, notLike, num, or, phrase, sel, txt } from './testing/utils';
 
 describe('SearchQLParser', () => {
 
@@ -19,14 +19,18 @@ describe('SearchQLParser', () => {
       'first_name ~ Adam | token_expired ~ true',
       'test_function(aaa, "b(b & b)")',
       'aaa = bbb & cc != dd',
+      'days_diff(2018-01-01, 2018-01-31) > years_ago(2016-01-01)',
     ];
 
     const successfulOutputValues = [
       and(phrase('aaa'), phrase('bbb')),
       likeR(txt('token_expired'), txt('true')),
       or(likeR(txt('first_name'), txt('Adam')), likeR(txt('token_expired'), txt('true'))),
-      fn('test_function')(txt('aaa'), txt('b(b & b)')),
+      func('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
+      gtR(
+        func('days_diff')(date('2018-01-01'), date('2018-01-31')),
+        func('years_ago')(date('2016-01-01'))),
     ].map(Either.of);
 
     const invalidInput = [
@@ -146,7 +150,7 @@ describe('SearchQLParser', () => {
       and(phrase('aaa'), phrase('bbb')),
       like(txt('token_expired'), txt('true')),
       or(like(txt('first_name'), txt('Adam')), like(txt('token_expired'), txt('true'))),
-      fn('test_function')(txt('aaa'), txt('b(b & b)')),
+      func('test_function')(txt('aaa'), txt('b(b & b)')),
       and(isR(txt('aaa'), txt('bbb')), isNotR(txt('cc'), txt('dd'))),
       func('is_empty')(sel('first_name', ValueType.Text)),
       func('is_null')(sel('first_name', ValueType.Text)),
@@ -322,7 +326,7 @@ describe('SearchQLParser', () => {
         like(txt('first_name'), txt('Adam'), LikeC),
         likeR(txt('token_expired'), txt('true'), LikeC),
         AndC),
-      fn('test_function')(txt('aaa'), txt('bbb')),
+      func('test_function')(txt('aaa'), txt('bbb')),
       func('concat')(txt('aaa'), txt('bbb'), txt('ccc'), func('concat')(txt('eee'), txt('fff'))),
       isR(
         func('length')(sel('first_name', ValueType.Text)),
