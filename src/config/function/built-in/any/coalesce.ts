@@ -1,9 +1,9 @@
 import { List } from 'immutable';
 import { Left, Some } from 'monet';
 
-import { ValueType } from '../../../common/model';
-import { OptionalFunctionArg, RequiredFunctionArg } from '../function-arg';
-import { FunctionConfig } from '../function-config';
+import { ValueType } from '../../../../common/model';
+import { OptionalFunctionArg, RequiredFunctionArg } from '../../function-arg';
+import { FunctionConfig } from '../../function-config';
 
 export const coalesceFunction =
   new FunctionConfig(
