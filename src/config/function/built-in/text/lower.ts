@@ -5,9 +5,9 @@ import { ValueType } from '../../../../common/model';
 import { RequiredFunctionArg } from '../../function-arg';
 import { FunctionConfig } from '../../function-config';
 
-export const lengthFunction =
+export const lowerFunction =
   new FunctionConfig(
-    'length',
-    List([RequiredFunctionArg.fromType(ValueType.Text, 'field_name')]),
+    'lower',
+    List([RequiredFunctionArg.fromType(ValueType.Text, 'value')]),
     None(),
-    Right(ValueType.Number));
+    Right(ValueType.Text));

@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - function aliases
 - generic functions
+- functions operating on TEXT type values:
+  - `​​concat`
+  - `​​trim`
+  - `​​lower`
+  - `​​upper`
+  - `​​remove_stop_words`
+  - `​​cleanup`
 - functions operating on ANY type values:
   - `coalesce`
   - `is_date`

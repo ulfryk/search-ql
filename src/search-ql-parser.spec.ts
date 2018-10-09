@@ -309,6 +309,7 @@ describe('SearchQLParser', () => {
       'first_name ~= Adam',
       'first_name ~= Adam && token_expired ~= true',
       'test_function/    aaa|bbb/',
+      'concat/ aaa | bbb| ccc | concat/eee|fff/ /',
     ];
 
     const successfulOutputValues = [
@@ -320,6 +321,7 @@ describe('SearchQLParser', () => {
         likeR(txt('token_expired'), txt('true'), LikeC),
         AndC),
       fn('test_function')(txt('aaa'), txt('bbb')),
+      func('concat')(txt('aaa'), txt('bbb'), txt('ccc'), func('concat')(txt('eee'), txt('fff'))),
     ].map(Either.of);
 
     const invalidInput = [
