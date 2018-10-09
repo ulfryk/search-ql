@@ -21,6 +21,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - `​​upper`
   - `​​remove_stop_words`
   - `​​cleanup`
+- functions operating on numeric (DATE / NUMBER) type values:
+  - `max`
+  - `min`
+- functions operating on DATE type values:
+  - `​​days_ago`
+  - `​​months_ago`
+  - `​​years_ago`
+  - `​​days_diff`
+  - `​​months_diff`
+  - `​​years_diff`
+  - `​​now`
 - functions operating on NUMBER type values:
   - `abs`
   - `​​round`
