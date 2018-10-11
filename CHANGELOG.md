@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 7.0.1 - 2018-10-11
+
+### Fix
+- drop fancy functions operating on TEXT type values (unused and not needed):
+  - `​​remove_stop_words`
+  - `​​cleanup`
+
 ## 7.0.0 - 2018-10-09
 
 ### Added
