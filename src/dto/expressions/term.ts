@@ -1,5 +1,3 @@
 import { IExpression } from './expression';
 
-export interface ITermExpression<P> extends IExpression<string> {
-  readonly preparedValue: P;
-}
+export interface ITermExpression extends IExpression<string> {}

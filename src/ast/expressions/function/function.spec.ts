@@ -22,7 +22,7 @@ const fn = (name: string, ...args: Expression[]) =>
       None(),
       Right(ValueType.Boolean)));
 
-const phrase = (val: string): PhraseExpression<any> =>
+const phrase = (val: string): PhraseExpression =>
   PhraseExpression.fromTerm(fromMatch(config)(val));
 
 describe('SearchQL expressions', () => {
@@ -224,7 +224,6 @@ describe('SearchQL expressions', () => {
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [{
-            preparedValue: 'lorem',
             returnType: ValueType.Text,
             type: ExpressionType.Text,
             value: 'lorem',
@@ -246,7 +245,6 @@ describe('SearchQL expressions', () => {
           returnType: ValueType.Boolean,
           type: ExpressionType.Function,
           value: [{
-            preparedValue: 1514764800000,
             returnType: ValueType.Date,
             type: ExpressionType.Date,
             value: '2018-01-01',

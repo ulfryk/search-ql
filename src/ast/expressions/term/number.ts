@@ -1,12 +1,12 @@
 import { Maybe, Some } from 'monet';
 
 import { Expression, ExpressionType, IntegrityFailure, ValueType } from '../../../common/model';
+import { isNumber, parseNumber } from '../../../common/utils';
 import { InvalidExpression } from '../invalid';
-import { isNumber } from './is-number';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
-export class NumberExpression extends TermExpression<number> {
+export class NumberExpression extends TermExpression {
 
   public static fromTerm(term: TermExpression) {
     return isNumber(term.value) ? NumberExpression.of(term.value) : term;
@@ -16,16 +16,18 @@ export class NumberExpression extends TermExpression<number> {
     return new NumberExpression(value);
   }
 
-  // TODO: probably use config here
-  public static prepareValue(value: string): number {
-    return Number(value.trim());
-  }
-
   public readonly returnType = ValueType.Number;
   public readonly type: ExpressionType.Number = ExpressionType.Number;
 
-  constructor(value: string, preparedValue = NumberExpression.prepareValue(value)) {
-    super(value, preparedValue);
+  constructor(value: string) {
+    super(value);
+  }
+
+  public equals(other: Expression): boolean {
+    return this === other || (
+      other instanceof NumberExpression &&
+      parseNumber(this.value) === parseNumber(other.value)
+    );
   }
 
   public checkIntegrity(): Expression {
@@ -41,28 +43,12 @@ export class NumberExpression extends TermExpression<number> {
   private getIntegrityErrors(): Maybe<string[]> {
     return Some([
       ...this.getWrongValueError(),
-      ...this.getWrongPreparedValueError(),
-      ...this.getNotMatchingValuesError(),
     ]).filter(errors => errors.length > 0);
   }
 
   private getWrongValueError() {
     return isNumber(this.value) ? [] : [
       `NumberExpression contains a non-number value: "${this.value}".`,
-    ];
-  }
-
-  private getWrongPreparedValueError() {
-    return Number(this.preparedValue) === this.preparedValue ? [] : [
-      `NumberExpression contains a non-number preparedValue: "${this.preparedValue}" ` +
-        `(${typeof this.preparedValue}).`,
-    ];
-  }
-
-  private getNotMatchingValuesError() {
-    return NumberExpression.prepareValue(this.value) === Number(this.preparedValue) ? [] : [
-      `NumberExpression value ("${this.value}") doesn't match ` +
-        `preparedValue ("${this.preparedValue}").`,
     ];
   }
 

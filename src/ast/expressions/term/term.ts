@@ -4,21 +4,18 @@ import { Maybe } from 'monet';
 import { Expression, ReshapeContext, ValueType } from '../../../common/model';
 import { ITermExpression } from '../../../dto';
 
-export abstract class TermExpression<PV = any> extends Expression {
+export abstract class TermExpression extends Expression {
 
   public readonly returnType: ValueType = ValueType.Text;
 
-  constructor(
-    public readonly value: string,
-    public readonly preparedValue: PV,
-  ) {
+  constructor(public readonly value: string) {
     super();
   }
 
   public equals(other: Expression): boolean {
     return this === other || (
       other instanceof this.constructor &&
-      this.preparedValue === (other as TermExpression).preparedValue
+      this.value === (other as TermExpression).value
     );
   }
 
@@ -44,9 +41,8 @@ export abstract class TermExpression<PV = any> extends Expression {
     return List([this]);
   }
 
-  public toJS(): ITermExpression<PV> {
+  public toJS(): ITermExpression {
     return {
-      preparedValue: this.preparedValue,
       returnType: this.returnType,
       type: this.type,
       value: this.value,

@@ -10,27 +10,27 @@ export const fromJS = <E extends IExpression>(pojo: E): Expression => {
 
   switch (pojo.type) {
     case ExpressionType.Date: {
-      const { preparedValue, value } = (pojo as any as ITermExpression<number>);
-      return new DateExpression(value, preparedValue);
+      const { value } = (pojo as any as ITermExpression);
+      return new DateExpression(value);
     }
 
     case ExpressionType.Number: {
-      const { preparedValue, value } = (pojo as any as ITermExpression<number>);
-      return new NumberExpression(value, preparedValue);
+      const { value } = (pojo as any as ITermExpression);
+      return new NumberExpression(value);
     }
 
     case ExpressionType.Text: {
-      const { preparedValue, value } = (pojo as any as ITermExpression<string>);
-      return new TextExpression(value, preparedValue);
+      const { value } = (pojo as any as ITermExpression);
+      return new TextExpression(value);
     }
 
     case ExpressionType.Selector: {
-      const { matchingType, preparedValue, value } = (pojo as any as ISelectorExpression);
-      return new SelectorExpression(matchingType, value, preparedValue);
+      const { matchingType, value } = (pojo as any as ISelectorExpression);
+      return new SelectorExpression(matchingType, value);
     }
 
     case ExpressionType.Phrase: {
-      const { term } = (pojo as any as IPhraseExpression<any>);
+      const { term } = (pojo as any as IPhraseExpression);
       return new PhraseExpression(fromJS(term) as TermExpression);
     }
 

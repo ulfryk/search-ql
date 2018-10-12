@@ -1,12 +1,12 @@
 import { Maybe, Some } from 'monet';
 
 import { Expression, ExpressionType, IntegrityFailure, ValueType } from '../../../common/model';
+import { isDate, parseDate } from '../../../common/utils';
 import { InvalidExpression } from '../invalid';
-import { isDate } from './is-date';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
 
-export class DateExpression extends TermExpression<number> {
+export class DateExpression extends TermExpression {
 
   public static fromTerm(term: TermExpression) {
     return isDate(term.value) ? DateExpression.of(term.value) : term;
@@ -16,16 +16,18 @@ export class DateExpression extends TermExpression<number> {
     return new DateExpression(value);
   }
 
-  // TODO: probably use config here
-  public static prepareValue(value: string): number {
-    return Date.parse(value.trim());
-  }
-
   public readonly returnType = ValueType.Date;
   public readonly type: ExpressionType.Date = ExpressionType.Date;
 
-  constructor(value: string, preparedValue = DateExpression.prepareValue(value)) {
-    super(value, preparedValue);
+  constructor(value: string) {
+    super(value);
+  }
+
+  public equals(other: Expression): boolean {
+    return this === other || (
+      other instanceof DateExpression &&
+      parseDate(this.value) === parseDate(other.value)
+    );
   }
 
   public checkIntegrity(): Expression {
@@ -41,27 +43,12 @@ export class DateExpression extends TermExpression<number> {
   private getIntegrityErrors(): Maybe<string[]> {
     return Some([
       ...this.getWrongValueError(),
-      ...this.getNonNumberPreparedValueError(),
-      ...this.getNotMatchingValuesError(),
     ]).filter(errors => errors.length > 0);
   }
 
   private getWrongValueError() {
     return isDate(this.value) ? [] : [
       `DateExpression contains a non-date value: "${this.value}".`,
-    ];
-  }
-
-  private getNonNumberPreparedValueError() {
-    return Number(this.preparedValue) === this.preparedValue ? [] : [
-      `DateExpression contains a non-number preparedValue: ${this.preparedValue}.`,
-    ];
-  }
-
-  private getNotMatchingValuesError() {
-    return DateExpression.prepareValue(this.value) === this.preparedValue ? [] : [
-      `DateExpression value ("${this.value}") doesn't match ` +
-        `preparedValue ("${this.preparedValue}").`,
     ];
   }
 

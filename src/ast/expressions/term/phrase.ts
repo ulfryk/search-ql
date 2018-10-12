@@ -6,11 +6,11 @@ import { IPhraseExpression } from '../../../dto';
 import { InvalidExpression } from '../invalid';
 import { TermExpression } from './term';
 
-export class PhraseExpression<T> extends TermExpression<string> {
+export class PhraseExpression extends TermExpression {
 
-  public static fromTerm<G, C extends TermExpression<G>>(term: C): PhraseExpression<G> {
+  public static fromTerm<C extends TermExpression>(term: C): PhraseExpression {
     if (term.is(PhraseExpression as any)) {
-      return term as any as PhraseExpression<G>;
+      return term as any as PhraseExpression;
     }
     return new PhraseExpression(term);
   }
@@ -18,21 +18,19 @@ export class PhraseExpression<T> extends TermExpression<string> {
   public readonly returnType: ValueType = ValueType.Phrase;
   public readonly type: ExpressionType.Phrase = ExpressionType.Phrase;
 
-  constructor(public readonly term: TermExpression<T>) {
-    super(term.value, term.value.trim());
+  constructor(public readonly term: TermExpression) {
+    super(term.value);
   }
 
   public equals(other: Expression): boolean {
     return this === other || (
       other instanceof PhraseExpression &&
-      this.preparedValue === other.preparedValue &&
       this.term.equals(other.term)
     );
   }
 
-  public toJS(): IPhraseExpression<T> {
+  public toJS(): IPhraseExpression {
     return {
-      preparedValue: this.preparedValue,
       returnType: this.returnType,
       term: this.term.toJS(),
       type: this.type,

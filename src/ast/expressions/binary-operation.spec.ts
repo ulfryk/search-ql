@@ -259,8 +259,8 @@ describe('SearchQL expressions', () => {
           returnType: ValueType.Boolean,
           type: ExpressionType.Binary,
           value: [
-            { preparedValue: 'aaa', returnType: ValueType.Text, type: ExpressionType.Text, value: 'aaa' },
-            { preparedValue: 123, returnType: ValueType.Number, type: ExpressionType.Number, value: '123' },
+            { returnType: ValueType.Text, type: ExpressionType.Text, value: 'aaa' },
+            { returnType: ValueType.Number, type: ExpressionType.Number, value: '123' },
           ],
         },
         {
@@ -269,10 +269,8 @@ describe('SearchQL expressions', () => {
           type: ExpressionType.Binary,
           value: [
             {
-              preparedValue: '123',
               returnType: ValueType.Phrase,
               term: {
-                preparedValue: '123',
                 returnType: ValueType.Text,
                 type: ExpressionType.Text,
                 value: '123',
@@ -281,10 +279,8 @@ describe('SearchQL expressions', () => {
               value: '123',
             },
             {
-              preparedValue: 'aaa',
               returnType: ValueType.Phrase,
               term: {
-                preparedValue: 'aaa',
                 returnType: ValueType.Text,
                 type: ExpressionType.Text,
                 value: 'aaa',
@@ -299,8 +295,8 @@ describe('SearchQL expressions', () => {
           returnType: ValueType.Boolean,
           type: ExpressionType.Binary,
           value: [
-            { preparedValue: 'aaa', returnType: ValueType.Text, type: ExpressionType.Text, value: 'aaa' },
-            { preparedValue: '123', returnType: ValueType.Text, type: ExpressionType.Text, value: '123' },
+            { returnType: ValueType.Text, type: ExpressionType.Text, value: 'aaa' },
+            { returnType: ValueType.Text, type: ExpressionType.Text, value: '123' },
           ],
         },
       ];
