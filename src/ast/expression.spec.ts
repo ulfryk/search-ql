@@ -36,6 +36,11 @@ describe('SearchQL ast: Expression tree', () => {
       },
       {
         returnType: ValueType.Date,
+        timeFrame: {
+          end: 1533195898070,
+          start: 1533195898070,
+          text: '2018-08-02T07:44:58.070Z',
+        },
         type: ExpressionType.Date,
         value: '2018-08-02T07:44:58.070Z',
       },
@@ -123,6 +128,11 @@ describe('SearchQL ast: Expression tree', () => {
       // --- DATE ---
       [{
         returnType: ValueType.Date,
+        timeFrame: {
+          end: 0,
+          start: 0,
+          text: 'asd2018-08-02asasd',
+        },
         type: ExpressionType.Date,
         value: 'asd2018-08-02asasd',
       }, [

@@ -1,7 +1,7 @@
 import { List } from 'immutable';
-import { Expression, ExpressionType } from '../common/model';
+import { Expression, ExpressionType, TimeFrame } from '../common/model';
 import { FunctionConfig } from '../config';
-import { IBinaryOperationExpression, IExpression, IFunctionExpression, INotExpression, IPhraseExpression, ISelectorExpression, ITermExpression } from '../dto';
+import { IBinaryOperationExpression, IDateExpression, IExpression, IFunctionExpression, INotExpression, IPhraseExpression, ISelectorExpression, ITermExpression } from '../dto';
 import { BinaryOperationExpression, DateExpression, FunctionExpression, NotExpression, NumberExpression, PhraseExpression, SelectorExpression, TermExpression, TextExpression } from './expressions';
 import { Operator } from './operators';
 
@@ -10,8 +10,8 @@ export const fromJS = <E extends IExpression>(pojo: E): Expression => {
 
   switch (pojo.type) {
     case ExpressionType.Date: {
-      const { value } = (pojo as any as ITermExpression);
-      return new DateExpression(value);
+      const { timeFrame, value } = (pojo as any as IDateExpression);
+      return new DateExpression(value, TimeFrame.fromJS(timeFrame));
     }
 
     case ExpressionType.Number: {

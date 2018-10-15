@@ -1,7 +1,8 @@
 import { Maybe, Some } from 'monet';
 
-import { Expression, ExpressionType, IntegrityFailure, ValueType } from '../../../common/model';
+import { Expression, ExpressionType, IntegrityFailure, TimeFrame, ValueType } from '../../../common/model';
 import { isDate, parseDate } from '../../../common/utils';
+import { IDateExpression } from '../../../dto';
 import { InvalidExpression } from '../invalid';
 import { PhraseExpression } from './phrase';
 import { TermExpression } from './term';
@@ -19,15 +20,27 @@ export class DateExpression extends TermExpression {
   public readonly returnType = ValueType.Date;
   public readonly type: ExpressionType.Date = ExpressionType.Date;
 
-  constructor(value: string) {
+  constructor(
+    value: string,
+    public readonly timeFrame: TimeFrame = parseDate(value),
+  ) {
     super(value);
   }
 
   public equals(other: Expression): boolean {
     return this === other || (
       other instanceof DateExpression &&
-      parseDate(this.value) === parseDate(other.value)
+      this.timeFrame.equals(other.timeFrame)
     );
+  }
+
+  public toJS(): IDateExpression {
+    return {
+      returnType: this.returnType,
+      timeFrame: this.timeFrame.toJS(),
+      type: this.type,
+      value: this.value,
+    };
   }
 
   public checkIntegrity(): Expression {
