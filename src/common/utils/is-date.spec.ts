@@ -22,7 +22,7 @@ const invalidInput = [
   '$#%564 *(&^@%#1 1~`1`',
 ];
 
-describe('SearchQL expressions', () => {
+describe('SearchQL common/utils', () => {
 
   describe('isDate', () => {
 

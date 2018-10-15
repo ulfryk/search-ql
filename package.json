@@ -6,9 +6,9 @@
   "types": "lib/index.d.ts",
   "scripts": {
     "build": "rm -rf ./lib && tsc --project tsconfig.publish.json",
-    "karma": "karma start config/karma.conf.js",
+    "karma": "TZ='America/Los_Angeles' karma start config/karma.conf.js",
     "lint": "tslint --project tsconfig.tslint.json --format verbose './src/**/*.ts'",
-    "mocha": "mocha --opts ./mocha.opts './src/**/*.spec.ts'",
+    "mocha": "TZ='America/Los_Angeles' mocha --opts ./mocha.opts './src/**/*.spec.ts'",
     "mocha:tdd:full": "yarn mocha --watch",
     "mocha:tdd": "yarn mocha:tdd:full --reporter min",
     "prepublishOnly": "yarn build",

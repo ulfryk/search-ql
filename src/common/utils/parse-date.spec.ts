@@ -21,17 +21,17 @@ const input = [
 ];
 
 const output = [
-  new TimeFrame(Date.parse('2018-11-20T23:00:00.000Z'), Date.parse('2018-11-21T22:59:59.999Z'), input[0]),
+  new TimeFrame(Date.parse('2018-11-21T08:00:00.000Z'), Date.parse('2018-11-22T07:59:59.999Z'), input[0]),
   new TimeFrame(Date.parse(date1), Date.parse(date1), input[1]),
   new TimeFrame(Date.parse(date2), Date.parse(date2), input[2]),
-  new TimeFrame(Date.parse('2018-10-14T22:00:00.000Z'), Date.parse('2018-10-15T21:59:59.999Z'), input[3]),
-  new TimeFrame(Date.parse('2018-08-27T22:00:00.000Z'), Date.parse('2018-08-28T21:59:59.999Z'), input[4]),
-  new TimeFrame(Date.parse('2018-08-27T22:00:00.000Z'), Date.parse('2018-08-28T21:59:59.999Z'), input[5]),
-  new TimeFrame(Date.parse('2018-08-27T22:00:00.000Z'), Date.parse('2018-08-28T21:59:59.999Z'), input[6]),
-  new TimeFrame(Date.parse('2018-01-28T19:15:00.000Z'), Date.parse('2018-01-28T19:15:00.999Z'), input[7]),
+  new TimeFrame(Date.parse('2018-10-15T07:00:00.000Z'), Date.parse('2018-10-16T06:59:59.999Z'), input[3]),
+  new TimeFrame(Date.parse('2018-08-28T07:00:00.000Z'), Date.parse('2018-08-29T06:59:59.999Z'), input[4]),
+  new TimeFrame(Date.parse('2018-08-28T07:00:00.000Z'), Date.parse('2018-08-29T06:59:59.999Z'), input[5]),
+  new TimeFrame(Date.parse('2018-08-28T07:00:00.000Z'), Date.parse('2018-08-29T06:59:59.999Z'), input[6]),
+  new TimeFrame(Date.parse('2018-01-29T04:15:00.000Z'), Date.parse('2018-01-29T04:15:00.999Z'), input[7]),
 ];
 
-describe('SearchQL expressions', () => {
+describe('SearchQL common/utils', () => {
 
   describe('parseDate', () => {
 

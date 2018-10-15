@@ -247,8 +247,8 @@ describe('SearchQL expressions', () => {
           value: [{
             returnType: ValueType.Date,
             timeFrame: {
-              end: 1514847599999,
-              start: 1514761200000,
+              end: 1514879999999,
+              start: 1514793600000,
               text: '2018-01-01',
             },
             type: ExpressionType.Date,

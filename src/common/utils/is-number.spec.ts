@@ -30,7 +30,7 @@ const invalidInput = [
   '--0',
 ];
 
-describe('SearchQL expressions', () => {
+describe('SearchQL common/utils', () => {
 
   describe('isNumber', () => {
 
