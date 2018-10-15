@@ -15,7 +15,7 @@ export class TimeFrame implements ISetoid {
 
     if (chrono.length > 1) {
       throw new Error(
-        `TimeFrame got invalid input (too much results: ${chrono.length}) for "${text}" phrase.`);
+        `TimeFrame got invalid input (too many results: ${chrono.length}) for "${text}" phrase.`);
     }
 
     const [parsed] = chrono;
