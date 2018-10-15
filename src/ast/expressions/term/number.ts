@@ -26,7 +26,7 @@ export class NumberExpression extends TermExpression {
   public equals(other: Expression): boolean {
     return this === other || (
       other instanceof NumberExpression &&
-      parseNumber(this.value) === parseNumber(other.value)
+      parseNumber(this.value).eq(parseNumber(other.value))
     );
   }
 
