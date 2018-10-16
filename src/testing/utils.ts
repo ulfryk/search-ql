@@ -45,7 +45,7 @@ const and = (l: Expression, r: Expression, op: AndOperator = And) =>
 const eq = (l: TermExpression, r: TermExpression, op: EqualityOperator | RelationalOperator) =>
   new BinaryOperationExpression(op, [
     SelectorExpression.of(l.value)(
-      (r as PhraseExpression<any>).term && (r as PhraseExpression<any>).term.returnType ||
+      (r as PhraseExpression).term && (r as PhraseExpression).term.returnType ||
       r.returnType),
     r,
   ]);

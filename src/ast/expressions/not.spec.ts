@@ -60,8 +60,8 @@ describe('SearchQL expressions', () => {
       ];
 
       const rhs = [
-        List([lhs[0], lhs[0].value, (lhs[0].value as PhraseExpression<any>).term]),
-        List([lhs[1], lhs[1].value, (lhs[1].value as PhraseExpression<any>).term]),
+        List([lhs[0], lhs[0].value, (lhs[0].value as PhraseExpression).term]),
+        List([lhs[1], lhs[1].value, (lhs[1].value as PhraseExpression).term]),
       ];
 
       it('should properly build up list of expressions', () => {
@@ -84,10 +84,8 @@ describe('SearchQL expressions', () => {
           returnType: 'PHRASE',
           type: ExpressionType.Not,
           value: {
-            preparedValue: '',
             returnType: ValueType.Phrase,
             term: {
-              preparedValue: '',
               returnType: ValueType.Text,
               type: ExpressionType.Text,
               value: '',
@@ -100,10 +98,8 @@ describe('SearchQL expressions', () => {
           returnType: 'PHRASE',
           type: ExpressionType.Not,
           value: {
-            preparedValue: 'aaa  asdas as asd asdas dad',
             returnType: ValueType.Phrase,
             term: {
-              preparedValue: 'aaa  asdas as asd asdas dad',
               returnType: ValueType.Text,
               type: ExpressionType.Text,
               value: 'aaa  asdas as asd asdas dad ',

@@ -10,7 +10,7 @@ const validInput = [
   new Date(Date.now() + 5563400).toDateString(),
   'Aug 28 2018',
   '28 Aug 2018',
-  'August 28 2018',
+  'August 28, 2018',
 ];
 
 const invalidInput = [
@@ -19,9 +19,10 @@ const invalidInput = [
   '2018-11-21asdasd',
   '123123123',
   'Aug 282018',
+  '$#%564 *(&^@%#1 1~`1`',
 ];
 
-describe('SearchQL expressions', () => {
+describe('SearchQL common/utils', () => {
 
   describe('isDate', () => {
 

@@ -1,9 +1,8 @@
 import { Maybe } from 'monet';
 
+import { isDate, isNumber } from '../../../common/utils';
 import { ParserConfig } from './../../../config/parser-config';
 import { DateExpression } from './date';
-import { isDate } from './is-date';
-import { isNumber } from './is-number';
 import { NumberExpression } from './number';
 import { SelectorExpression } from './selector';
 import { TermExpression } from './term';

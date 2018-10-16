@@ -53,10 +53,8 @@ describe('SearchQL ast', () => {
           type: ExpressionType.Binary,
           value: [
             {
-              preparedValue: 'aaa',
               returnType: ValueType.Phrase,
               term: {
-                preparedValue: 'aaa',
                 returnType: ValueType.Text,
                 type: ExpressionType.Text,
                 value: 'aaa',
@@ -65,10 +63,8 @@ describe('SearchQL ast', () => {
               value: 'aaa',
             },
             {
-              preparedValue: 'bbb',
               returnType: ValueType.Phrase,
               term: {
-                preparedValue: 'bbb',
                 returnType: ValueType.Text,
                 type: ExpressionType.Text,
                 value: 'bbb',
@@ -82,10 +78,8 @@ describe('SearchQL ast', () => {
           returnType: ValueType.Phrase,
           type: ExpressionType.Not,
           value: {
-            preparedValue: 'ccc',
             returnType: ValueType.Phrase,
             term: {
-              preparedValue: 'ccc',
               returnType: ValueType.Text,
               type: ExpressionType.Text,
               value: 'ccc',

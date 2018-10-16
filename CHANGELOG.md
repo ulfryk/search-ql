@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 8.0.0 - 2018-10-16
+
+### Changed
+- **[breaking]**  move date and number testing and parsing to `common/utils` and re-export them in main index
+- `timeFrame` field added to `DateExpression` and `IDateExpression`
+
+### Removed
+- **[breaking]** preparedValue dropped from TermExpressions and DTO
+
 ## 7.0.1 - 2018-10-11
 
 ### Fix
