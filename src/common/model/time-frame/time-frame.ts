@@ -1,12 +1,12 @@
-import { ISetoid } from '@samwise-tech/core';
 import { ParsedResult } from 'chrono-node';
 import { Maybe } from 'monet';
 
 import { ITimeFrame } from '../../../dto';
+import { IOrd, Ordering } from '../ord';
 import { getEnd } from './get-end';
 import { getStart } from './get-start';
 
-export class TimeFrame implements ISetoid {
+export class TimeFrame implements IOrd<TimeFrame> {
 
   public static fromChrono(chrono: ParsedResult[], text: string) {
     if (chrono.length === 0) {
@@ -42,6 +42,18 @@ export class TimeFrame implements ISetoid {
       this.start === other.start &&
       this.end === other.end
     );
+  }
+
+  public compare(other: TimeFrame): Ordering {
+    if (this.end < other.start) {
+      return Ordering.Lt;
+    }
+
+    if (this.start > other.end) {
+      return Ordering.Gt;
+    }
+
+    return Ordering.Eq;
   }
 
   public toJS(): ITimeFrame {
