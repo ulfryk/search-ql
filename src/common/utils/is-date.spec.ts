@@ -14,6 +14,7 @@ const validInput = [
 ];
 
 const invalidInput = [
+  'Nov 16',
   '201811-21',
   'fasdfasdfasdf',
   '2018-11-21asdasd',
