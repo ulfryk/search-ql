@@ -1,6 +1,6 @@
 {
   "name": "@samwise-tech/search-ql",
-  "version": "8.0.2",
+  "version": "8.0.3",
   "description": "QL used for advanced searches in Samwise applications",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
