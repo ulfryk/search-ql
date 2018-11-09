@@ -1,7 +1,7 @@
 import { List, Map, Set } from 'immutable';
 import { Maybe, None, Some } from 'monet';
 
-import { allBinaryOperators, checkBoolCompatibility, Expression, ExpressionType, IntegrityFailure, isBooleanType, isPhraseType, TypeFailure, ValueType } from '../../common/model';
+import { allBinaryOperators, checkBoolCompatibility, checkTextCompatibility, Expression, ExpressionType, IntegrityFailure, isBooleanType, isPhraseType, TypeFailure, ValueType } from '../../common/model';
 import { IBinaryOperationExpression, IExpression } from '../../dto';
 import { AndOperator, BinaryOperator, EqualityOperator, LogicalOperator, RelationalOperator } from '../operators';
 import { InvalidExpression } from './invalid';
@@ -187,38 +187,44 @@ export class BinaryOperationExpression extends Expression {
     ]);
   }
 
-  private areCompatible(newLeft: Expression, newRight: Expression) {
-    return newLeft.returnType === newRight.returnType ||
-      checkBoolCompatibility(newLeft.returnType, newRight.returnType);
+  private areCompatible(newLeft: Expression, newRight: Expression): boolean {
+    return this.areTypesCompatible(newLeft.returnType, newRight.returnType);
+  }
+
+  private areTypesCompatible(lhs: ValueType, rhs: ValueType): boolean {
+    return lhs === rhs || checkBoolCompatibility(lhs, rhs) || checkTextCompatibility(lhs, rhs);
   }
 
   // tslint:disable-next-line:cyclomatic-complexity
   private checkSelectorEqualityTypes(newLeft: Expression, newRight: Expression): Maybe<string[]> {
-    const lhsType = (newLeft as SelectorExpression).matchingType;
-    const rhsType = (newRight as SelectorExpression).matchingType;
+    const leftIsSelector = newLeft.is(SelectorExpression as any);
+    const rightIsSelector = newRight.is(SelectorExpression as any);
+    const lhsType = leftIsSelector ?
+      (newLeft as SelectorExpression).matchingType :
+      newLeft.returnType;
+    const rhsType = rightIsSelector ?
+      (newRight as SelectorExpression).matchingType :
+      newRight.returnType;
 
-    if (newLeft.is(SelectorExpression as any) && newRight.is(SelectorExpression as any)) {
-      return lhsType === rhsType ? None() : Some([
+    if (this.areTypesCompatible(lhsType, rhsType)) {
+      return None();
+    }
+
+    return Some([
+      leftIsSelector && rightIsSelector ?
         `If both sides of ${this.operator.token} expression are model selectors, ` +
         `than their matching types should equal, ` +
-        `but got LHS matching type: ${lhsType}, RHS matching type: ${rhsType}.`,
-      ]);
-    }
+        `but got LHS matching type: ${lhsType}, RHS matching type: ${rhsType}.` :
 
-    if (newLeft.is(SelectorExpression as any)) {
-      return lhsType === newRight.returnType ? None() : Some([
-        `If LHS of ${this.operator.token} expression is model selector, ` +
-        `than its matching type should equal RHS return type, ` +
-        `but got LHS matching type: ${lhsType}, RHS return type: ${newRight.returnType}.`,
-      ]);
-    }
+        leftIsSelector ?
+          `If LHS of ${this.operator.token} expression is model selector, ` +
+          `than its matching type should equal RHS return type, ` +
+          `but got LHS matching type: ${lhsType}, RHS return type: ${rhsType}.` :
 
-    return newLeft.returnType === rhsType ?
-      None() : Some([
-        `If RHS of ${this.operator.token} expression is model selector, ` +
-        `than its matching type should equal LHS return type, ` +
-        `but got LHS return type : ${newLeft.returnType}, RHS matching type: ${rhsType}.`,
-      ]);
+          `If RHS of ${this.operator.token} expression is model selector, ` +
+          `than its matching type should equal LHS return type, ` +
+          `but got LHS return type : ${lhsType}, RHS matching type: ${rhsType}.`,
+    ]);
   }
 
   // Logical operators type checking

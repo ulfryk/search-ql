@@ -51,8 +51,12 @@ const boolCompatible = [ValueType.Boolean, ValueType.Phrase];
 const checkBoolCompatibility = (...types: ValueType[]) =>
   types.every(side => boolCompatible.includes(side));
 
+const checkTextCompatibility = (...types: ValueType[]) =>
+  types.every(side => TEXT_TYPES.includes(side));
+
 export {
   checkBoolCompatibility,
+  checkTextCompatibility,
   isAnyType,
   isBooleanType,
   isDateType,
