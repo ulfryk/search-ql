@@ -20,6 +20,8 @@ describe('SearchQLParser', () => {
       'test_function(aaa, "b(b & b)")',
       'aaa = bbb & cc != dd',
       'days_diff(2018-01-01, 2018-01-31) > years_ago(2016-01-01)',
+      'token_expired = 10',
+      '111 ~ 2016-01-01',
     ];
 
     const successfulOutputValues = [
@@ -31,6 +33,8 @@ describe('SearchQLParser', () => {
       gtR(
         func('days_diff')(date('2018-01-01'), date('2018-01-31')),
         func('years_ago')(date('2016-01-01'))),
+      isR(txt('token_expired'), num('10')),
+      likeR(num('111'), date('2016-01-01')),
     ].map(Either.of);
 
     const invalidInput = [
@@ -144,6 +148,8 @@ describe('SearchQLParser', () => {
       'age >= 13 & age < 18 | length(first_name) > 1 & length(first_name) <= 4',
       'length(token_expired) >= age',
       'coalesce(first_name, typeof(age), "Lorem ipsum dolor")',
+      'first_name = 123',
+      'first_name LIKE 2021-02-04',
     ];
 
     const successfulOutputValues = [
@@ -176,6 +182,8 @@ describe('SearchQLParser', () => {
         sel('first_name', ValueType.Text),
         func('typeof')(sel('age', ValueType.Number)),
         txt('Lorem ipsum dolor')),
+      isR(sel('first_name', ValueType.Text), num('123')),
+      likeR(sel('first_name', ValueType.Text), date('2021-02-04')),
     ].map(Either.of);
 
     const invalidInput = [
@@ -192,7 +200,6 @@ describe('SearchQLParser', () => {
       'a ISNT is_empty(b)',
       '! length(first_name)',
       'aaa = (bb AND cc)',
-      'first_name != age',
       'length(first_name) < is_empty(age)',
       'first_name < is_empty(age)',
       'coalesce(age, length(first_name), loremipsum, 12, 2012-08-07, test_function())',
@@ -218,9 +225,6 @@ describe('SearchQLParser', () => {
       [
         'TypeError: Both sides of = expression should be of same type, but got LHS: TEXT and RHS: PHRASE.',
         'IntegrityError: The RHS of = shouldn\'t evaluate to Phrase.',
-      ],
-      [
-        'TypeError: If both sides of != expression are model selectors, than their matching types should equal, but got LHS matching type: TEXT, RHS matching type: NUMBER.',
       ],
       [
         'TypeError: Both sides of < expression should be of same type, but got LHS: NUMBER and RHS: BOOLEAN.',
