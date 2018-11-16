@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 8.0.6 - 2018-11-16
+### Fix
+- more fix [enum imports](https://github.com/Microsoft/TypeScript/issues/26969)
+
 ## 8.0.5 - 2018-11-16
 ### Fix
 - fix [enum imports](https://github.com/Microsoft/TypeScript/issues/26969)
