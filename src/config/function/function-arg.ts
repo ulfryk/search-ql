@@ -63,6 +63,7 @@ class RequiredFunctionArg extends FunctionArg {
 
 }
 
+// tslint:disable-next-line:no-object-mutation
 FunctionArg.fromJS = ({ demand, label, type, typeParam }: IFunctionArg) => {
   switch (demand) {
     case ArgDemand.Optional: return OptionalFunctionArg.fromType(type, label, typeParam);

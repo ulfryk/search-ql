@@ -1,4 +1,4 @@
-/* tslint:disable:no-unused-expression no-magic-numbers */
+/* tslint:disable:no-unused-expression no-magic-numbers no-array-mutation */
 import { expect } from 'chai';
 import { Map, OrderedSet } from 'immutable';
 

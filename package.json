@@ -35,7 +35,7 @@
     "yarn": ">=1"
   },
   "dependencies": {
-    "@samwise-tech/core": "^2.0.3",
+    "@samwise-tech/core": "^2.0.4",
     "@types/big.js": "4.0.5",
     "@types/parsimmon": "^1.10.0",
     "big.js": "5.2.2",
@@ -46,12 +46,12 @@
     "parsimmon": "^1.12.0"
   },
   "devDependencies": {
-    "@samwise-tech/forbidden-patterns": "1.0.4",
-    "@samwise-tech/tslint-config": "1.0.6",
+    "@samwise-tech/forbidden-patterns": "1.0.5",
+    "@samwise-tech/tslint-config": "1.0.7",
     "@types/chai": "4.1.7",
     "@types/lodash": "4.14.118",
     "@types/mocha": "5.2.5",
-    "@types/node": "10.12.3",
+    "@types/node": "10.12.9",
     "chai": "4.2.0",
     "circular-dependency-plugin": "5.0.2",
     "core-js": "2.5.7",
@@ -68,7 +68,7 @@
     "ts-node": "7.0.1",
     "tslib": "1.9.3",
     "tslint": "5.11.0",
-    "typescript": "3.0.3",
+    "typescript": "3.1.6",
     "webpack": "4.25.1"
   }
 }

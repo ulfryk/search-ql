@@ -3,6 +3,7 @@ import { ISetoid } from '@samwise-tech/core';
 const enum Ordering { Lt = -1, Eq = 0, Gt = 1 }
 
 interface IOrd<T> extends ISetoid {
+  // tslint:disable-next-line:no-method-signature
   compare(other: IOrd<T>): Ordering;
 }
 
