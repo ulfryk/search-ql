@@ -1,4 +1,4 @@
-export enum OperatorType {
+export const enum OperatorType {
   And = 'AND',
   Like = 'LIKE',
   Not = 'NOT',
