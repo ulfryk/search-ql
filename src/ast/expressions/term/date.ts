@@ -17,7 +17,7 @@ export class DateExpression extends TermExpression {
     return new DateExpression(value);
   }
 
-  public readonly returnType = ValueType.Date;
+  public readonly returnType: ValueType.Date = ValueType.Date;
   public readonly type: ExpressionType.Date = ExpressionType.Date;
 
   constructor(
