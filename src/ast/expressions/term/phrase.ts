@@ -15,7 +15,7 @@ export class PhraseExpression extends TermExpression {
     return new PhraseExpression(term);
   }
 
-  public readonly returnType: ValueType = ValueType.Phrase;
+  public readonly returnType: ValueType.Phrase = ValueType.Phrase;
   public readonly type: ExpressionType.Phrase = ExpressionType.Phrase;
 
   constructor(public readonly term: TermExpression) {

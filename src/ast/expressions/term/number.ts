@@ -16,7 +16,7 @@ export class NumberExpression extends TermExpression {
     return new NumberExpression(value);
   }
 
-  public readonly returnType = ValueType.Number;
+  public readonly returnType: ValueType.Number = ValueType.Number;
   public readonly type: ExpressionType.Number = ExpressionType.Number;
 
   constructor(value: string) {
