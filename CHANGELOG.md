@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## Unreleased
 
+## 8.0.4 - 2018-11-16
+### Fix
+- update dependencies
+
 ## 8.0.3 - 2018-11-09
 ### Fix
 - type checker (allow Date and Number to be matched as Text)
