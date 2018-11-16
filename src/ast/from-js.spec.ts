@@ -1,4 +1,4 @@
-/* tslint:disable:no-unused-expression */
+/* tslint:disable:no-unused-expression no-array-mutation */
 import { expect } from 'chai';
 
 import { ExpressionType, OperatorType, ValueType } from '../common/model';

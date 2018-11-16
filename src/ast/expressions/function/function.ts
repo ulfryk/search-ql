@@ -19,6 +19,7 @@ export class FunctionExpression extends Expression {
     const absRestCount = restArgsCount > 0 ? restArgsCount : 0;
     const argExpressions = List(config.args)
       .map(({ type }) => Some(type))
+      // tslint:disable-next-line:no-array-mutation
       .concat(Array(absRestCount).fill(config.argsRest.map(({ type }) => type)))
       .filter((_type, index) => Boolean(args[index]))
       .map((type, index) => type
@@ -133,6 +134,7 @@ export class FunctionExpression extends Expression {
     const restSize = this.config.argsRest.fold(0)(() =>
       this.value.size > this.config.args.size ?
         this.value.size - this.config.args.size : 0);
+    // tslint:disable-next-line:no-array-mutation
     const restArgs = this.config.argsRest.fold([])(arg => Array(restSize).fill(arg));
     const argConfigs = this.config.args.concat(restArgs).toArray();
 
